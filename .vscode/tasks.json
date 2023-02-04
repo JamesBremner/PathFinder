@@ -4,12 +4,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "starter",
+            "label": "test",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
             "command": "mingw32-make.exe",
-            "args": ["-f", ".vscode/makefile", "GraphDataTest" ],
+            "args": ["-f", ".vscode/makefile", "test" ],
             "problemMatcher": [
                 "$gcc"
             ],

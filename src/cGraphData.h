@@ -10,16 +10,35 @@ class cGraphData
     /// @return vertex index
     int add( const std::string& vertexName );
 
+    int findorAdd( const std::string vertexName );
+
     /// @brief add edge
     /// @param srcName 
     /// @param dstName 
-    /// @return edge inex
+    /// @return edge index
     int add( const std::string& srcName, const std::string& dstName );
+    int add( int src, int dst );
+
+    int findorAdd( 
+        const std::string& srcName,
+         const std::string& dstName,
+         const std::string& sAttr );
+
+    int vertexCount() const
+    {
+        return vVertexName.size();
+    }
 
     /// @brief find vertex with name
     /// @param vertexName 
     /// @return vertex index, -1 if not found
     int find( const std::string& vertexName ) const;
+
+    int find(int src, int dst ) const;
+
+    std::vector<int> adjacentOut( int vi ) const;
+
+    double edgeAttr( int src, int dst, int ai ) const;
 
     /// @brief human readable edge list
     /// @return text

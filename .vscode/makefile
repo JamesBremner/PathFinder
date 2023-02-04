@@ -18,9 +18,10 @@ OPT = -g
 CCflags = -std=c++17 $(OPT) -D_mingw_
 
 # sources
-OBJ_GraphDataTest = \
+OBJ_test = \
 	$(ODIR)/cGraphData.o \
-	$(ODIR)/GraphDataTest.o 
+	$(ODIR)/GraphTheory.o \
+	$(ODIR)/test.o 
 
 ### COMPILE
 
@@ -28,9 +29,9 @@ $(ODIR)/%.o: %.cpp
 	g++  $(CCflags) \
 	-c -o $@ $< $(INCS)
 
-GraphDataTest: $(OBJ_GraphDataTest)
+test: $(OBJ_test)
 	g++ $(OPT) \
-	-o bin/GraphDataTest.exe $^  \
+	-o bin/test.exe $^  \
 	$(static_link_flags) $(LIBS)
 
 .PHONY: clean
