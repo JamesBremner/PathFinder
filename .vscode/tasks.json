@@ -7,14 +7,9 @@
             "label": "starter",
             "options": {
                 "cwd": "${workspaceFolder}"
-               },
+            },
             "command": "mingw32-make.exe",
-            "args": [
-                "-f",
-                ".vscode/makefile",
-                "starter"
-            ],
-
+            "args": ["-f", ".vscode/makefile", "GraphDataTest" ],
             "problemMatcher": [
                 "$gcc"
             ],
@@ -27,14 +22,13 @@
             "label": "clean",
             "options": {
                 "cwd": "${workspaceFolder}"
-               },
+            },
             "command": "mingw32-make.exe",
             "args": [
                 "-f",
                 ".vscode/makefile",
                 "clean"
             ],
-
             "problemMatcher": [
                 "$gcc"
             ],
@@ -43,6 +37,5 @@
                 "isDefault": false
             }
         }
-
     ]
 }
