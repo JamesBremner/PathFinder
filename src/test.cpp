@@ -3,12 +3,20 @@
 #include "cutest.h"
 #include "GraphTheory.h"
 
+TEST(findorAdd)
+{
+    cGraphData g;
+    g.findorAdd("a", "b", "1");
+    g.findorAdd("b", "c", "1");
+    CHECK_EQUAL( 2, g.edgeCount() );
+}
 TEST(dijsktra)
 {
     cGraphData g;
     g.findorAdd("a", "b", "1");
     g.findorAdd("b", "c", "1");
     g.findorAdd("a", "d", "1");
+
 
     std::vector<std::string> expected{"a", "b", "c"};
     CHECK(std::equal(
@@ -24,8 +32,8 @@ TEST(spanningTree)
     g.findorAdd("b", "c", "1");
     g.findorAdd("a", "d", "1");
     std::string expected(
+        "b - a\n"
         "b - c\n"
-        "a - b\n"
         "a - d\n");
     CHECK_EQUAL(expected, spanningTree(g, "a").text());
 }

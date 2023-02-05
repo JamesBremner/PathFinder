@@ -11,23 +11,27 @@ int cGraphData::add(const std::string &vertexName)
     vOutEdges.push_back({});
     return vVertexName.size() - 1;
 }
-int cGraphData::add(const std::string &srcName, const std::string &dstName)
+int cGraphData::add(
+    const std::string &srcName,
+    const std::string &dstName)
 {
-    int isrc = find(srcName);
-    int idst = find(dstName);
-    if (isrc < 0 || idst < 0)
-        throw std::runtime_error("cGraphData::add missing vertex name " + srcName + " or " + dstName);
-    return add(isrc, idst);
+    return add(find(srcName), find(dstName));
 }
 int cGraphData::add(int src, int dst)
 {
     int max = vVertexName.size() - 1;
     if (0 > src || src > max ||
         0 > dst || dst > max)
-        throw std::runtime_error("cGraphData::add out of range");
+        throw std::runtime_error("cGraphData::add edge vertices out of range");
     int iedge = vEdgeDst.size();
     vOutEdges[src].push_back(iedge);
     vEdgeDst.push_back(dst);
+    vEdgeAttr.push_back({});
+
+    // add reverse edge ( assumes undirected graph )
+    iedge++;
+    vOutEdges[dst].push_back(iedge);
+    vEdgeDst.push_back(src);
     vEdgeAttr.push_back({});
     return iedge;
 }
@@ -56,9 +60,9 @@ int cGraphData::findorAdd(
     int dst,
     const std::string &sAttr)
 {
-    int edg = add(src, dst);
-    vEdgeAttr[edg].push_back(sAttr);
-    return edg;
+    int edg = add(dst,src);
+     vEdgeAttr[edg].push_back(sAttr);
+
 }
 int cGraphData::find(const std::string &vertexName) const
 {
@@ -101,7 +105,10 @@ std::string cGraphData::text() const
         int vi = find(vn);
         for (int ei : vOutEdges[vi])
         {
-            ss << vn << " - " << vVertexName[vEdgeDst[ei]] << "\n";
+            int wi = vEdgeDst[ei];
+            if( vi > wi )
+                continue;
+            ss << vn << " - " << vVertexName[wi] << "\n";
         }
     }
     return ss.str();

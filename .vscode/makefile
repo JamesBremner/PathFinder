@@ -38,3 +38,5 @@ test: $(OBJ_test)
 clean:
 	del /q .vscode\\obj\\*.o
 
+rebuild: clean test
+
