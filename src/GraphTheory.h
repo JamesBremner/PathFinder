@@ -1,3 +1,4 @@
+#include <functional>
 #include "cGraphData.h"
 
 /// @brief find shortest path from start node to every other
@@ -31,6 +32,16 @@ cGraphData
 spanningTree(
     const cGraphData &g,
     const std::string &startName);
+
+/// @brief depth first search
+/// @param g 
+/// @param startName 
+/// @param visitor function to call when a new node is reached
+
+void dfs(
+    const cGraphData &g,
+    const std::string &startName,
+    std::function<void(int v)> visitor);
 
 /// @brief path visiting every node
 std::vector<int>

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <stack>
 #include "GraphTheory.h"
 
 std::vector<int>
@@ -130,7 +131,7 @@ spanningTree(
             {
                 if (visited[w])
                     continue;
-                if( v > w )
+                if (v > w)
                     continue;
 
                 double cost = g.edgeAttr(v, w, 0);
@@ -157,6 +158,40 @@ spanningTree(
     return spanTree;
 }
 
+void dfs(
+    const cGraphData &g,
+    const std::string &startName,
+    std::function<void(int v)> visitor)
+{
+    // track visited vertices
+    std::vector<bool> visited(g.vertexCount(), false);
+
+    // vertices waiting to be visited
+    std::stack<int> wait;
+
+    /*  1 Start by putting one of the graph's vertices on top of a stack.
+        2 Take the top vertex of the stack and add it to the visited list.
+        3 Add adjacent vertices which aren't in the visited list to the top of the stack.
+        4 Keep repeating steps 2 and 3 until the stack is empty.
+    */
+
+    wait.push(g.find(startName));
+
+    while (!wait.empty())
+    {
+        int v = wait.top();
+        wait.pop();
+        if (visited[v])
+            continue;
+        visitor(v);
+        visited[v] = true;
+
+        for (int w : g.adjacentOut(v))
+            if (!visited[w])
+                wait.push(w);
+    }
+}
+
 std::vector<int>
 tourNodes(
     const cGraphData &g)
@@ -165,24 +200,29 @@ tourNodes(
     auto spanTree = spanningTree(
         g,
         g.userName(0));
-    if( ! spanTree.vertexCount() )
+    if (!spanTree.vertexCount())
         throw std::runtime_error(
-            "tourNodes cannot find spanning tree"        );
+            "tourNodes cannot find spanning tree");
+
+    std::vector<int> tour;
+    tour.push_back(0);
 
     // find spanning tree leaves
     std::vector<int> vLeaves;
-    for( int vi = 0; vi < spanTree.vertexCount(); vi++ ) {
-        if( !spanTree.adjacentOut( vi ).size() ) {
+    for (int vi = 0; vi < spanTree.vertexCount(); vi++)
+    {
+        if (!spanTree.adjacentOut(vi).size())
+        {
             vLeaves.push_back(vi);
         }
     }
 
-    for( int leaf1 : vLeaves ) {
-        for( int leaf2 : vLeaves ) {
-            if( leaf1 == leaf2 )
+    for (int leaf1 : vLeaves)
+    {
+        for (int leaf2 : vLeaves)
+        {
+            if (leaf1 == leaf2)
                 continue;
-            
         }
     }
-    
 }
