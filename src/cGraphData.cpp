@@ -60,9 +60,9 @@ int cGraphData::findorAdd(
     int dst,
     const std::string &sAttr)
 {
-    int edg = add(dst,src);
-     vEdgeAttr[edg].push_back(sAttr);
-
+    int ei = add(dst,src);
+     vEdgeAttr[ei].push_back(sAttr);
+    return ei;
 }
 int cGraphData::find(const std::string &vertexName) const
 {

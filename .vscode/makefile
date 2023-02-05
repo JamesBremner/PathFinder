@@ -26,12 +26,12 @@ OBJ_test = \
 ### COMPILE
 
 $(ODIR)/%.o: %.cpp  
-	g++  $(CCflags) \
-	-c -o $@ $< $(INCS)
+	g++ $<  \
+	-c -o $@ $(INCS) $(CCflags)
 
 test: $(OBJ_test)
-	g++ $^ $(OPT) \
-	-o bin/test.exe  \
+	g++ -o bin/test.exe \
+	$^ $(OPT) \
 	$(static_link_flags) $(LIBS)
 
 .PHONY: clean

@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 
+/// @brief A graph of vertices connected by undirected eges
 class cGraphData
 {
 public:
@@ -73,8 +74,6 @@ public:
     std::string text() const;
 
 private:
-
-    bool myfDirected;
 
     /* vertex user names
 

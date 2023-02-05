@@ -37,11 +37,12 @@ spanningTree(
 /// @param g 
 /// @param startName 
 /// @param visitor function to call when a new node is reached
+/// visitor should return true, but false if the search should stop
 
 void dfs(
     const cGraphData &g,
     const std::string &startName,
-    std::function<void(int v)> visitor);
+    std::function<bool(int v)> visitor);
 
 /// @brief path visiting every node
 std::vector<int>
