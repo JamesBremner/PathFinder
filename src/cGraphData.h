@@ -23,6 +23,10 @@ class cGraphData
         const std::string& srcName,
          const std::string& dstName,
          const std::string& sAttr );
+    int findorAdd(
+    int src,
+    int dst,
+    const std::string &sAttr);
 
     int vertexCount() const
     {
@@ -33,6 +37,18 @@ class cGraphData
     /// @param vertexName 
     /// @return vertex index, -1 if not found
     int find( const std::string& vertexName ) const;
+
+    std::string userName( int i ) const
+    {
+        return vVertexName[i];
+    }
+    std::vector<std::string> userName( std::vector<int> vi )
+    {
+        std::vector<std::string> ret;
+        for( int i : vi )
+            ret.push_back( userName( i));
+        return ret;
+    }
 
     int find(int src, int dst ) const;
 

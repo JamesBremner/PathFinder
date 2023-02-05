@@ -10,3 +10,8 @@ path(
     const cGraphData &g,
     const std::string &startName,
     const std::string &endName);
+
+cGraphData
+spanningTree(
+    const cGraphData &g,
+    const std::string &startName);

@@ -45,13 +45,21 @@ int cGraphData::findorAdd(
     const std::string &dstName,
     const std::string &sAttr)
 {
-    int src = findorAdd(srcName);
-    int dst = findorAdd(dstName);
+    return findorAdd(
+        findorAdd(srcName),
+        findorAdd(dstName),
+        sAttr);
+
+}
+int cGraphData::findorAdd(
+    int src,
+    int dst,
+    const std::string &sAttr)
+{
     int edg = add(src, dst);
     vEdgeAttr[edg].push_back(sAttr);
     return edg;
 }
-
 int cGraphData::find(const std::string &vertexName) const
 {
     auto it = std::find(vVertexName.begin(), vVertexName.end(), vertexName);

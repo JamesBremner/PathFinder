@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 #include "GraphTheory.h"
 
 std::vector<int>
@@ -87,3 +88,68 @@ path(
 
     return ret;
 }
+cGraphData
+spanningTree(
+    const cGraphData &g,
+    const std::string &startName)
+    {
+        cGraphData spanTree;
+
+        int start = g.find( startName );
+
+        // track visited vertices
+        std::vector<bool> visited(g.vertexCount(), false);
+
+        // add initial arbitrary link
+        int v = start;
+        auto va = g.adjacentOut(v);
+        if (!va.size())
+            throw std::runtime_error(
+                "spanning tree start vertex unconnected");
+        auto w = va[0];
+        spanTree.findorAdd(g.userName(v),g.userName(w),"1");
+        visited[v] = true;
+        visited[w] = true;
+
+        // while nodes remain outside of span
+        while (g.vertexCount() > spanTree.vertexCount())
+        {
+            double min_cost = INT_MAX;
+            std::pair<int,int> bestLink;
+
+            // loop over nodes in span
+            for (int kv = 0; kv < g.vertexCount(); kv++)
+            {
+                if (!visited[kv])
+                    continue;
+                v = kv;
+
+                // loop over adjacent nodes not in span
+                for (auto w : g.adjacentOut(v))
+                {
+                    if (visited[w])
+                        continue;
+
+                    double cost = g.edgeAttr(v, w, 0);
+                    if (cost > 0)
+                    {
+                        if (cost < min_cost)
+                        {
+                            min_cost = cost;
+                            bestLink = std::make_pair(v, w);
+                        }
+                    }
+                }
+            }
+
+            // add cheapest link between node in tree to node not yet in tree
+            spanTree.findorAdd(
+                g.userName(bestLink.first),
+                g.userName(bestLink.second),
+                "1");
+            visited[bestLink.first] = true;
+            visited[bestLink.second] = true;
+        }
+
+        return spanTree;
+    }
