@@ -47,7 +47,7 @@ graph_calc readfile(
         }
     }
 
-    if (calc.find("cycle") != -1)
+    else if (calc.find("cycle") != -1)
     {
         option = graph_calc::cycle;
         std::string sn1, sn2;

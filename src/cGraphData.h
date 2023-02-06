@@ -27,7 +27,8 @@ public:
         const std::string &dstName);
     int add(
         int src,
-        int dst);
+        int dst,
+        const std::string &sAttr = "1");
 
     /// @brief add edge, add required vertices
     /// @param srcName

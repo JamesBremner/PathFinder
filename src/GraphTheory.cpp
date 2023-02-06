@@ -108,7 +108,10 @@ spanningTree(
         throw std::runtime_error(
             "spanning tree start vertex unconnected");
     auto w = va[0];
-    spanTree.findorAdd(g.userName(v), g.userName(w), "1");
+    spanTree.findorAdd(
+        g.userName(v),
+         g.userName(w),
+          "1");
     visited[v] = true;
     visited[w] = true;
 

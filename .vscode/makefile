@@ -31,9 +31,12 @@ OBJ_pathfinder = \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/readfile.o
 
+DEPS = \
+	cGraphData.h
+
 ### COMPILE
 
-$(ODIR)/%.o: %.cpp  
+$(ODIR)/%.o: %.cpp $(DEPS)
 	g++ $<  \
 	-c -o $@ $(INCS) $(CCflags)
 
@@ -51,5 +54,5 @@ pathfinder: $(OBJ_pathfinder)
 clean:
 	del /q .vscode\\obj\\*.o
 
-rebuild: clean test
+rebuild: clean test pathfinder
 

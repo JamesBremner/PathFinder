@@ -26,7 +26,8 @@ int cGraphData::add(
 {
     return add(find(srcName), find(dstName));
 }
-int cGraphData::add(int src, int dst)
+int cGraphData::add(int src, int dst,
+    const std::string &sAttr )
 {
     int max = vVertexName.size() - 1;
     if (0 > src || src > max ||
@@ -36,12 +37,14 @@ int cGraphData::add(int src, int dst)
     vOutEdges[src].push_back(iedge);
     vEdgeDst.push_back(dst);
     vEdgeAttr.push_back({});
+    vEdgeAttr[iedge].push_back(sAttr);
 
     // add reverse edge ( assumes undirected graph )
     iedge++;
     vOutEdges[dst].push_back(iedge);
     vEdgeDst.push_back(src);
     vEdgeAttr.push_back({});
+    vEdgeAttr[iedge].push_back(sAttr);
     return iedge;
 }
 
@@ -58,7 +61,7 @@ int cGraphData::findorAdd(
     const std::string &dstName,
     const std::string &sAttr)
 {
-    return findorAdd(
+    return add(
         findorAdd(srcName),
         findorAdd(dstName),
         sAttr);
@@ -69,8 +72,7 @@ int cGraphData::findorAdd(
     int dst,
     const std::string &sAttr)
 {
-    int ei = add(dst,src);
-     vEdgeAttr[ei].push_back(sAttr);
+    int ei = add(dst,src,sAttr);
     return ei;
 }
 int cGraphData::find(const std::string &vertexName) const
@@ -103,6 +105,9 @@ double cGraphData::edgeAttr(int src, int dst, int ai) const
     int edg = find(src, dst);
     if (edg < 0)
         return INT_MAX;
+    if ( 0 > ai || ai > vEdgeAttr[edg].size()-1)
+        throw std::runtime_error(
+            "cGraphData::edgeAttr bad attribute index"        );
     return atof(vEdgeAttr[edg][ai].c_str());
 }
 
