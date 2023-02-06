@@ -1,0 +1,4 @@
+format tour
+l a b 1
+l b c 1
+l a d 1

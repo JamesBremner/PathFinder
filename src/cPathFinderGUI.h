@@ -105,7 +105,8 @@ enum class graph_calc {
     none,
     cost,
     cycle,
-    astar
+    astar,
+    tour,
 };
 
 extern cGUI theGUI;

@@ -6,7 +6,7 @@
 
 cGUI::cGUI()
     : cStarterGUI(
-          "Graphify",
+          "PathFinder",
           {50, 50, 1000, 700})
 {
     ConstructMenu();
@@ -62,7 +62,7 @@ void cGUI::calculate()
         myfname = fb.open();
 
         {
-            //raven::set::cRunWatch::Start();
+            // raven::set::cRunWatch::Start();
 
             switch (readfile(myGraph, myfname))
             {
@@ -70,11 +70,11 @@ void cGUI::calculate()
             {
                 myResultText = "";
                 for (int v : path(
-                        myGraph,
+                         myGraph,
                          myStartName,
                          myEndName))
                 {
-                    myResultText += myGraph.userName( v ) + " ";
+                    myResultText += myGraph.userName(v) + " ";
                 }
             }
             break;
@@ -85,6 +85,15 @@ void cGUI::calculate()
                 // myResultText = std::to_string(vc.size()) + " cycles found";
             }
             break;
+
+            case graph_calc::tour:
+
+                myResultText = "";
+                for (int v : tourNodes(myGraph) )
+                {
+                    myResultText += myGraph.userName(v) + " ";
+                }
+                break;
 
             case graph_calc::none:
                 break;
@@ -104,7 +113,7 @@ void cGUI::draw(PAINTSTRUCT &ps)
     // if (myObstacle.view() == -999)
     //     return;
 
-    fm.text("Graphify " + myfname);
+    fm.text("PathFinder " + myfname);
 
     wex::shapes S(ps);
 

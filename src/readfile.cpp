@@ -2,6 +2,35 @@
 #include "cGraphData.h"
 #include "cpathfinderGUI.h"
 
+static void readCostedLinks(
+    cGraphData &g,
+    std::ifstream &ifs)
+{
+    std::string stype, sn1, sn2, scost;
+    ifs >> stype;
+
+    while (ifs.good())
+    {
+        switch (stype[0])
+        {
+        case 'l':
+            ifs >> sn1 >> sn2 >> scost;
+            g.findorAdd(sn1, sn2, scost);
+            break;
+        case 's':
+            ifs >> sn1;
+            theGUI.start(sn1);
+            break;
+        case 'e':
+            ifs >> sn1;
+            theGUI.end(sn1);
+            break;
+        }
+
+        ifs >> stype;
+    }
+}
+
 graph_calc readfile(
     cGraphData &g,
     const std::string &fname)
@@ -22,29 +51,7 @@ graph_calc readfile(
     if (calc.find("cost") != -1)
     {
         option = graph_calc::cost;
-        std::string stype, sn1, sn2, scost;
-        ifs >> stype;
-
-        while (ifs.good())
-        {
-            switch (stype[0])
-            {
-            case 'l':
-                ifs >> sn1 >> sn2 >> scost;
-                g.findorAdd(sn1, sn2, scost);
-                break;
-            case 's':
-                ifs >> sn1;
-                    theGUI.start( sn1 );
-                    break;
-            case 'e':
-                    ifs >> sn1;
-                    theGUI.end(sn1);
-                    break;
-            }
-
-            ifs >> stype;
-        }
+        readCostedLinks( g, ifs );
     }
 
     else if (calc.find("cycle") != -1)
@@ -71,6 +78,12 @@ graph_calc readfile(
             g.findorAdd(sn1, sn2, "1");
             ifs >> sn1 >> sn2;
         }
+    }
+
+    else if (calc.find("tour") != -1)
+    {
+        option = graph_calc::tour;
+        readCostedLinks( g, ifs );
     }
 
     else
