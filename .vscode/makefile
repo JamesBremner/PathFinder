@@ -2,10 +2,11 @@
 VPATH = ./src ../raven-set
 
 # compiler include search paths
-INCS = -I../raven-set
+INCS = -I../raven-set \
+	-I../windex/include
 
 LIBS = \
-	-lgdiplus -lgdi32 -lcomdlg32 -lstdc++fs \
+	-lgdiplus -lgdi32 -lcomdlg32 -lstdc++fs -lComctl32 \
 	#-mwindows
 
 static_link_flags = -static-libstdc++ -static-libgcc -static
@@ -23,6 +24,13 @@ OBJ_test = \
 	$(ODIR)/test.o \
 	$(ODIR)/cutest.o
 
+OBJ_pathfinder = \
+	$(ODIR)/pathfinder.o \
+	$(ODIR)/cPathFinderGUI.o \
+	$(ODIR)/cGraphData.o \
+	$(ODIR)/GraphTheory.o \
+	$(ODIR)/readfile.o
+
 ### COMPILE
 
 $(ODIR)/%.o: %.cpp  
@@ -31,6 +39,11 @@ $(ODIR)/%.o: %.cpp
 
 test: $(OBJ_test)
 	g++ -o bin/test.exe \
+	$^ $(OPT) \
+	$(static_link_flags) $(LIBS)
+
+pathfinder: $(OBJ_pathfinder)
+	g++ -o bin/pathfinder.exe \
 	$^ $(OPT) \
 	$(static_link_flags) $(LIBS)
 

@@ -2,6 +2,15 @@
 #include <algorithm>
 #include "cGraphData.h"
 
+void cGraphData::clear()
+{
+    vVertexName.clear();
+    vOutEdges.clear();
+    vEdgeDst.clear();
+    vVertexAttr.clear();
+    vEdgeAttr.clear();
+}
+
 int cGraphData::add(const std::string &vertexName)
 {
     int index = find(vertexName);

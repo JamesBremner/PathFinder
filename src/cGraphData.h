@@ -1,10 +1,16 @@
+#pragma once
 #include <string>
 #include <vector>
+
+
 
 /// @brief A graph of vertices connected by undirected eges
 class cGraphData
 {
 public:
+
+    void clear();
+
     /// @brief add vertex
     /// @param vertexName
     /// @return vertex index
