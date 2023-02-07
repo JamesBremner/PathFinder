@@ -1,9 +1,10 @@
 #source file search paths
-VPATH = ./src ../raven-set
+VPATH = ./src ../raven-set ../autocell/src
 
 # compiler include search paths
 INCS = -I../raven-set \
-	-I../windex/include
+	-I../windex/include \
+	-I../autocell/src
 
 LIBS = \
 	-lgdiplus -lgdi32 -lcomdlg32 -lstdc++fs -lComctl32 \
@@ -31,6 +32,14 @@ OBJ_pathfinder = \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/readfile.o
 
+OBJ_obstacle = \
+	$(ODIR)/obstacle.o \
+	$(ODIR)/cObstacleGUI.o \
+	$(ODIR)/cObstacle.o \
+	$(ODIR)/cGraphData.o \
+	$(ODIR)/autocell.o \
+	$(ODIR)/cxy.o \
+
 DEPS = \
 	cGraphData.h
 
@@ -47,6 +56,11 @@ test: $(OBJ_test)
 
 pathfinder: $(OBJ_pathfinder)
 	g++ -o bin/pathfinder.exe \
+	$^ $(OPT) \
+	$(static_link_flags) $(LIBS)
+
+obstacle: $(OBJ_obstacle)
+	g++ -o bin/obstacle.exe \
 	$^ $(OPT) \
 	$(static_link_flags) $(LIBS)
 

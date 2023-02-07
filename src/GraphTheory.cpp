@@ -110,8 +110,8 @@ spanningTree(
     auto w = va[0];
     spanTree.findorAdd(
         g.userName(v),
-         g.userName(w),
-          "1");
+        g.userName(w),
+        "1");
     visited[v] = true;
     visited[w] = true;
 
@@ -196,10 +196,90 @@ void dfs(
     }
 }
 
+// static bool tourNodesVisitor(
+//     int v,
+//     cGraphData& spanTree,
+//     std::vector<int>& tour,
+//     std::vector<bool>& spanVisited)
+// {
+//     // add node to tour
+//     spanVisited[v] = true;
+//     tour.push_back(
+//         g.find(spanTree.userName(v)));
+
+//     // stop if all nodes visited
+//     unvisited = std::count(
+//         spanVisited.begin(),
+//         spanVisited.end(),
+//         false);
+//     if (!unvisited)
+//         return false;
+
+//     if (std::find(vleaf.begin(), vleaf.end(), v) != vleaf.end())
+//     {
+//         // reached a leaf of the spanning tree
+//         // jump to an unvisted leaf
+//         for (int f : vleaf)
+//         {
+//             if (f == v)
+//                 continue;
+//             if (spanVisited[f])
+//                 continue;
+
+//             std::cout << "jump " << spanTree.userName(v)
+//                       << " to " << spanTree.userName(f) << "\n";
+
+//             // start a new dfs starting from the unvisited leaf
+//             start = f;
+//             return false;
+//         }
+//     }
+// }
+
+static int isLeafJump(
+    int v,
+    const std::vector<int> &vleaf,
+    const std::vector<bool> &spanVisited)
+{
+    if (std::find(
+            vleaf.begin(),
+            vleaf.end(),
+            v) == vleaf.end())
+        return -1;
+
+    // reached a leaf of the spanning tree
+    // jump to an unvisted leaf
+    for (int f : vleaf)
+    {
+        if (f == v)
+            continue;
+        if (spanVisited[f])
+            continue;
+
+        return f;
+    }
+
+    return -1;
+}
+
+static void tourNodesAdd(
+    int v,
+    std::vector<bool> &spanVisited,
+    std::vector<int> &tour,
+    const cGraphData &g_input,
+    const cGraphData &spanTree)
+{
+    spanVisited[v] = true;
+    tour.push_back(
+        g_input.find(spanTree.userName(v)));
+}
+
 std::vector<int>
 tourNodes(
     const cGraphData &g)
 {
+    std::cout << "tourNodes\n";
+
     // find a spanning tree
     auto spanTree = spanningTree(
         g,
@@ -207,6 +287,7 @@ tourNodes(
     if (!spanTree.vertexCount())
         throw std::runtime_error(
             "tourNodes cannot find spanning tree");
+    std::cout << "spanning tree found\n";
 
     // find spanning tree leaves
     std::vector<int> vleaf;
@@ -215,47 +296,68 @@ tourNodes(
         if (spanTree.adjacentOut(v).size() == 1)
             vleaf.push_back(v);
     }
+    std::cout << "leaves ";
+    for (int f : vleaf)
+        std::cout << spanTree.userName(f) << " ";
+    std::cout << "\n";
 
     std::vector<int> tour;
     std::vector<bool> spanVisited(spanTree.vertexCount(), false);
     int start = 0;
     int unvisited = spanTree.vertexCount();
+    int prevUnvisited = unvisited + 1;
 
     // while unvisited nodes remain
     while (unvisited)
     {
+        // check on progress
+        if (unvisited == prevUnvisited)
+        {
+            std::cout << "tourNodes stuck!!!\n";
+            return tour;
+        }
+        prevUnvisited = unvisited;
+
         // depth first search
         dfs(spanTree, g.userName(start),
             [&](int v)
             {
                 // add node to tour
-                spanVisited[v] = true;
-                tour.push_back(
-                    g.find(spanTree.userName(v)));
+                tourNodesAdd(
+                    v,
+                    spanVisited,
+                    tour,
+                    g,
+                    spanTree);
+
+                // spanVisited[v] = true;
+                // tour.push_back(
+                //     g.find(spanTree.userName(v)));
 
                 // stop if all nodes visited
                 unvisited = std::count(
-                        spanVisited.begin(),
-                        spanVisited.end(),
-                        false);
-                if( ! unvisited )
+                    spanVisited.begin(),
+                    spanVisited.end(),
+                    false);
+                if (!unvisited)
                     return false;
 
-                if (std::find(vleaf.begin(), vleaf.end(), v) != vleaf.end())
+                start = isLeafJump(
+                    v,
+                    vleaf,
+                    spanVisited);
+                if (start >= 0)
                 {
-                    // reached a leaf of the spanning tree
-                    // jump to an unvisted leaf
-                    for (int f : vleaf)
-                    {
-                        if (f == v)
-                            continue;
-                        if (spanVisited[f])
-                            continue;
-                        
-                        // start a new dfs starting from the unvisited leaf
-                        start = f;
-                        return false;
-                    }
+
+                    std::cout << "jump " << spanTree.userName(v)
+                              << " to " << spanTree.userName(start) << "\n";
+
+                    tour.push_back(
+                        g.find(spanTree.userName(start)));
+                    spanVisited[start] = true;
+
+                    // start a new dfs starting from the unvisited leaf
+                    return false;
                 }
 
                 // continue the search

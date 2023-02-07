@@ -122,7 +122,8 @@ std::string cGraphData::text() const
             int wi = vEdgeDst[ei];
             if( vi > wi )
                 continue;
-            ss << vn << " - " << vVertexName[wi] << "\n";
+            ss << "l " << vn << " " << vVertexName[wi] 
+                << " " << edgeAttr(vi,wi,0) << "\n";
         }
     }
     return ss.str();

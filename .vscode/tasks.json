@@ -19,6 +19,15 @@
             "problemMatcher": [ "$gcc" ],
             "group": { "kind": "build", "isDefault": true }
         },
+        },
+        {
+            "label": "obstacle",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe",
+            "args": ["-f", ".vscode/makefile", "obstacle" ],
+            "problemMatcher": [ "$gcc" ],
+            "group": { "kind": "build", "isDefault": true }
+        },
         {
             "label": "clean",
             "options": {
