@@ -6,6 +6,7 @@
 #include <autocell.h>
 #include "cObstacle.h"
 #include "cGraphData.h"
+#include "GraphTheory.h"
 
 void read(
     cObstacle &obs,
@@ -135,8 +136,6 @@ void cObstacle::connect()
 
 void cObstacle::inputGraph()
 {
-    cGraphData g;
-
     // loop over node pairs
     for (auto n1 : vN)
         for (auto n2 : vN)
@@ -160,7 +159,7 @@ void cObstacle::inputGraph()
                 continue;
 
             // OK to connect
-            g.findorAdd(
+            mygraphdata.findorAdd(
                 std::to_string(n1->ID()),
                 std::to_string(n2->ID()),
                 std::to_string(d2));
@@ -169,7 +168,12 @@ void cObstacle::inputGraph()
     if( ! ofs.is_open() )
         throw std::runtime_error("Cannot open input grapg file");
     ofs << "format tour\n";
-    ofs << g.text();
+    ofs << mygraphdata.text();
+}
+
+void cObstacle::tourNodesGD()
+{
+    tourNodes( mygraphdata );
 }
 
 double cObstacle::linkCost(link_t &l) const

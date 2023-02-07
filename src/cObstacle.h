@@ -1,6 +1,7 @@
 #pragma once
 #include <autocell.h>
 #include "cxy.h"
+#include "cGraphData.h"
 
 /// @brief 2D grid cell that can contain obstacles
 
@@ -44,6 +45,7 @@ class cObstacle
     cell::cAutomaton<cOCell> *A; ///< 2D grid
     std::vector<cOCell *> vN;    ///< nodes to be included in path
     vlink_t vL;                  ///< links between nodes
+    cGraphData mygraphdata;
     vlink_t vPath;
     std::vector<cOCell *> myNodesRevisited;
     vlink_t mySpanningTree;
@@ -100,6 +102,7 @@ public:
     void unobstructedPoints();
 
     void inputGraph();
+    void tourNodesGD();
 
     /// @brief connect nodes, avoiding obstacles
     void connect();

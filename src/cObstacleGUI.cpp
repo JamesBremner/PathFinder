@@ -38,9 +38,13 @@ void cGUI::ConstructMenu()
                          myfname = fb.open();
                          read(myObstacle, myfname);
                          myObstacle.unobstructedPoints();
-                         myObstacle.inputGraph();
+                         
                          myObstacle.connect();
                          myObstacle.tourSpanningTree();
+
+                         myObstacle.inputGraph();
+                         myObstacle.tourNodesGD();
+
                          fm.update();
                      }
                      catch (std::runtime_error &e)

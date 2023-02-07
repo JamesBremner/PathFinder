@@ -74,7 +74,7 @@ void cGUI::calculate()
                          myStartName,
                          myEndName))
                 {
-                    myResultText += myGraph.userName(v) + " ";
+                    myResultText += myGraph.userName(v) + " -> ";
                 }
             }
             break;
@@ -91,7 +91,7 @@ void cGUI::calculate()
                 myResultText = "";
                 for (int v : tourNodes(myGraph) )
                 {
-                    myResultText += myGraph.userName(v) + " ";
+                    myResultText += myGraph.userName(v) + " -> ";
                 }
                 break;
 

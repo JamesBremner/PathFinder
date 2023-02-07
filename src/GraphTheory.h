@@ -1,6 +1,39 @@
 #include <functional>
 #include "cGraphData.h"
 
+class cTourNodes
+{
+public:
+    cTourNodes(const cGraphData &theGraph)
+        : g(theGraph)
+    {
+    }
+    void calculate();
+
+    std::vector<int> getTour() const
+    {
+        return tour;
+    }
+
+private:
+    const cGraphData &g;
+    cGraphData spanTree;
+
+    int dfsStart;
+    int unvisited;
+    std::vector<int> vleaf;
+    std::vector<bool> spanVisited;
+    std::vector<int> revisited;
+
+    std::vector<int> tour;
+
+    void tourNodesAdd(int v);
+
+    bool visitor(int v);
+
+    int isLeafJump(int v );
+};
+
 /// @brief find shortest path from start node to every other
 /// @param g 
 /// @param startName 

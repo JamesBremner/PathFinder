@@ -31,9 +31,9 @@ TEST(spanningTree)
     g.findorAdd("b", "c", "1");
     g.findorAdd("a", "d", "1");
     std::string expected(
-        "b - a\n"
-        "b - c\n"
-        "a - d\n");
+        "l b a 1\n"
+        "l b c 1\n"
+        "l a d 1\n");
     CHECK_EQUAL(expected, spanningTree(g, "a").text());
 }
 

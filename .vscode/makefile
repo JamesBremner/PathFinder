@@ -22,6 +22,7 @@ CCflags = -std=c++17 $(OPT) -D_mingw_
 OBJ_test = \
 	$(ODIR)/cGraphData.o \
 	$(ODIR)/GraphTheory.o \
+	$(ODIR)/tourNodes.o \
 	$(ODIR)/test.o \
 	$(ODIR)/cutest.o
 
@@ -37,6 +38,8 @@ OBJ_obstacle = \
 	$(ODIR)/cObstacleGUI.o \
 	$(ODIR)/cObstacle.o \
 	$(ODIR)/cGraphData.o \
+	$(ODIR)/GraphTheory.o \
+	$(ODIR)/tourNodes.o \
 	$(ODIR)/autocell.o \
 	$(ODIR)/cxy.o \
 
