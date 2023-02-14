@@ -84,6 +84,34 @@ int cGraphData::findorAdd(
     return ei;
 }
 
+void cGraphData::remove(
+    const std::string &srcName,
+    const std::string &dstName)
+{
+    remove(
+        find(srcName),
+        find(dstName));
+}
+
+void cGraphData::remove(
+    int src,
+    int dst)
+{
+    if (0 > src || src > vertexCount() - 1 ||
+        0 > dst || dst > vertexCount() - 1)
+        return;
+    auto eit = std::find( vOutEdges[src].begin(), vOutEdges[src].end(), dst);
+    if( eit != vOutEdges[src].end() ) {
+        vEdgeDst[*eit] = -1;
+        vOutEdges[src].erase( eit );
+    }
+    eit = std::find( vOutEdges[dst].begin(), vOutEdges[dst].end(), src);
+    if( eit != vOutEdges[dst].end() ) {
+        vEdgeDst[*eit] = -1;
+        vOutEdges[dst].erase( eit );
+    }
+}
+
 void cGraphData::edgeAttr(int ie, const std::vector<std::string> &vsAttr)
 {
     for (auto &sa : vsAttr)
@@ -96,16 +124,19 @@ void cGraphData::vertexAttr(int iv, const std::vector<std::string> &vsAttr)
 }
 int cGraphData::edgeCount() const
 {
+    int c = vEdgeDst.size() - std::count(vEdgeDst.begin(),vEdgeDst.end(),-1);
     if (fDirected)
-        return vEdgeDst.size();
-    return vEdgeDst.size() / 2;
+        return c;
+    return c / 2;
 }
 int cGraphData::find(const std::string &vertexName) const
 {
     auto it = std::find(vVertexName.begin(), vVertexName.end(), vertexName);
     if (it == vVertexName.end())
         return -1;
-    return std::distance(vVertexName.begin(), it);
+    int i = it - vVertexName.begin();
+    return i;
+    //return std::distance(vVertexName.begin(), it);
 }
 
 int cGraphData::find(int src, int dst) const

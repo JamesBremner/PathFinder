@@ -46,6 +46,13 @@ public:
         int dst,
         const std::string &sAttr);
 
+    void remove(
+        const std::string &srcName,
+        const std::string &dstName);
+    void remove(
+        int src,
+        int dst     );
+
     void edgeAttr( int ie, const std::vector<std::string>& vsAttr );
     void vertexAttr( int iv, const std::vector<std::string>& vsAttr );
 
