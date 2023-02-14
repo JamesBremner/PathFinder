@@ -47,7 +47,7 @@ static void readObstacles(
         switch (stype[0])
         {
         case 'l':
-            ifs >> sn1 >> sn2 >> scost << sx << sy;
+            ifs >> sn1 >> sn2 >> scost;
             g.findorAdd(sn1, sn2, scost);
             g.edgeAttr( ie, { sx, sy });
             break;
