@@ -4,11 +4,17 @@
 
 void cGraphData::clear()
 {
+    fDirected = false;
     vVertexName.clear();
     vOutEdges.clear();
     vEdgeDst.clear();
     vVertexAttr.clear();
     vEdgeAttr.clear();
+}
+
+void cGraphData::directed(bool f)
+{
+    fDirected = f;
 }
 
 int cGraphData::add(const std::string &vertexName)
@@ -27,7 +33,7 @@ int cGraphData::add(
     return add(find(srcName), find(dstName));
 }
 int cGraphData::add(int src, int dst,
-    const std::string &sAttr )
+                    const std::string &sAttr)
 {
     int max = vVertexName.size() - 1;
     if (0 > src || src > max ||
@@ -39,7 +45,10 @@ int cGraphData::add(int src, int dst,
     vEdgeAttr.push_back({});
     vEdgeAttr[iedge].push_back(sAttr);
 
-    // add reverse edge ( assumes undirected graph )
+    if (fDirected)
+        return iedge;
+
+    // add reverse edge for undirected graphs
     iedge++;
     vOutEdges[dst].push_back(iedge);
     vEdgeDst.push_back(src);
@@ -65,15 +74,31 @@ int cGraphData::findorAdd(
         findorAdd(srcName),
         findorAdd(dstName),
         sAttr);
-
 }
 int cGraphData::findorAdd(
     int src,
     int dst,
     const std::string &sAttr)
 {
-    int ei = add(dst,src,sAttr);
+    int ei = add(dst, src, sAttr);
     return ei;
+}
+
+void cGraphData::edgeAttr(int ie, const std::vector<std::string> &vsAttr)
+{
+    for (auto &sa : vsAttr)
+        vEdgeAttr[ie].push_back(sa);
+}
+void cGraphData::vertexAttr(int iv, const std::vector<std::string> &vsAttr)
+{
+    for (auto &sa : vsAttr)
+        vVertexAttr[iv].push_back(sa);
+}
+int cGraphData::edgeCount() const
+{
+    if (fDirected)
+        return vEdgeDst.size();
+    return vEdgeDst.size() / 2;
 }
 int cGraphData::find(const std::string &vertexName) const
 {
@@ -95,6 +120,8 @@ int cGraphData::find(int src, int dst) const
 
 std::vector<int> cGraphData::adjacentOut(int vi) const
 {
+    if (0 > vi || vi > vOutEdges.size() - 1)
+        throw std::runtime_error("cGraphData::adjacentOut bad vertex index");
     std::vector<int> ret;
     for (int ei : vOutEdges[vi])
         ret.push_back(vEdgeDst[ei]);
@@ -105,9 +132,9 @@ double cGraphData::edgeAttr(int src, int dst, int ai) const
     int edg = find(src, dst);
     if (edg < 0)
         return INT_MAX;
-    if ( 0 > ai || ai > vEdgeAttr[edg].size()-1)
+    if (0 > ai || ai > vEdgeAttr[edg].size() - 1)
         throw std::runtime_error(
-            "cGraphData::edgeAttr bad attribute index"        );
+            "cGraphData::edgeAttr bad attribute index");
     return atof(vEdgeAttr[edg][ai].c_str());
 }
 
@@ -120,11 +147,30 @@ std::string cGraphData::text() const
         for (int ei : vOutEdges[vi])
         {
             int wi = vEdgeDst[ei];
-            if( vi > wi )
+            if (vi > wi)
                 continue;
-            ss << "l " << vn << " " << vVertexName[wi] 
-                << " " << edgeAttr(vi,wi,0) << "\n";
+            ss << "l " << vn << " " << vVertexName[wi];
+            for (auto &sa : vEdgeAttr[ei])
+                ss << " " << sa;
+            ss << "\n";
         }
     }
     return ss.str();
+}
+
+std::vector<std::pair<int, int>>
+cGraphData::edgeList() const
+{
+    std::vector<std::pair<int, int>> ret;
+    for (int vi = 0; vi < vVertexName.size(); vi++)
+    {
+        for (int ei : vOutEdges[vi])
+        {
+            int wi = vEdgeDst[ei];
+            if (vi > wi)
+                continue;
+            ret.push_back(std::make_pair(vi, wi));
+        }
+    }
+    return ret;
 }

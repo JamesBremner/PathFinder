@@ -4,14 +4,6 @@
 #include <stack>
 #include "GraphTheory.h"
 
-std::vector<int>
-tourNodes(
-    const cGraphData &g)
-{
-    cTourNodes T(g);
-    T.calculate();
-    return T.getTour();
-}
 bool cTourNodes::visitor(
     int v)
 {
@@ -27,21 +19,21 @@ bool cTourNodes::visitor(
         return false;
 
     dfsStart = isLeafJump(v);
-    if (dfsStart >= 0)
-    {
-        std::cout << "jump " << spanTree.userName(v)
-                  << " to " << spanTree.userName(dfsStart) << "\n";
-
-        // start a new dfs starting from the unvisited leaf
+    if (dfsStart == -1)
+        return true;
+    if (dfsStart == -2)
         return false;
-    }
 
-    // continue the search
-    return true;
+    std::cout << "jump " << spanTree.userName(v)
+              << " to " << spanTree.userName(dfsStart) << "\n";
+
+    // start a new dfs starting from the unvisited leaf
+    return false;
 }
 
 int cTourNodes::isLeafJump(int v)
 {
+    // check if at a leaf
     if (std::find(
             vleaf.begin(),
             vleaf.end(),
@@ -60,12 +52,14 @@ int cTourNodes::isLeafJump(int v)
         return f;
     }
 
-    return -1;
+    // no unvisited leaves
+    return -2;
 }
 
 void cTourNodes::tourNodesAdd(
     int v)
 {
+    std::cout << "add " << spanTree.userName(v) << "\n";
     if (spanVisited[v])
     {
         if (std::find(revisited.begin(), revisited.end(), v) == revisited.end())
@@ -80,7 +74,14 @@ void cTourNodes::calculate()
 {
     std::cout << "tourNodes\n";
 
+    auto best = tour;
+    int bestUnvisited = INT_MAX;
+    int bestRevisited = INT_MAX;
+
+    // loop over nodes, starting the spanning tree at each
     for (int spanTreeRoot = 0; spanTreeRoot < g.vertexCount(); spanTreeRoot++)
+    //int spanTreeRoot = g.find("252");
+    for (int k = 0; k < 1; k++)
     {
         // find a spanning tree
         spanTree = spanningTree(
@@ -99,7 +100,7 @@ void cTourNodes::calculate()
         spanVisited.clear();
         spanVisited.resize(spanTree.vertexCount(), false);
         revisited.clear();
-        dfsStart = 0;
+        dfsStart = spanTreeRoot;
         unvisited = spanTree.vertexCount();
         int prevUnvisited = unvisited + 1;
 
@@ -107,11 +108,10 @@ void cTourNodes::calculate()
         while (unvisited)
         {
             // check on progress
-            if (unvisited == prevUnvisited)
-            {
-                //std::cout << "tourNodes stuck!!!\n";
+            if (dfsStart == -2)
                 break;
-            }
+            if (unvisited == prevUnvisited)
+                break;
             prevUnvisited = unvisited;
 
             // depth first search
@@ -122,10 +122,37 @@ void cTourNodes::calculate()
                     cTourNodes::visitor, this,
                     std::placeholders::_1));
         }
-        std::cout << "tourNodes revisited " << revisited.size() 
-            << " unvisited " << unvisited
-            << " start " << g.userName(spanTreeRoot) << "\n";
-        if( (! revisited.size() ) && ( ! unvisited ) )
+        std::cout << "tourNodes revisited " << revisited.size()
+                  << " unvisited " << unvisited
+                  << " start " << g.userName(spanTreeRoot) << "\n";
+
+        // check for 'perfect' tour
+        if ((!revisited.size()) && (!unvisited))
             return;
+
+        if (unvisited < bestUnvisited)
+        {
+            best = tour;
+            bestUnvisited = unvisited;
+            bestRevisited = revisited.size();
+        }
+        else if (unvisited == bestUnvisited)
+        {
+            if (revisited.size() < bestRevisited)
+            {
+                best = tour;
+                bestUnvisited = unvisited;
+                bestRevisited = revisited.size();
+            }
+        }
     }
+    tour.clear();
+    for( int isp : best )
+        tour.push_back( g.find(spanTree.userName( isp )));
+}
+
+std::vector<std::pair<int, int>>
+cTourNodes::spanTree_get() const
+{
+    return spanTree.edgeList();
 }

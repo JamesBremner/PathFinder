@@ -163,17 +163,21 @@ void cObstacle::inputGraph()
                 std::to_string(n1->ID()),
                 std::to_string(n2->ID()),
                 std::to_string(d2));
+            int v1 = mygraphdata.find(std::to_string(n1->ID()));
+            int v2 = mygraphdata.find(std::to_string(n2->ID()));
+            mygraphdata.vertexAttr(v1,{std::to_string(w1),std::to_string(h1)});
+            mygraphdata.vertexAttr(v2,{std::to_string(w2),std::to_string(h2)});
         }
     std::ofstream ofs("../data/obstacle_graph.txt");
     if( ! ofs.is_open() )
         throw std::runtime_error("Cannot open input grapg file");
-    ofs << "format tour\n";
+    ofs << "format obs\n";
     ofs << mygraphdata.text();
 }
 
 void cObstacle::tourNodesGD()
 {
-    tourNodes( mygraphdata );
+    //tourNodes( mygraphdata );
 }
 
 double cObstacle::linkCost(link_t &l) const

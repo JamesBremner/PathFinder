@@ -76,10 +76,15 @@ path(
     int start = g.find(startName);
     int end = g.find(endName);
 
+    // check that end is reachable from start
+    if( pred[end] == -1)
+        return ret;
+
     ret.push_back(end);
     int next = end;
     while (1)
     {
+        
         next = pred[next];
         ret.push_back(next);
         if (next == start)
@@ -118,6 +123,8 @@ spanningTree(
     // while nodes remain outside of span
     while (g.vertexCount() > spanTree.vertexCount())
     {
+        std::cout << spanTree.text(); 
+        
         double min_cost = INT_MAX;
         std::pair<int, int> bestLink;
 

@@ -1,3 +1,4 @@
+#pragma once
 #include <functional>
 #include "cGraphData.h"
 
@@ -8,12 +9,17 @@ public:
         : g(theGraph)
     {
     }
+
     void calculate();
 
     std::vector<int> getTour() const
     {
         return tour;
     }
+
+    std::vector<std::pair<int,int>>
+        spanTree_get() const;
+
 
 private:
     const cGraphData &g;
@@ -30,6 +36,12 @@ private:
     void tourNodesAdd(int v);
 
     bool visitor(int v);
+
+    /// @brief find leaf to jump to from leaf
+    /// @param v 
+    /// @return >= 0 node index to jump to
+    /// @return -1 v is not a leaf
+    /// @return -2 no unvisited leaves
 
     int isLeafJump(int v );
 };
@@ -49,6 +61,7 @@ dijsktra(
 /// @param startName 
 /// @param endName 
 /// @return vector of node indices on the path
+/// @return empty vector when end is not reachable from start
 
 std::vector<int>
 path(

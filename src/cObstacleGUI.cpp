@@ -38,7 +38,7 @@ void cGUI::ConstructMenu()
                          myfname = fb.open();
                          read(myObstacle, myfname);
                          myObstacle.unobstructedPoints();
-                         
+
                          myObstacle.connect();
                          myObstacle.tourSpanningTree();
 
@@ -64,18 +64,20 @@ void cGUI::ConstructMenu()
             myViewType = eView::input;
             fm.update();
         });
-    vfile.append("Spanning Tree",
-                 [&](const std::string &title)
-                 {
-                     myViewType = eView::span;
-                     fm.update();
-                 });
-    vfile.append("Route",
-                 [&](const std::string &title)
-                 {
-                     myViewType = eView::route;
-                     fm.update();
-                 });
+    vfile.append(
+        "Spanning Tree",
+        [&](const std::string &title)
+        {
+            myViewType = eView::span;
+            fm.update();
+        });
+    vfile.append(
+        "Route",
+        [&](const std::string &title)
+        {
+            myViewType = eView::route;
+            fm.update();
+        });
     mbar.append("View", vfile);
 }
 
@@ -185,7 +187,7 @@ void cGUI::drawObstacles(
     wex::shapes &S,
     int scale)
 {
-        int W, H;
+    int W, H;
     myObstacle.size(W, H);
     S.color(0x0000FF);
     for (int h = 0; h < H; h++)

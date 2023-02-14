@@ -31,6 +31,7 @@ OBJ_pathfinder = \
 	$(ODIR)/cPathFinderGUI.o \
 	$(ODIR)/cGraphData.o \
 	$(ODIR)/GraphTheory.o \
+	$(ODIR)/tourNodes.o \
 	$(ODIR)/readfile.o
 
 OBJ_obstacle = \
@@ -71,5 +72,5 @@ obstacle: $(OBJ_obstacle)
 clean:
 	del /q .vscode\\obj\\*.o
 
-rebuild: clean test pathfinder
+rebuild: clean test pathfinder obstacle
 

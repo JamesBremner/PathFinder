@@ -1,7 +1,6 @@
 #include "wex.h"
 #include "cGraphData.h"
-
-
+#include "GraphTheory.h"
 
 class cStarterGUI
 {
@@ -66,28 +65,46 @@ protected:
     wex::gui &fm;
 };
 
+enum class graph_calc
+{
+    none,
+    cost,
+    cycle,
+    astar,
+    tour,
+    obs,
+};
+
 class cGUI : public cStarterGUI
 {
 public:
     cGUI();
 
-    void start( const std::string& name )
+    void start(const std::string &name)
     {
         myStartName = name;
     }
-    void end( const std::string& name )
+    void end(const std::string &name)
     {
         myEndName = name;
     }
 
 private:
-
     cGraphData myGraph;
-
+    cTourNodes * mypTourNodes;
     std::string myfname;
+    graph_calc myCalcOption;
     std::string myStartName;
     std::string myEndName;
     std::string myResultText;
+
+    enum class eView
+    {
+        route,
+        span,
+        input,
+    };
+    eView myViewType;
 
     void ConstructMenu();
 
@@ -95,18 +112,11 @@ private:
 
     void draw(PAINTSTRUCT &ps);
 
-    void drawInput(wex::shapes& S);
+    void drawInput(wex::shapes &S);
+    void drawSpan(wex::shapes &S);
     void drawObstacles(
-        wex::shapes& S,
-        int scale );
-};
-
-enum class graph_calc {
-    none,
-    cost,
-    cycle,
-    astar,
-    tour,
+        wex::shapes &S,
+        int scale);
 };
 
 extern cGUI theGUI;
@@ -117,6 +127,5 @@ extern cGUI theGUI;
 /// @return calculation option
 
 graph_calc readfile(
-    cGraphData& g,
+    cGraphData &g,
     const std::string &fname);
-

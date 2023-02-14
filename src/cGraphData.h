@@ -4,12 +4,14 @@
 
 
 
-/// @brief A graph of vertices connected by undirected eges
+/// @brief A graph of vertices connected by edges
 class cGraphData
 {
 public:
 
     void clear();
+
+    void directed( bool f = true );
 
     /// @brief add vertex
     /// @param vertexName
@@ -44,14 +46,15 @@ public:
         int dst,
         const std::string &sAttr);
 
+    void edgeAttr( int ie, const std::vector<std::string>& vsAttr );
+    void vertexAttr( int iv, const std::vector<std::string>& vsAttr );
+
     int vertexCount() const
     {
         return vVertexName.size();
     }
-    int edgeCount() const
-    {
-        return vEdgeDst.size() / 2;
-    }
+
+    int edgeCount() const;
 
     /// @brief find vertex with name
     /// @param vertexName
@@ -78,9 +81,15 @@ public:
 
     /// @brief human readable edge list
     /// @return text
+
     std::string text() const;
 
+    std::vector<std::pair<int,int>>
+    edgeList() const;
+
 private:
+
+    bool fDirected;
 
     /* vertex user names
 

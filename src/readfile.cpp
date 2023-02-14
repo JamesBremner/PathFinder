@@ -25,6 +25,32 @@ static void readCostedLinks(
             ifs >> sn1;
             theGUI.end(sn1);
             break;
+        case 'c':
+            ifs >> sn1;
+            
+        }
+
+        ifs >> stype;
+    }
+}
+static void readObstacles(
+    cGraphData &g,
+    std::ifstream &ifs)
+{
+    std::string stype, sn1, sn2, scost, sx, sy;
+    int ie;
+
+    ifs >> stype;
+
+    while (ifs.good())
+    {
+        switch (stype[0])
+        {
+        case 'l':
+            ifs >> sn1 >> sn2 >> scost << sx << sy;
+            g.findorAdd(sn1, sn2, scost);
+            g.edgeAttr( ie, { sx, sy });
+            break;
         }
 
         ifs >> stype;
@@ -85,7 +111,11 @@ graph_calc readfile(
         option = graph_calc::tour;
         readCostedLinks( g, ifs );
     }
-
+    else if (calc.find("obs") != -1)
+    {
+        option = graph_calc::obs;
+        readObstacles( g, ifs );
+    }
     else
         throw std::runtime_error(
             "bad calculation type ");

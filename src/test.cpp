@@ -6,6 +6,7 @@
 TEST(findorAdd)
 {
     cGraphData g;
+    g.directed(false);
     g.findorAdd("a", "b", "1");
     g.findorAdd("b", "c", "1");
     CHECK_EQUAL(2, g.edgeCount());
@@ -61,11 +62,13 @@ TEST(dfs)
 TEST(tourNodes)
 {
     cGraphData g;
+    g.directed(false);
     g.findorAdd("a", "b", "1");
     g.findorAdd("b", "c", "1");
     g.findorAdd("a", "d", "1");
-
-    auto tour = tourNodes(g);
+    cTourNodes tourer( g );
+    tourer.calculate();
+    auto tour = tourer.getTour();
 
     std::vector<std::string> expected{"b", "c", "d", "a"};
     CHECK(std::equal(
