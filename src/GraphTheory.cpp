@@ -77,14 +77,14 @@ path(
     int end = g.find(endName);
 
     // check that end is reachable from start
-    if( pred[end] == -1)
+    if (pred[end] == -1)
         return ret;
 
     ret.push_back(end);
     int next = end;
     while (1)
     {
-        
+
         next = pred[next];
         ret.push_back(next);
         if (next == start)
@@ -117,14 +117,13 @@ spanningTree(
         g.userName(v),
         g.userName(w),
         "1");
+    // std::cout << "add span " << g.userName(v) << " " << g.userName(w) << "\n";
     visited[v] = true;
     visited[w] = true;
 
     // while nodes remain outside of span
     while (g.vertexCount() > spanTree.vertexCount())
     {
-        std::cout << spanTree.text(); 
-        
         double min_cost = INT_MAX;
         std::pair<int, int> bestLink;
 
@@ -161,10 +160,14 @@ spanningTree(
             g.userName(bestLink.first),
             g.userName(bestLink.second),
             "1");
+        // std::cout << "add span " << g.userName(bestLink.first) << " " << g.userName(bestLink.second) << "\n";
+        // std::cout << spanTree.text();
         visited[bestLink.first] = true;
         visited[bestLink.second] = true;
     }
 
+    // std::cout << "spanTree return\n"
+    //           << spanTree.text();
     return spanTree;
 }
 
@@ -185,11 +188,18 @@ void dfs(
         4 Keep repeating steps 2 and 3 until the stack is empty.
     */
 
-    wait.push(g.find(startName));
+    int startIndex = g.find(startName);
+    if (startIndex < 0)
+        throw std::runtime_error(
+            "dfs bad start " + startName);
+    wait.push(startIndex);
 
     while (!wait.empty())
     {
         int v = wait.top();
+        if (v < 0)
+            throw std::runtime_error(
+                "dfs bad index 1");
         wait.pop();
         if (visited[v])
             continue;
@@ -198,8 +208,12 @@ void dfs(
         visited[v] = true;
 
         for (int w : g.adjacentOut(v))
+        {
+            if (w < 0)
+                throw std::runtime_error(
+                    "dfs bad index 2");
             if (!visited[w])
                 wait.push(w);
+        }
     }
 }
-

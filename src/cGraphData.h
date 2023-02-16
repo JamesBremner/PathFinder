@@ -9,6 +9,8 @@ class cGraphData
 {
 public:
 
+    cGraphData();
+
     void clear();
 
     void directed( bool f = true );
@@ -20,7 +22,7 @@ public:
 
     int findorAdd(const std::string vertexName);
 
-    /// @brief add edge, vertices must exist
+    /// @brief add edge using vertex user names, vertices must exist
     /// @param srcName
     /// @param dstName
     /// @return edge index ( throws exception on failure )
@@ -82,7 +84,13 @@ public:
 
     int find(int src, int dst) const;
 
+    /// @brief vertices reachable with one hop
+    /// @param vi starting vertex
+    /// @return vector of reachable vertex indices
+
     std::vector<int> adjacentOut(int vi) const;
+
+    std::vector<std::string> adjacentOut(const std::string& name ) const;
 
     double edgeAttr(int src, int dst, int ai) const;
 

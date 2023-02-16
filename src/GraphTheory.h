@@ -44,6 +44,9 @@ private:
     /// @return -2 no unvisited leaves
 
     int isLeafJump(int v );
+
+    int graphIndexFromSpanIndex( int isp ) const;
+    std::vector<int> vectorgraphIndexFromSpanIndex( const std::vector<int>& visp );
 };
 
 /// @brief find shortest path from start node to every other
