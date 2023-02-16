@@ -41,15 +41,22 @@ int cGraphData::add(
 int cGraphData::add(int src, int dst,
                     const std::string &sAttr)
 {
-    if (0 > src || 0 > dst )
+    if (0 > src || 0 > dst)
         throw std::runtime_error("cGraphData::add edge bad vertex index");
+
+    // check there is storage allocated for these vertices
     int max = vVertexName.size() - 1;
-    if( src > max || dst > max ) {
+    if (src > max || dst > max)
+    {
+
+        // allocate storage for new vertices
+        // the new vertex names are set to '@myIndex'
+        // which indicates the name is the index formatted as a string
         max = src;
-        if( dst > src )
+        if (dst > src)
             max = dst;
         max++;
-        vVertexName.resize(max,"@myIndex");
+        vVertexName.resize(max, "@myIndex");
         vOutEdges.resize(max);
     }
 
@@ -114,15 +121,17 @@ void cGraphData::remove(
     if (0 > src || src > vertexCount() - 1 ||
         0 > dst || dst > vertexCount() - 1)
         return;
-    auto eit = std::find( vOutEdges[src].begin(), vOutEdges[src].end(), dst);
-    if( eit != vOutEdges[src].end() ) {
+    auto eit = std::find(vOutEdges[src].begin(), vOutEdges[src].end(), dst);
+    if (eit != vOutEdges[src].end())
+    {
         vEdgeDst[*eit] = -1;
-        vOutEdges[src].erase( eit );
+        vOutEdges[src].erase(eit);
     }
-    eit = std::find( vOutEdges[dst].begin(), vOutEdges[dst].end(), src);
-    if( eit != vOutEdges[dst].end() ) {
+    eit = std::find(vOutEdges[dst].begin(), vOutEdges[dst].end(), src);
+    if (eit != vOutEdges[dst].end())
+    {
         vEdgeDst[*eit] = -1;
-        vOutEdges[dst].erase( eit );
+        vOutEdges[dst].erase(eit);
     }
 }
 
@@ -138,7 +147,7 @@ void cGraphData::vertexAttr(int iv, const std::vector<std::string> &vsAttr)
 }
 int cGraphData::edgeCount() const
 {
-    int c = vEdgeDst.size() - std::count(vEdgeDst.begin(),vEdgeDst.end(),-1);
+    int c = vEdgeDst.size() - std::count(vEdgeDst.begin(), vEdgeDst.end(), -1);
     if (fDirected)
         return c;
     return c / 2;
@@ -150,7 +159,7 @@ int cGraphData::find(const std::string &vertexName) const
         return -1;
     int i = it - vVertexName.begin();
     return i;
-    //return std::distance(vVertexName.begin(), it);
+    // return std::distance(vVertexName.begin(), it);
 }
 
 int cGraphData::find(int src, int dst) const
@@ -173,11 +182,11 @@ std::vector<int> cGraphData::adjacentOut(int vi) const
     return ret;
 }
 
-std::vector<std::string> cGraphData::adjacentOut(const std::string& name ) const
+std::vector<std::string> cGraphData::adjacentOut(const std::string &name) const
 {
     std::vector<std::string> ret;
-    for( int i : adjacentOut( find( name )))
-        ret.push_back( vVertexName[i]);
+    for (int i : adjacentOut(find(name)))
+        ret.push_back(vVertexName[i]);
     return ret;
 }
 
@@ -190,6 +199,22 @@ double cGraphData::edgeAttr(int src, int dst, int ai) const
         throw std::runtime_error(
             "cGraphData::edgeAttr bad attribute index");
     return atof(vEdgeAttr[edg][ai].c_str());
+}
+
+std::string cGraphData::userName(int i) const
+{
+    std::string ret = vVertexName[i];
+    if (ret == "@myIndex")
+        return std::to_string(i);
+    return ret;
+}
+
+std::vector<std::string> cGraphData::userName(std::vector<int> vi)
+{
+    std::vector<std::string> ret;
+    for (int i : vi)
+        ret.push_back(userName(i));
+    return ret;
 }
 
 std::string cGraphData::text() const

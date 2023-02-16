@@ -6,10 +6,29 @@
 TEST(findorAdd)
 {
     cGraphData g;
-    g.directed(false);
     g.findorAdd("a", "b", "1");
     g.findorAdd("b", "c", "1");
     CHECK_EQUAL(2, g.edgeCount());
+
+    g.clear();
+    g.directed();
+    g.findorAdd("a", "b", "1");
+    g.findorAdd("b", "c", "1");
+    CHECK_EQUAL(2, g.edgeCount());
+}
+
+TEST( edgebyindex )
+{
+    cGraphData g;
+    g.add( 1, 2, "1" );
+    g.add( 2, 3, "1" );
+    CHECK_EQUAL(2, g.edgeCount());
+    std::vector<std::string> exp {"1","2","3"};
+    auto act = g.userName({1,2,3});
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        act.begin()));
 }
 
 TEST(adjacent)

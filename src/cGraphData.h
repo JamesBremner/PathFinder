@@ -29,6 +29,20 @@ public:
     int add(
         const std::string &srcName,
         const std::string &dstName);
+
+    /// @brief add edge using vertex indices
+    /// @param src source index
+    /// @param dst destination index
+    /// @param sAttr edge attribite
+    /// @return edge index
+    /*  
+    The vertices need not exist ( if not they will be added )
+    The vertex name must be the sting format index
+
+    For large graphs this is much faster than adding edges by vertex names
+    but the vertex names must be the vertex indices.
+    
+    */
     int add(
         int src,
         int dst,
@@ -68,19 +82,20 @@ public:
     /// @brief find vertex with name
     /// @param vertexName
     /// @return vertex index, -1 if not found
+
     int find(const std::string &vertexName) const;
 
-    std::string userName(int i) const
-    {
-        return vVertexName[i];
-    }
-    std::vector<std::string> userName(std::vector<int> vi)
-    {
-        std::vector<std::string> ret;
-        for (int i : vi)
-            ret.push_back(userName(i));
-        return ret;
-    }
+    /// @brief vertex name from index
+    /// @param i vertex index
+    /// @return vertex name
+
+    std::string userName(int i) const;
+
+    /// @brief vertex names from vertex indices
+    /// @param vi vector of indices
+    /// @return vector of names
+
+    std::vector<std::string> userName(std::vector<int> vi);
 
     int find(int src, int dst) const;
 
