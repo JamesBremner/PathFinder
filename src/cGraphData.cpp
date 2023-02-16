@@ -30,6 +30,7 @@ int cGraphData::add(const std::string &vertexName)
         throw std::runtime_error("cGraphData::add duplicate vertex name " + vertexName);
     vVertexName.push_back(vertexName);
     vOutEdges.push_back({});
+    vVertexAttr.push_back({});
     return vVertexName.size() - 1;
 }
 int cGraphData::add(
@@ -142,6 +143,9 @@ void cGraphData::edgeAttr(int ie, const std::vector<std::string> &vsAttr)
 }
 void cGraphData::vertexAttr(int iv, const std::vector<std::string> &vsAttr)
 {
+    if( 0 > iv || iv > vVertexAttr.size()-1 )
+        throw std::runtime_error(
+            "cGraphData::vertexAttr bad index"        );
     for (auto &sa : vsAttr)
         vVertexAttr[iv].push_back(sa);
 }
