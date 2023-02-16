@@ -3,6 +3,8 @@
 #include "cutest.h"
 #include "GraphTheory.h"
 
+
+
 TEST(findorAdd)
 {
     cGraphData g;
@@ -115,13 +117,34 @@ TEST(tourNodes)
     tourer.calculate();
     auto tour = tourer.getTour();
 
-    std::vector<std::string> expected{"b", "c"};
+    std::vector<std::string> expected{"c", "b", "a", "d" };
     auto actual = g.userName(tour);
     CHECK(std::equal(
         expected.begin(),
         expected.end(),
         actual.begin()));
 }
+
+TEST(tourNodes2)
+{
+    cGraphData g;
+    g.directed(false);
+    g.findorAdd("a", "b", "1");
+    g.findorAdd("b", "c", "1");
+    g.findorAdd("a", "d", "1");
+    g.findorAdd("c", "d", "1");
+    cTourNodes tourer(g);
+    tourer.calculate();
+    auto tour = tourer.getTour();
+
+    std::vector<std::string> expected{"b", "c", "d", "a"};
+    auto actual = g.userName(tour);
+    CHECK(std::equal(
+        expected.begin(),
+        expected.end(),
+        actual.begin()));
+}
+
 
 main()
 {

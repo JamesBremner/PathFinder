@@ -40,13 +40,13 @@ private:
     /// @brief find leaf to jump to from leaf
     /// @param v 
     /// @return >= 0 node index to jump to
-    /// @return -1 v is not a leaf
+    /// @return -1 no jump required
     /// @return -2 no unvisited leaves
 
     int isLeafJump(int v );
 
-    int graphIndexFromSpanIndex( int isp ) const;
-    std::vector<int> vectorgraphIndexFromSpanIndex( const std::vector<int>& visp );
+    std::vector<int> vectorgraphIndexFromSpanIndex( 
+        const std::vector<int>& visp );
 };
 
 /// @brief find shortest path from start node to every other
