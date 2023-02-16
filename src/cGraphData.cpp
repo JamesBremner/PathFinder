@@ -3,6 +3,8 @@
 #include <algorithm>
 #include "cGraphData.h"
 
+namespace raven {
+
 cGraphData::cGraphData()
 {
     clear();
@@ -256,4 +258,6 @@ cGraphData::edgeList() const
         }
     }
     return ret;
+}
+
 }

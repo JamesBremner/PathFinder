@@ -2,6 +2,8 @@
 #include <functional>
 #include "cGraphData.h"
 
+namespace raven {
+
 class cTourNodes
 {
 public:
@@ -97,3 +99,5 @@ void dfs(
 std::vector<int>
 tourNodes(
     const cGraphData &g );
+
+}

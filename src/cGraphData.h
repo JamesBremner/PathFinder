@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-
+namespace raven {
 
 /// @brief A graph of vertices connected by edges
 class cGraphData
@@ -41,7 +41,7 @@ public:
 
     For large graphs this is much faster than adding edges by vertex names
     but the vertex names must be the vertex indices.
-    
+
     */
     int add(
         int src,
@@ -152,3 +152,5 @@ private:
     */
     std::vector<std::vector<std::string>> vEdgeAttr;
 };
+
+}

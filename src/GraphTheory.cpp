@@ -3,6 +3,8 @@
 #include <stack>
 #include "GraphTheory.h"
 
+namespace raven {
+
 std::vector<int>
 dijsktra(
     const cGraphData &g,
@@ -216,4 +218,5 @@ void dfs(
                 wait.push(w);
         }
     }
+}
 }

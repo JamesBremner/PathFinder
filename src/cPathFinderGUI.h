@@ -90,8 +90,8 @@ public:
     }
 
 private:
-    cGraphData myGraph;
-    cTourNodes * mypTourNodes;
+    raven::cGraphData myGraph;
+    raven::cTourNodes * mypTourNodes;
     std::string myfname;
     graph_calc myCalcOption;
     std::string myStartName;
@@ -127,5 +127,5 @@ extern cGUI theGUI;
 /// @return calculation option
 
 graph_calc readfile(
-    cGraphData &g,
+    raven::cGraphData &g,
     const std::string &fname);

@@ -3,7 +3,7 @@
 #include "cpathfinderGUI.h"
 
 static void readCostedLinks(
-    cGraphData &g,
+    raven::cGraphData &g,
     std::ifstream &ifs)
 {
     std::string stype, sn1, sn2, scost;
@@ -34,7 +34,7 @@ static void readCostedLinks(
     }
 }
 static void readObstacles(
-    cGraphData &g,
+    raven::cGraphData &g,
     std::ifstream &ifs)
 {
     std::string stype, sn1, sn2, scost, sx, sy;
@@ -58,7 +58,7 @@ static void readObstacles(
 }
 
 graph_calc readfile(
-    cGraphData &g,
+    raven::cGraphData &g,
     const std::string &fname)
 {
     graph_calc option = graph_calc::none;

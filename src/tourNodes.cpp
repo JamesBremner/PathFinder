@@ -4,6 +4,8 @@
 #include <stack>
 #include "GraphTheory.h"
 
+namespace raven {
+
 bool cTourNodes::visitor(
     int v)
 {
@@ -198,4 +200,5 @@ std::vector<std::pair<int, int>>
 cTourNodes::spanTree_get() const
 {
     return spanTree.edgeList();
+}
 }

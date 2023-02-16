@@ -7,7 +7,7 @@
 
 TEST(findorAdd)
 {
-    cGraphData g;
+    raven::cGraphData g;
     g.findorAdd("a", "b", "1");
     g.findorAdd("b", "c", "1");
     CHECK_EQUAL(2, g.edgeCount());
@@ -21,7 +21,7 @@ TEST(findorAdd)
 
 TEST( edgebyindex )
 {
-    cGraphData g;
+    raven::cGraphData g;
     g.add( 1, 2, "1" );
     g.add( 2, 3, "1" );
     CHECK_EQUAL(2, g.edgeCount());
@@ -35,7 +35,7 @@ TEST( edgebyindex )
 
 TEST(adjacent)
 {
-    cGraphData g;
+    raven::cGraphData g;
     g.findorAdd("a", "b", "1");
     g.findorAdd("b", "c", "1");
     g.findorAdd("a", "d", "1");
@@ -58,7 +58,7 @@ TEST(adjacent)
 }
 TEST(dijsktra)
 {
-    cGraphData g;
+    raven::cGraphData g;
     g.findorAdd("a", "b", "1");
     g.findorAdd("b", "c", "1");
     g.findorAdd("a", "d", "1");
@@ -72,7 +72,7 @@ TEST(dijsktra)
 
 TEST(spanningTree)
 {
-    cGraphData g;
+    raven::cGraphData g;
     g.findorAdd("a", "b", "1");
     g.findorAdd("b", "c", "1");
     g.findorAdd("a", "d", "1");
@@ -87,7 +87,7 @@ TEST(spanningTree)
 
 TEST(dfs)
 {
-    cGraphData g;
+    raven::cGraphData g;
     g.findorAdd("a", "b", "1");
     g.findorAdd("b", "c", "1");
     g.findorAdd("a", "d", "1");
@@ -108,12 +108,12 @@ TEST(dfs)
 
 TEST(tourNodes)
 {
-    cGraphData g;
+    raven::cGraphData g;
     g.directed(false);
     g.findorAdd("a", "b", "1");
     g.findorAdd("b", "c", "1");
     g.findorAdd("a", "d", "1");
-    cTourNodes tourer(g);
+    raven::cTourNodes tourer(g);
     tourer.calculate();
     auto tour = tourer.getTour();
 
@@ -127,13 +127,13 @@ TEST(tourNodes)
 
 TEST(tourNodes2)
 {
-    cGraphData g;
+    raven::cGraphData g;
     g.directed(false);
     g.findorAdd("a", "b", "1");
     g.findorAdd("b", "c", "1");
     g.findorAdd("a", "d", "1");
     g.findorAdd("c", "d", "1");
-    cTourNodes tourer(g);
+    raven::cTourNodes tourer(g);
     tourer.calculate();
     auto tour = tourer.getTour();
 

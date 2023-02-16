@@ -45,7 +45,7 @@ class cObstacle
     cell::cAutomaton<cOCell> *A; ///< 2D grid
     std::vector<cOCell *> vN;    ///< nodes to be included in path
     vlink_t vL;                  ///< links between nodes
-    cGraphData mygraphdata;
+    raven::cGraphData mygraphdata;
     vlink_t vPath;
     std::vector<cOCell *> myNodesRevisited;
     vlink_t mySpanningTree;

@@ -94,7 +94,7 @@ void cGUI::calculate()
             case graph_calc::tour:
 
                 delete mypTourNodes;
-                mypTourNodes = new cTourNodes( myGraph );
+                mypTourNodes = new raven::cTourNodes( myGraph );
                 mypTourNodes->calculate();
 
                 myResultText = "";
