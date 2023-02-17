@@ -19,14 +19,14 @@ TEST(findorAdd)
     CHECK_EQUAL(2, g.edgeCount());
 }
 
-TEST( edgebyindex )
+TEST(edgebyindex)
 {
     raven::cGraphData g;
-    g.add( 1, 2, "1" );
-    g.add( 2, 3, "1" );
+    g.add(1, 2, "1");
+    g.add(2, 3, "1");
     CHECK_EQUAL(2, g.edgeCount());
-    std::vector<std::string> exp {"1","2","3"};
-    auto act = g.userName({1,2,3});
+    std::vector<std::string> exp{"1", "2", "3"};
+    auto act = g.userName({1, 2, 3});
     CHECK(std::equal(
         exp.begin(),
         exp.end(),
@@ -82,7 +82,6 @@ TEST(spanningTree)
         "l a d 1\n");
 
     CHECK_EQUAL(expected, spanningTree(g, "a").text());
-
 }
 
 TEST(dfs)
@@ -117,7 +116,7 @@ TEST(tourNodes)
     tourer.calculate();
     auto tour = tourer.getTour();
 
-    std::vector<std::string> expected{"c", "b", "a", "d" };
+    std::vector<std::string> expected{"c", "b", "a", "d"};
     auto actual = g.userName(tour);
     CHECK(std::equal(
         expected.begin(),
@@ -145,6 +144,19 @@ TEST(tourNodes2)
         actual.begin()));
 }
 
+TEST(cycle)
+{
+    raven::cGraphData g;
+    g.directed();
+    g.findorAdd("a", "b", "1");
+    g.findorAdd("b", "c", "1");
+    g.findorAdd("d", "a", "1");
+    g.findorAdd("c", "d", "1");
+
+    auto act = dfs_cycle_finder(g,"a");
+    CHECK_EQUAL(1,act.size());
+    CHECK_EQUAL(5,act[0].size());
+}
 
 main()
 {

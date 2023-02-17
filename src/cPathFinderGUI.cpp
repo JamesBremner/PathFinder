@@ -85,20 +85,17 @@ void cGUI::calculate()
             break;
 
             case graph_calc::cycle:
-            {
-                // auto vc = myGraph.dfs_cycle_finder(myGraph.userName(0));
-                // myResultText = std::to_string(vc.size()) + " cycles found";
-            }
-            break;
+                calcCycle();
+                break;
 
             case graph_calc::tour:
 
                 delete mypTourNodes;
-                mypTourNodes = new raven::cTourNodes( myGraph );
+                mypTourNodes = new raven::cTourNodes(myGraph);
                 mypTourNodes->calculate();
 
                 myResultText = "";
-                for (int v : mypTourNodes->getTour() )
+                for (int v : mypTourNodes->getTour())
                 {
                     myResultText += myGraph.userName(v) + " -> ";
                 }
@@ -117,6 +114,20 @@ void cGUI::calculate()
     }
 }
 
+void cGUI::calcCycle()
+{
+    auto vc = dfs_cycle_finder(myGraph, myGraph.userName(0));
+    myResultText = std::to_string(vc.size()) + " cycles found\n\n";
+    for (int k = 0; k < vc.size(); k++)
+    {
+        for( auto& sv : myGraph.userName( vc[k]))
+            myResultText += sv + " ";
+
+        myResultText += "\n";
+    }
+    myViewType = eView::route;
+}
+
 void cGUI::draw(PAINTSTRUCT &ps)
 {
     fm.text("PathFinder " + myfname);
@@ -127,7 +138,7 @@ void cGUI::draw(PAINTSTRUCT &ps)
     {
 
     case eView::route:
-        S.text(myResultText, {20, 20});
+        S.text(myResultText, {20, 20, 500, 500});
         break;
 
     case eView::input:
@@ -158,22 +169,22 @@ void cGUI::drawInput(wex::shapes &S)
 
 void cGUI::drawSpan(wex::shapes &S)
 {
-        if( myCalcOption != graph_calc::tour)
-            return;
-        S.color(0x0000FF);
-        S.penThick(2);
-        std::stringstream ss;
-        for (auto &pl : mypTourNodes->spanTree_get())
-        {
-            ss << myGraph.userName(std::get<0>(pl))
-                 << " - " << myGraph.userName(std::get<1>(pl))
-                 << "\n";
-            // int w, h, w2, h2;
-            // grid->coords(
-            //     w, h, std::get<0>(pl));
-            // grid->coords(
-            //     w2, h2, std::get<1>(pl));
-            // S.line({scale * w, scale * h, scale * w2, scale * h2});
-        }
-        S.text( ss.str(), {20,20,1000,500});
+    if (myCalcOption != graph_calc::tour)
+        return;
+    S.color(0x0000FF);
+    S.penThick(2);
+    std::stringstream ss;
+    for (auto &pl : mypTourNodes->spanTree_get())
+    {
+        ss << myGraph.userName(std::get<0>(pl))
+           << " - " << myGraph.userName(std::get<1>(pl))
+           << "\n";
+        // int w, h, w2, h2;
+        // grid->coords(
+        //     w, h, std::get<0>(pl));
+        // grid->coords(
+        //     w2, h2, std::get<1>(pl));
+        // S.line({scale * w, scale * h, scale * w2, scale * h2});
+    }
+    S.text(ss.str(), {20, 20, 1000, 500});
 }

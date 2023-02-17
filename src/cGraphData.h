@@ -72,6 +72,12 @@ public:
     void edgeAttr( int ie, const std::vector<std::string>& vsAttr );
     void vertexAttr( int iv, const std::vector<std::string>& vsAttr );
 
+    //////////////////////// GETTERS
+
+    bool directed() const
+    {
+        return fDirected;
+    }
     int vertexCount() const
     {
         return vVertexName.size();

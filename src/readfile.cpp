@@ -83,13 +83,15 @@ graph_calc readfile(
     else if (calc.find("cycle") != -1)
     {
         option = graph_calc::cycle;
-        std::string sn1, sn2;
-        ifs >> sn1 >> sn2;
+        g.clear();
+        g.directed();
+        std::string stype, sn1, sn2;
+        ifs >> stype >> sn1 >> sn2;
 
         while (ifs.good())
         {
             g.findorAdd(sn1, sn2, "1");
-            ifs >> sn1 >> sn2;
+            ifs >> stype >> sn1 >> sn2;
         }
     }
 

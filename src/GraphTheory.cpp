@@ -10,6 +10,15 @@ dijsktra(
     const cGraphData &g,
     const std::string &startName)
 {
+    return dijsktra(
+        g,
+        g.find( startName )    );
+}
+std::vector<int>
+dijsktra(
+    const cGraphData &g,
+    int start )
+{
     // shortest distance from start to each node
     std::vector<double> dist(g.vertexCount(), INT_MAX);
 
@@ -18,8 +27,6 @@ dijsktra(
 
     std::vector<bool> sptSet(g.vertexCount(), false); // sptSet[i] will be true if vertex i is included in shortest
                                                       // path tree or shortest distance from src to i is finalized
-
-    int start = g.find(startName);
 
     // Distance of source vertex from itself is always 0
     dist[start] = 0;
@@ -71,12 +78,25 @@ path(
     const std::string &startName,
     const std::string &endName)
 {
-    auto pred = dijsktra(g, startName);
+    return path(
+        g,
+        g.find(startName),
+        g.find(endName)    );
+}
 
+std::vector<int>
+path(
+    const cGraphData &g,
+    int start,
+    int end )
+{
     std::vector<int> ret;
 
-    int start = g.find(startName);
-    int end = g.find(endName);
+    if( 0 > start || start > g.vertexCount() ||
+        0 > end || end > g.vertexCount() )
+        return ret;
+
+    auto pred = dijsktra(g, start);
 
     // check that end is reachable from start
     if (pred[end] == -1)
@@ -219,4 +239,58 @@ void dfs(
         }
     }
 }
+
+ std::vector<std::vector<int>>
+    dfs_cycle_finder(
+        const cGraphData &g,
+        const std::string &start)
+    {
+        if( ! g.directed() )
+            throw std::runtime_error(
+                "cGraph::dfs_cycle_finder invoked on undirected graph");
+
+        std::vector<std::vector<int>> ret;
+
+        // track visited vertices
+        std::vector<bool> visited(g.vertexCount(), false);
+
+        // vertices waiting to be processed
+        std::stack<int> wait;
+
+        // start at the beginning
+        wait.push(g.find(start));
+
+        // continue until no more vertices need processing
+        while (!wait.empty())
+        {
+            int v = wait.top();
+            wait.pop();
+            if (!visited[v])
+            {
+                visited[v] = true;
+
+                for (int w : g.adjacentOut(v))
+                {
+                    if (!visited[w])
+                    {
+                        wait.push(w);
+                    }
+                    else
+                    {
+                        // previously visited node, check for ancestor
+                        auto cycle = path(g,w, v);
+                        if (cycle.size() > 0)
+                        {
+                            // found a cycle
+                            cycle.push_back(w);
+                            ret.push_back(cycle);
+                        }
+                    }
+                }
+            }
+        }
+        return ret;
+    }
+
+
 }

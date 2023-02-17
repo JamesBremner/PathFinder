@@ -2,102 +2,123 @@
 #include <functional>
 #include "cGraphData.h"
 
-namespace raven {
-
-class cTourNodes
+namespace raven
 {
-public:
-    cTourNodes(const cGraphData &theGraph)
-        : g(theGraph)
+
+    class cTourNodes
     {
-    }
+    public:
+        cTourNodes(const cGraphData &theGraph)
+            : g(theGraph)
+        {
+        }
 
-    void calculate();
+        void calculate();
 
-    std::vector<int> getTour() const
-    {
-        return tour;
-    }
+        std::vector<int> getTour() const
+        {
+            return tour;
+        }
 
-    std::vector<std::pair<int,int>>
+        std::vector<std::pair<int, int>>
         spanTree_get() const;
 
+    private:
+        const cGraphData &g;
+        cGraphData spanTree;
 
-private:
-    const cGraphData &g;
-    cGraphData spanTree;
+        int dfsStart;
+        int unvisited;
+        std::vector<int> vleaf;
+        std::vector<bool> spanVisited;
+        std::vector<int> revisited;
 
-    int dfsStart;
-    int unvisited;
-    std::vector<int> vleaf;
-    std::vector<bool> spanVisited;
-    std::vector<int> revisited;
+        std::vector<int> tour;
 
-    std::vector<int> tour;
+        void tourNodesAdd(int v);
 
-    void tourNodesAdd(int v);
+        bool visitor(int v);
 
-    bool visitor(int v);
+        /// @brief find leaf to jump to from leaf
+        /// @param v
+        /// @return >= 0 node index to jump to
+        /// @return -1 no jump required
+        /// @return -2 no unvisited leaves
 
-    /// @brief find leaf to jump to from leaf
-    /// @param v 
-    /// @return >= 0 node index to jump to
-    /// @return -1 no jump required
-    /// @return -2 no unvisited leaves
+        int isLeafJump(int v);
 
-    int isLeafJump(int v );
+        std::vector<int> vectorgraphIndexFromSpanIndex(
+            const std::vector<int> &visp);
+    };
 
-    std::vector<int> vectorgraphIndexFromSpanIndex( 
-        const std::vector<int>& visp );
-};
+    /// @brief find shortest path from start node to every other
+    /// @param g
+    /// @param startName
+    /// @return vector of preceeding node index for every node
 
-/// @brief find shortest path from start node to every other
-/// @param g 
-/// @param startName 
-/// @return vector of preceeding node index for every node
+    std::vector<int>
+    dijsktra(
+        const cGraphData &g,
+        const std::string &startName);
+    std::vector<int>
+    dijsktra(
+        const cGraphData &g,
+        int start);
 
-std::vector<int>
-dijsktra(
-    const cGraphData &g,
-    const std::string &startName);
+    /// @brief find shortest path from start to end node
+    /// @param g
+    /// @param startName
+    /// @param endName
+    /// @return vector of node indices on the path
+    /// @return empty vector when end is not reachable from start
 
-/// @brief find shortest path from start to end node
-/// @param g 
-/// @param startName 
-/// @param endName 
-/// @return vector of node indices on the path
-/// @return empty vector when end is not reachable from start
+    std::vector<int>
+    path(
+        const cGraphData &g,
+        const std::string &startName,
+        const std::string &endName);
 
-std::vector<int>
-path(
-    const cGraphData &g,
-    const std::string &startName,
-    const std::string &endName);
+    std::vector<int>
+    path(
+        const cGraphData &g,
+        int start,
+        int end);
 
-/// @brief find spanning tree 
-/// @param g 
-/// @param startName root node
-/// @return graph - a tree rooted at start and visiting every node
+    /// @brief find spanning tree
+    /// @param g
+    /// @param startName root node
+    /// @return graph - a tree rooted at start and visiting every node
 
-cGraphData
-spanningTree(
-    const cGraphData &g,
-    const std::string &startName);
+    cGraphData
+    spanningTree(
+        const cGraphData &g,
+        const std::string &startName);
 
-/// @brief depth first search
-/// @param g 
-/// @param startName 
-/// @param visitor function to call when a new node is reached
-/// visitor should return true, but false if the search should stop
+    /// @brief depth first search
+    /// @param g
+    /// @param startName
+    /// @param visitor function to call when a new node is reached
+    /// visitor should return true, but false if the search should stop
 
-void dfs(
-    const cGraphData &g,
-    const std::string &startName,
-    std::function<bool(int v)> visitor);
+    void dfs(
+        const cGraphData &g,
+        const std::string &startName,
+        std::function<bool(int v)> visitor);
 
-/// @brief path visiting every node
-std::vector<int>
-tourNodes(
-    const cGraphData &g );
+    /// @brief cycle finder
+    /// @param g
+    /// @param start
+    /// @return vector of cycles
+
+    std::vector<std::vector<int>>
+    dfs_cycle_finder(
+        const cGraphData &g,
+        const std::string &start);
+
+    /// @brief path visiting every node
+    
+    std::vector<int>
+    tourNodes(
+        const cGraphData &g);
 
 }

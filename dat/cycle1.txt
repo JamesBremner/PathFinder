@@ -1,0 +1,5 @@
+format cycle
+l a b
+l b c
+l d a
+l c d
