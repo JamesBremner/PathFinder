@@ -54,13 +54,13 @@ namespace raven
     /// @brief find shortest path from start node to every other
     /// @param g
     /// @param startName
-    /// @return vector of preceeding node index for every node
+    /// @return pair: vector of preceeding node index for every node, vector of cost of path from start to vertex
 
-    std::vector<int>
+    std::pair<std::vector<int>,std::vector<double>>
     dijsktra(
         const cGraphData &g,
         const std::string &startName);
-    std::vector<int>
+    std::pair<std::vector<int>,std::vector<double>>
     dijsktra(
         const cGraphData &g,
         int start);
@@ -69,16 +69,16 @@ namespace raven
     /// @param g
     /// @param startName
     /// @param endName
-    /// @return vector of node indices on the path
-    /// @return empty vector when end is not reachable from start
+    /// @return pair: vector of node indices on the path, path cost
+    /// @return pair: empty vector, -1 when end is not reachable from start
 
-    std::vector<int>
+   std::pair<std::vector<int>,double>
     path(
         const cGraphData &g,
         const std::string &startName,
         const std::string &endName);
 
-    std::vector<int>
+   std::pair<std::vector<int>,double>
     path(
         const cGraphData &g,
         int start,

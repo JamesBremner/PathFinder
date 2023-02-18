@@ -6,6 +6,8 @@ static void readCostedLinks(
     raven::cGraphData &g,
     std::ifstream &ifs)
 {
+    g.clear();
+
     std::string stype, sn1, sn2, scost;
     ifs >> stype;
 
@@ -13,6 +15,12 @@ static void readCostedLinks(
     {
         switch (stype[0])
         {
+            case 'g':
+            if( g.vertexCount() )
+                throw std::runtime_error(
+                    "g ( graph mode ) must be second line"                );
+            g.directed();
+            break;
         case 'l':
             ifs >> sn1 >> sn2 >> scost;
             g.findorAdd(sn1, sn2, scost);

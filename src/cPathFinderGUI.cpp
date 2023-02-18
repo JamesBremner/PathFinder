@@ -71,18 +71,10 @@ void cGUI::calculate()
             myCalcOption = readfile(myGraph, myfname);
             switch (myCalcOption)
             {
+
             case graph_calc::cost:
-            {
-                myResultText = "";
-                for (int v : path(
-                         myGraph,
-                         myStartName,
-                         myEndName))
-                {
-                    myResultText += myGraph.userName(v) + " -> ";
-                }
-            }
-            break;
+                calcCost();
+                break;
 
             case graph_calc::cycle:
                 calcCycle();
@@ -113,6 +105,18 @@ void cGUI::calculate()
         return;
     }
 }
+void cGUI::calcCost()
+{
+    auto result = path(
+        myGraph,
+        myStartName,
+        myEndName);
+
+    myResultText = "";
+    for (int v : result.first)
+        myResultText += myGraph.userName(v) + " -> ";
+    myResultText += " Cost = " + std::to_string(result.second);
+}
 
 void cGUI::calcCycle()
 {
@@ -120,7 +124,7 @@ void cGUI::calcCycle()
     myResultText = std::to_string(vc.size()) + " cycles found\n\n";
     for (int k = 0; k < vc.size(); k++)
     {
-        for( auto& sv : myGraph.userName( vc[k]))
+        for (auto &sv : myGraph.userName(vc[k]))
             myResultText += sv + " ";
 
         myResultText += "\n";

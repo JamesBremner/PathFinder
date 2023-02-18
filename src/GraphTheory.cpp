@@ -5,7 +5,7 @@
 
 namespace raven {
 
-std::vector<int>
+std::pair<std::vector<int>,std::vector<double>>
 dijsktra(
     const cGraphData &g,
     const std::string &startName)
@@ -14,7 +14,7 @@ dijsktra(
         g,
         g.find( startName )    );
 }
-std::vector<int>
+std::pair<std::vector<int>,std::vector<double>>
 dijsktra(
     const cGraphData &g,
     int start )
@@ -69,10 +69,12 @@ dijsktra(
             }
         }
     }
-    return pred;
+
+    //std::pair<std::vector<int>,std:vector<double>> ret { std::makepred,dist}
+    return std::make_pair( pred, dist);
 }
 
-std::vector<int>
+std::pair<std::vector<int>,double>
 path(
     const cGraphData &g,
     const std::string &startName,
@@ -84,37 +86,37 @@ path(
         g.find(endName)    );
 }
 
-std::vector<int>
+std::pair<std::vector<int>,double>
 path(
     const cGraphData &g,
     int start,
     int end )
 {
-    std::vector<int> ret;
+    std::vector<int> vpath;
 
     if( 0 > start || start > g.vertexCount() ||
         0 > end || end > g.vertexCount() )
-        return ret;
+        return std::make_pair( vpath, -1 );
 
-    auto pred = dijsktra(g, start);
+    // run the Dijsktra algorithm
+    auto result = dijsktra(g, start);
 
     // check that end is reachable from start
-    if (pred[end] == -1)
-        return ret;
+    if (result.first[end] == -1)
+        return std::make_pair( vpath, -1 );
 
-    ret.push_back(end);
+    vpath.push_back(end);
     int next = end;
     while (1)
     {
-
-        next = pred[next];
-        ret.push_back(next);
+        next = result.first[next];
+        vpath.push_back(next);
         if (next == start)
             break;
     }
-    std::reverse(ret.begin(), ret.end());
+    std::reverse(vpath.begin(), vpath.end());
 
-    return ret;
+    return std::make_pair( vpath, result.second[end]);
 }
 cGraphData
 spanningTree(
@@ -279,11 +281,11 @@ void dfs(
                     {
                         // previously visited node, check for ancestor
                         auto cycle = path(g,w, v);
-                        if (cycle.size() > 0)
+                        if (cycle.first.size() > 0)
                         {
                             // found a cycle
-                            cycle.push_back(w);
-                            ret.push_back(cycle);
+                            cycle.first.push_back(w);
+                            ret.push_back(cycle.first);
                         }
                     }
                 }

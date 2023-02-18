@@ -67,7 +67,7 @@ TEST(dijsktra)
     CHECK(std::equal(
         expected.begin(),
         expected.end(),
-        g.userName(path(g, "a", "c")).begin()));
+        g.userName(path(g, "a", "c").first).begin()));
 }
 
 TEST(spanningTree)

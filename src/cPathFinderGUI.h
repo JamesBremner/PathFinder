@@ -109,6 +109,7 @@ private:
     void ConstructMenu();
 
     void calculate();
+    void calcCost();
     void calcCycle();
 
     void draw(PAINTSTRUCT &ps);
