@@ -74,7 +74,7 @@ public:
 
     //////////////////////// GETTERS
 
-    bool directed() const
+    bool isDirected() const
     {
         return fDirected;
     }
@@ -101,7 +101,9 @@ public:
     /// @param vi vector of indices
     /// @return vector of names
 
-    std::vector<std::string> userName(std::vector<int> vi);
+    std::vector<std::string> userName(std::vector<int> vi) const;
+
+    std::vector<std::string> vertexNames() const;
 
     int find(int src, int dst) const;
 

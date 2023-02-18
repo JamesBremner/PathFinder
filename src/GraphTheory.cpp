@@ -247,7 +247,7 @@ void dfs(
         const cGraphData &g,
         const std::string &start)
     {
-        if( ! g.directed() )
+        if( ! g.isDirected() )
             throw std::runtime_error(
                 "cGraph::dfs_cycle_finder invoked on undirected graph");
 

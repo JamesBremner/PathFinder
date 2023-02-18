@@ -215,11 +215,23 @@ std::string cGraphData::userName(int i) const
     return ret;
 }
 
-std::vector<std::string> cGraphData::userName(std::vector<int> vi)
+std::vector<std::string> cGraphData::userName(std::vector<int> vi) const
 {
     std::vector<std::string> ret;
     for (int i : vi)
         ret.push_back(userName(i));
+    return ret;
+}
+
+std::vector<std::string> cGraphData::vertexNames() const
+{
+    std::vector<std::string> ret;
+    for (int kv = 0; kv < vVertexName.size(); kv++ ) {
+        if(vVertexName[kv] == "@myIndex")
+            ret.push_back(std::to_string( kv));
+        else
+            ret.push_back( vVertexName[kv]);
+    }
     return ret;
 }
 

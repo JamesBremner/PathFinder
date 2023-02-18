@@ -90,6 +90,8 @@ public:
     }
 
 private:
+    wex::panel &graphPanel;
+    
     raven::cGraphData myGraph;
     raven::cTourNodes * mypTourNodes;
     std::string myfname;

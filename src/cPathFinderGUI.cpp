@@ -1,21 +1,40 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 #include "wex.h"
+#include "window2file.h"
 #include "GraphTheory.h"
 #include "cPathFinderGUI.h"
 
 cGUI::cGUI()
     : cStarterGUI(
           "PathFinder",
-          {50, 50, 1000, 700})
+          {50, 50, 1000, 700}),
+     graphPanel( wex::maker::make<wex::panel>(fm)),
+     myCalcOption( graph_calc::none )
 {
+
+    graphPanel.move(0, 50, 800, 750);
+
     ConstructMenu();
 
     fm.events().draw(
         [this](PAINTSTRUCT &ps)
         {
             draw(ps);
+        });
+
+    graphPanel.events().draw(
+        [&](PAINTSTRUCT &ps)
+        {
+            if( myCalcOption == graph_calc::none )
+                return;
+            // fill graph panel with image produced by graphviz
+            wex::window2file w2f;
+            auto path = std::filesystem::temp_directory_path();
+            auto sample = path / "sample.png";
+            w2f.draw(graphPanel, sample.string());
         });
 
     show();
@@ -116,6 +135,15 @@ void cGUI::calcCost()
     for (int v : result.first)
         myResultText += myGraph.userName(v) + " -> ";
     myResultText += " Cost = " + std::to_string(result.second);
+
+    auto viz = pathViz(
+        myGraph,
+        result.first,
+        true);
+    RunDOT(
+        myGraph,
+        viz);
+    graphPanel.update();
 }
 
 void cGUI::calcCycle()

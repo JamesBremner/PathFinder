@@ -56,11 +56,11 @@ namespace raven
     /// @param startName
     /// @return pair: vector of preceeding node index for every node, vector of cost of path from start to vertex
 
-    std::pair<std::vector<int>,std::vector<double>>
+    std::pair<std::vector<int>, std::vector<double>>
     dijsktra(
         const cGraphData &g,
         const std::string &startName);
-    std::pair<std::vector<int>,std::vector<double>>
+    std::pair<std::vector<int>, std::vector<double>>
     dijsktra(
         const cGraphData &g,
         int start);
@@ -72,13 +72,13 @@ namespace raven
     /// @return pair: vector of node indices on the path, path cost
     /// @return pair: empty vector, -1 when end is not reachable from start
 
-   std::pair<std::vector<int>,double>
+    std::pair<std::vector<int>, double>
     path(
         const cGraphData &g,
         const std::string &startName,
         const std::string &endName);
 
-   std::pair<std::vector<int>,double>
+    std::pair<std::vector<int>, double>
     path(
         const cGraphData &g,
         int start,
@@ -116,9 +116,17 @@ namespace raven
         const std::string &start);
 
     /// @brief path visiting every node
-    
+
     std::vector<int>
     tourNodes(
         const cGraphData &g);
 
+    std::string pathViz(
+        cGraphData &g,
+        std::vector<int> &vpath,
+        bool all);
+
+    void RunDOT(
+        cGraphData &g,
+        const std::string &pathViz);
 }

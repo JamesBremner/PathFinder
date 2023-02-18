@@ -32,6 +32,7 @@ OBJ_pathfinder = \
 	$(ODIR)/cGraphData.o \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/tourNodes.o \
+	$(ODIR)/GraphViz.o \
 	$(ODIR)/readfile.o
 
 OBJ_obstacle = \
