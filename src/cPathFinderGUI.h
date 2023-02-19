@@ -73,6 +73,7 @@ enum class graph_calc
     astar,
     tour,
     obs,
+    spans,
 };
 
 class cGUI : public cStarterGUI
@@ -90,9 +91,12 @@ public:
     }
 
 private:
-    wex::panel &graphPanel;
+    wex::panel &myplText;
+    wex::panel &myplLayout;
     
-    raven::cGraphData myGraph;
+    raven::cGraphData myGraph;              // the input graph
+    raven::cGraphData myResultGraph;              // the result graph
+
     raven::cTourNodes * mypTourNodes;
     std::string myfname;
     graph_calc myCalcOption;
@@ -113,8 +117,10 @@ private:
     void calculate();
     void calcCost();
     void calcCycle();
+    void calcSpan();
 
     void draw(PAINTSTRUCT &ps);
+    void drawLayout(PAINTSTRUCT &ps);
 
     void drawInput(wex::shapes &S);
     void drawSpan(wex::shapes &S);

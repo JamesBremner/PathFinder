@@ -11,30 +11,25 @@ cGUI::cGUI()
     : cStarterGUI(
           "PathFinder",
           {50, 50, 1000, 700}),
-     graphPanel( wex::maker::make<wex::panel>(fm)),
-     myCalcOption( graph_calc::none )
+      myplText(wex::maker::make<wex::panel>(fm)),
+      myplLayout(wex::maker::make<wex::panel>(fm)),
+      myCalcOption(graph_calc::none)
 {
-
-    graphPanel.move(0, 50, 800, 750);
+    myplText.move(0, 0, 800, 750);
+    myplLayout.move(0, 100, 800, 750);
 
     ConstructMenu();
 
-    fm.events().draw(
+    myplText.events().draw(
         [this](PAINTSTRUCT &ps)
         {
             draw(ps);
         });
 
-    graphPanel.events().draw(
+    myplLayout.events().draw(
         [&](PAINTSTRUCT &ps)
         {
-            if( myCalcOption == graph_calc::none )
-                return;
-            // fill graph panel with image produced by graphviz
-            wex::window2file w2f;
-            auto path = std::filesystem::temp_directory_path();
-            auto sample = path / "sample.png";
-            w2f.draw(graphPanel, sample.string());
+            drawLayout(ps);
         });
 
     show();
@@ -88,6 +83,10 @@ void cGUI::calculate()
         {
             // raven::set::cRunWatch::Start();
             myCalcOption = readfile(myGraph, myfname);
+
+            myplText.text("Caclulating...");
+            myplText.update();
+
             switch (myCalcOption)
             {
 
@@ -112,10 +111,16 @@ void cGUI::calculate()
                 }
                 break;
 
+            case graph_calc::spans:
+                calcSpan();
+                break;
+
             case graph_calc::none:
                 break;
             }
         }
+        myplText.text("");
+        myplLayout.show(true);
         fm.update();
     }
     catch (std::runtime_error &e)
@@ -126,11 +131,19 @@ void cGUI::calculate()
 }
 void cGUI::calcCost()
 {
+    if( myStartName.empty() || myEndName.empty() )
+        throw std::runtime_error("No path endpoints");
+        
     auto result = path(
         myGraph,
         myStartName,
         myEndName);
 
+    if (!result.first.size())
+    {
+        myResultText = "No path found";
+        return;
+    }
     myResultText = "";
     for (int v : result.first)
         myResultText += myGraph.userName(v) + " -> ";
@@ -143,7 +156,19 @@ void cGUI::calcCost()
     RunDOT(
         myGraph,
         viz);
-    graphPanel.update();
+}
+
+void cGUI::calcSpan()
+{
+    myResultGraph = spanningTree(myGraph, myGraph.userName(0));
+    myViewType = eView::span;
+    auto viz = pathViz(
+        myResultGraph,
+        {},
+        true);
+    RunDOT(
+        myResultGraph,
+        viz);
 }
 
 void cGUI::calcCycle()
@@ -201,22 +226,44 @@ void cGUI::drawInput(wex::shapes &S)
 
 void cGUI::drawSpan(wex::shapes &S)
 {
-    if (myCalcOption != graph_calc::tour)
-        return;
-    S.color(0x0000FF);
+    S.color(0x000000);
     S.penThick(2);
     std::stringstream ss;
-    for (auto &pl : mypTourNodes->spanTree_get())
+    for (int v1 = 0; v1 < myResultGraph.vertexCount(); v1++)
     {
-        ss << myGraph.userName(std::get<0>(pl))
-           << " - " << myGraph.userName(std::get<1>(pl))
-           << "\n";
-        // int w, h, w2, h2;
-        // grid->coords(
-        //     w, h, std::get<0>(pl));
-        // grid->coords(
-        //     w2, h2, std::get<1>(pl));
-        // S.line({scale * w, scale * h, scale * w2, scale * h2});
+        for (int v2 : myResultGraph.adjacentOut(v1))
+        {
+            // check not reverse link in undirected graph
+            if (!myResultGraph.isDirected())
+                if (v1 > v2)
+                    continue;
+
+            ss << myResultGraph.userName(v1) << " - "
+               << myResultGraph.userName(v2) << ", ";
+        }
     }
     S.text(ss.str(), {20, 20, 1000, 500});
+}
+
+void cGUI::drawLayout(PAINTSTRUCT &ps)
+{
+    switch (myCalcOption)
+    {
+
+    case graph_calc::cost:
+    case graph_calc::spans:
+    {
+        // fill graph panel with image produced by graphviz
+        myplLayout.show(true);
+        wex::window2file w2f;
+        auto path = std::filesystem::temp_directory_path();
+        auto sample = path / "sample.png";
+        w2f.draw(myplLayout, sample.string());
+    }
+    break;
+
+    default:
+        myplLayout.show(false);
+        break;
+    }
 }

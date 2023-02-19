@@ -126,6 +126,11 @@ graph_calc readfile(
         option = graph_calc::obs;
         readObstacles( g, ifs );
     }
+        else if (calc.find("spans") != -1)
+    {
+        option = graph_calc::spans;
+        readCostedLinks( g, ifs );
+    }
     else
         throw std::runtime_error(
             "bad calculation type ");

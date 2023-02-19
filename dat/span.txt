@@ -1,0 +1,5 @@
+format spans
+l 1 2 1
+l 2 3 1
+l 2 4 10
+l 4 3 1

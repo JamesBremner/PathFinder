@@ -10,7 +10,7 @@ namespace raven
 
     std::string pathViz(
         cGraphData &g,
-        std::vector<int> &vpath,
+        const std::vector<int> &vpath,
         bool all)
     {
         std::string graphvizgraph = "graph";
