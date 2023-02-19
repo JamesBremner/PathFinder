@@ -84,7 +84,7 @@ void cGUI::calculate()
             // raven::set::cRunWatch::Start();
             myCalcOption = readfile(myGraph, myfname);
 
-            myplText.text("Caclulating...");
+            myplText.text("Calculating...");
             myplText.update();
 
             switch (myCalcOption)
@@ -133,7 +133,7 @@ void cGUI::calcCost()
 {
     if( myStartName.empty() || myEndName.empty() )
         throw std::runtime_error("No path endpoints");
-        
+
     auto result = path(
         myGraph,
         myStartName,
@@ -160,7 +160,9 @@ void cGUI::calcCost()
 
 void cGUI::calcSpan()
 {
-    myResultGraph = spanningTree(myGraph, myGraph.userName(0));
+    if( myStartName.empty() )
+        myStartName = myGraph.userName(0);
+    myResultGraph = spanningTree(myGraph, myStartName);
     myViewType = eView::span;
     auto viz = pathViz(
         myResultGraph,
