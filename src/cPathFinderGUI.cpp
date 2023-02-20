@@ -99,20 +99,15 @@ void cGUI::calculate()
                 break;
 
             case graph_calc::tour:
-
-                delete mypTourNodes;
-                mypTourNodes = new raven::cTourNodes(myGraph);
-                mypTourNodes->calculate();
-
-                myResultText = "";
-                for (int v : mypTourNodes->getTour())
-                {
-                    myResultText += myGraph.userName(v) + " -> ";
-                }
+                calcTour();
                 break;
 
             case graph_calc::spans:
                 calcSpan();
+                break;
+
+            case graph_calc::sales:
+                calcSales();
                 break;
 
             case graph_calc::none:
@@ -131,7 +126,7 @@ void cGUI::calculate()
 }
 void cGUI::calcCost()
 {
-    if( myStartName.empty() || myEndName.empty() )
+    if (myStartName.empty() || myEndName.empty())
         throw std::runtime_error("No path endpoints");
 
     auto result = path(
@@ -160,7 +155,7 @@ void cGUI::calcCost()
 
 void cGUI::calcSpan()
 {
-    if( myStartName.empty() )
+    if (myStartName.empty())
         myStartName = myGraph.userName(0);
     myResultGraph = spanningTree(myGraph, myStartName);
     myViewType = eView::span;
@@ -187,6 +182,48 @@ void cGUI::calcCycle()
     myViewType = eView::route;
 }
 
+void cGUI::calcTour() {
+                delete mypTourNodes;
+                mypTourNodes = new raven::cTourNodes(myGraph);
+                mypTourNodes->calculate();
+
+                myResultText = "";
+                for (int v : mypTourNodes->getTour())
+                {
+                    myResultText += myGraph.userName(v) + " -> ";
+                }
+}
+
+void cGUI::calcSales()
+{
+    myResultText = "Sales calcultion NYI";
+
+    if (myGraph.rVertexAttr(0, 1) == INT_MAX)
+    {
+        // link specification
+    }
+    else
+    {
+        // city location specification
+        // link all cities with the square of the pythogorean distance between their locations
+        for (int v1 = 0; v1 < myGraph.vertexCount(); v1++)
+        {
+            double x1 = myGraph.rVertexAttr(v1, 0);
+            double y1 = myGraph.rVertexAttr(v1, 1);
+            for (int v2 = v1 + 1; v2 < myGraph.vertexCount(); v2++)
+            {
+                double x2 = myGraph.rVertexAttr(v2, 0);
+                double y2 = myGraph.rVertexAttr(v2, 1);
+                double dx = x2 - x1;
+                double dy = y2 - y1;
+                std::string dsq = std::to_string(dx * dx + dy * dy);
+                myGraph.add(v1, v2, dsq);
+            }
+        }
+    }
+
+    calcTour();
+}
 void cGUI::draw(PAINTSTRUCT &ps)
 {
     fm.text("PathFinder " + myfname);

@@ -69,8 +69,15 @@ public:
         int src,
         int dst     );
 
-    void edgeAttr( int ie, const std::vector<std::string>& vsAttr );
-    void vertexAttr( int iv, const std::vector<std::string>& vsAttr );
+    /// @brief write edge attributes
+    /// @param ie edge index
+    /// @param vsAttr vector of strings to replace vertex attributes
+    void wEdgeAttr( int ie, const std::vector<std::string>& vsAttr );
+
+    /// @brief write vertex attributes
+    /// @param iv vertex index
+    /// @param vsAttr vector of strings to replace vertex attributes
+    void wVertexAttr( int iv, const std::vector<std::string>& vsAttr );
 
     //////////////////////// GETTERS
 
@@ -115,7 +122,9 @@ public:
 
     std::vector<std::string> adjacentOut(const std::string& name ) const;
 
-    double edgeAttr(int src, int dst, int ai) const;
+    double rVertexAttr(int vi, int ai) const;
+    double rEdgeAttr(int src, int dst, int ai) const;
+    double rEdgeAttr(int ei, int ai) const;
 
     /// @brief human readable edge list
     /// @return text

@@ -138,18 +138,19 @@ void cGraphData::remove(
     }
 }
 
-void cGraphData::edgeAttr(int ie, const std::vector<std::string> &vsAttr)
+void cGraphData::wEdgeAttr(int ie, const std::vector<std::string> &vsAttr)
 {
-    for (auto &sa : vsAttr)
-        vEdgeAttr[ie].push_back(sa);
+    if( 0 > ie || ie > vEdgeAttr.size()-1 )
+        throw std::runtime_error(
+            "cGraphData::eEdgAttr bad index"        );
+    vEdgeAttr[ie] = vsAttr;
 }
-void cGraphData::vertexAttr(int iv, const std::vector<std::string> &vsAttr)
+void cGraphData::wVertexAttr(int iv, const std::vector<std::string> &vsAttr)
 {
     if( 0 > iv || iv > vVertexAttr.size()-1 )
         throw std::runtime_error(
             "cGraphData::vertexAttr bad index"        );
-    for (auto &sa : vsAttr)
-        vVertexAttr[iv].push_back(sa);
+    vVertexAttr[iv] = vsAttr;
 }
 int cGraphData::edgeCount() const
 {
@@ -196,15 +197,27 @@ std::vector<std::string> cGraphData::adjacentOut(const std::string &name) const
     return ret;
 }
 
-double cGraphData::edgeAttr(int src, int dst, int ai) const
+double cGraphData::rVertexAttr(int vi, int ai) const
 {
-    int edg = find(src, dst);
-    if (edg < 0)
+    if( 0>vi || vi > vVertexName.size()-1 )
         return INT_MAX;
-    if (0 > ai || ai > vEdgeAttr[edg].size() - 1)
+    if( 0>ai || ai > vVertexAttr[vi].size()-1)
+        return INT_MAX;
+    return atof(vVertexAttr[vi][ai].c_str());  
+}
+
+double cGraphData::rEdgeAttr(int src, int dst, int ai) const
+{
+    return rEdgeAttr( find(src,dst),ai);
+}
+double cGraphData::rEdgeAttr(int ei, int ai) const
+{
+    if (ei < 0)
+        return INT_MAX;
+    if (0 > ai || ai > vEdgeAttr[ei].size() - 1)
         throw std::runtime_error(
             "cGraphData::edgeAttr bad attribute index");
-    return atof(vEdgeAttr[edg][ai].c_str());
+    return atof(vEdgeAttr[ei][ai].c_str());
 }
 
 std::string cGraphData::userName(int i) const

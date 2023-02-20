@@ -2,6 +2,51 @@
 #include "cGraphData.h"
 #include "cpathfinderGUI.h"
 
+static void readSales(
+    raven::cGraphData &g,
+    std::ifstream &ifs)
+{
+    g.clear();
+
+    enum class eInput
+    {
+        none,
+        city,
+        link,
+    } inputType = eInput::none;
+
+    std::string stype, sn1, sn2, scost, name, x, y;
+
+    ifs >> stype;
+
+    while (ifs.good())
+    {
+        switch (stype[0])
+        {
+        case 'c':
+            if (inputType == eInput::link)
+                throw std::runtime_error(
+                    "Cannot mix cities and links");
+            inputType = eInput::city;
+            ifs >> x >> y >> name;
+            g.wVertexAttr(g.add(name), {x, y});
+            break;
+
+        case 'l':
+            if (inputType == eInput::city)
+                throw std::runtime_error(
+                    "Cannot mix cities and links");
+            inputType = eInput::link;
+            ifs >> sn1 >> sn2 >> scost;
+            g.findorAdd(sn1, sn2, scost);
+            break;
+
+        }
+
+        ifs >> stype;
+    }
+}
+
 static void readCostedLinks(
     raven::cGraphData &g,
     std::ifstream &ifs)
@@ -15,10 +60,10 @@ static void readCostedLinks(
     {
         switch (stype[0])
         {
-            case 'g':
-            if( g.vertexCount() )
+        case 'g':
+            if (g.vertexCount())
                 throw std::runtime_error(
-                    "g ( graph mode ) must be second line"                );
+                    "g ( graph mode ) must be second line");
             g.directed();
             break;
         case 'l':
@@ -35,7 +80,6 @@ static void readCostedLinks(
             break;
         case 'c':
             ifs >> sn1;
-            
         }
 
         ifs >> stype;
@@ -56,8 +100,8 @@ static void readObstacles(
         {
         case 'l':
             ifs >> sn1 >> sn2 >> scost;
-            g.findorAdd(sn1, sn2, scost);
-            g.edgeAttr( ie, { sx, sy });
+            ie = g.findorAdd(sn1, sn2, scost);
+            g.wEdgeAttr(ie, {sx, sy});
             break;
         }
 
@@ -85,7 +129,7 @@ graph_calc readfile(
     if (calc.find("cost") != -1)
     {
         option = graph_calc::cost;
-        readCostedLinks( g, ifs );
+        readCostedLinks(g, ifs);
     }
 
     else if (calc.find("cycle") != -1)
@@ -119,17 +163,22 @@ graph_calc readfile(
     else if (calc.find("tour") != -1)
     {
         option = graph_calc::tour;
-        readCostedLinks( g, ifs );
+        readCostedLinks(g, ifs);
     }
     else if (calc.find("obs") != -1)
     {
         option = graph_calc::obs;
-        readObstacles( g, ifs );
+        readObstacles(g, ifs);
     }
-        else if (calc.find("spans") != -1)
+    else if (calc.find("spans") != -1)
     {
         option = graph_calc::spans;
-        readCostedLinks( g, ifs );
+        readCostedLinks(g, ifs);
+    }
+    else if (calc.find("sales") != -1)
+    {
+        option = graph_calc::sales;
+        readSales(g, ifs);
     }
     else
         throw std::runtime_error(

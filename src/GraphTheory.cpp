@@ -61,7 +61,7 @@ dijsktra(
 
             // Update dist[v] only if total weight of path from src to  v through u is
             // smaller than current value of dist[v]
-            double cost = g.edgeAttr(uidx, vp, 0);
+            double cost = g.rEdgeAttr(uidx, vp, 0);
             if (dist[uidx] + cost < dist[vp])
             {
                 dist[vp] = dist[uidx] + cost;
@@ -167,7 +167,7 @@ spanningTree(
                 if (v > w)
                     continue;
 
-                double cost = g.edgeAttr(v, w, 0);
+                double cost = g.rEdgeAttr(v, w, 0);
                 if (cost > 0)
                 {
                     if (cost < min_cost)

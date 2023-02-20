@@ -33,6 +33,21 @@ TEST(edgebyindex)
         act.begin()));
 }
 
+TEST( attributes)
+{
+    raven::cGraphData g;
+    int v1 = g.add("a");
+    int v2 = g.add("b");
+    int ei = g.add("a","b");
+    g.wVertexAttr(v1,{"10","11","12"});
+    g.wVertexAttr(v2,{"20","21","22"});
+    g.wEdgeAttr(ei,{"50","51","52"});
+
+    CHECK_EQUAL(11.0,g.rVertexAttr(v1,1));
+    CHECK_EQUAL(22.0,g.rVertexAttr(v2,2));
+    CHECK_EQUAL(50.0,g.rEdgeAttr(ei,0));
+}
+
 TEST(adjacent)
 {
     raven::cGraphData g;

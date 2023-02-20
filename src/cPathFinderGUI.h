@@ -74,6 +74,7 @@ enum class graph_calc
     tour,
     obs,
     spans,
+    sales,
 };
 
 class cGUI : public cStarterGUI
@@ -118,6 +119,8 @@ private:
     void calcCost();
     void calcCycle();
     void calcSpan();
+    void calcSales();
+    void calcTour();
 
     void draw(PAINTSTRUCT &ps);
     void drawLayout(PAINTSTRUCT &ps);
