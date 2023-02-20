@@ -182,16 +182,17 @@ void cGUI::calcCycle()
     myViewType = eView::route;
 }
 
-void cGUI::calcTour() {
-                delete mypTourNodes;
-                mypTourNodes = new raven::cTourNodes(myGraph);
-                mypTourNodes->calculate();
+void cGUI::calcTour()
+{
+    delete mypTourNodes;
+    mypTourNodes = new raven::cTourNodes(myGraph);
+    mypTourNodes->calculate();
 
-                myResultText = "";
-                for (int v : mypTourNodes->getTour())
-                {
-                    myResultText += myGraph.userName(v) + " -> ";
-                }
+    myResultText = "";
+    for (int v : mypTourNodes->getTour())
+    {
+        myResultText += myGraph.userName(v) + " -> ";
+    }
 }
 
 void cGUI::calcSales()
@@ -223,6 +224,13 @@ void cGUI::calcSales()
     }
 
     calcTour();
+
+    RunDOT(
+        myGraph,
+        pathViz(
+            myGraph,
+            mypTourNodes->getTour(),
+            true));
 }
 void cGUI::draw(PAINTSTRUCT &ps)
 {
@@ -291,6 +299,7 @@ void cGUI::drawLayout(PAINTSTRUCT &ps)
 
     case graph_calc::cost:
     case graph_calc::spans:
+    case graph_calc::sales:
     {
         // fill graph panel with image produced by graphviz
         myplLayout.show(true);
