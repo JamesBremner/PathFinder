@@ -85,6 +85,44 @@ static void readCostedLinks(
         ifs >> stype;
     }
 }
+static void readUncostedLinks(
+    raven::cGraphData &g,
+    std::ifstream &ifs)
+{
+    g.clear();
+
+    std::string stype, sn1, sn2;
+    ifs >> stype;
+
+    while (ifs.good())
+    {
+        switch (stype[0])
+        {
+        case 'g':
+            if (g.vertexCount())
+                throw std::runtime_error(
+                    "g ( graph mode ) must be second line");
+            g.directed();
+            break;
+        case 'l':
+            ifs >> sn1 >> sn2;
+            g.findorAdd(sn1, sn2, "1");
+            break;
+        case 's':
+            ifs >> sn1;
+            theGUI.start(sn1);
+            break;
+        case 'e':
+            ifs >> sn1;
+            theGUI.end(sn1);
+            break;
+        case 'c':
+            ifs >> sn1;
+        }
+
+        ifs >> stype;
+    }
+}
 static void readObstacles(
     raven::cGraphData &g,
     std::ifstream &ifs)
@@ -179,6 +217,11 @@ graph_calc readfile(
     {
         option = graph_calc::sales;
         readSales(g, ifs);
+    }
+        else if (calc.find("cliques") != -1)
+    {
+        option = graph_calc::cliques;
+        readUncostedLinks(g, ifs);
     }
     else
         throw std::runtime_error(

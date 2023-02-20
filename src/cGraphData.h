@@ -112,6 +112,11 @@ public:
 
     std::vector<std::string> vertexNames() const;
 
+    /// @brief find edge
+    /// @param src 
+    /// @param dst 
+    /// @return edge index, -1 if no edge found
+    
     int find(int src, int dst) const;
 
     /// @brief vertices reachable with one hop
@@ -123,6 +128,7 @@ public:
     std::vector<std::string> adjacentOut(const std::string& name ) const;
 
     double rVertexAttr(int vi, int ai) const;
+    std::string rVertexAttrString(int vi, int ai ) const;
     double rEdgeAttr(int src, int dst, int ai) const;
     double rEdgeAttr(int ei, int ai) const;
 

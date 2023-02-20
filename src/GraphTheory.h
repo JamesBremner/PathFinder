@@ -121,10 +121,14 @@ namespace raven
     tourNodes(
         const cGraphData &g);
 
+    void cliques(
+        const cGraphData &g,
+        std::string& results );
+
     /// @brief Graph description in graphviz dot format
-    /// @param g 
-    /// @param vpath 
-    /// @param all 
+    /// @param g
+    /// @param vpath
+    /// @param all
     /// @return string in graphviz dot format
 
     std::string pathViz(
@@ -133,7 +137,7 @@ namespace raven
         bool all);
 
     /// @brief Run the graphviz dot layout program
-    /// @param[in] g 
+    /// @param[in] g
     /// @param[in] pathViz string in graphviz dot format
 
     void RunDOT(

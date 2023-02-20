@@ -110,6 +110,10 @@ void cGUI::calculate()
                 calcSales();
                 break;
 
+            case graph_calc::cliques:
+                calcCliques();
+                break;
+
             case graph_calc::none:
                 break;
             }
@@ -231,6 +235,13 @@ void cGUI::calcSales()
             myGraph,
             mypTourNodes->getTour(),
             true));
+}
+
+void cGUI::calcCliques()
+{
+    cliques(
+        myGraph,
+        myResultText );
 }
 void cGUI::draw(PAINTSTRUCT &ps)
 {
