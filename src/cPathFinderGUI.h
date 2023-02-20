@@ -76,6 +76,7 @@ enum class graph_calc
     spans,
     sales,
     cliques,
+    flows
 };
 
 class cGUI : public cStarterGUI
@@ -123,6 +124,7 @@ private:
     void calcSales();
     void calcTour();
     void calcCliques();
+    void calcFlows();
 
     void draw(PAINTSTRUCT &ps);
     void drawLayout(PAINTSTRUCT &ps);

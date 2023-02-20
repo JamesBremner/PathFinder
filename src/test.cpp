@@ -48,6 +48,18 @@ TEST( attributes)
     CHECK_EQUAL(50.0,g.rEdgeAttr(ei,0));
 }
 
+TEST( removeLink )
+{
+    raven::cGraphData g;
+    g.findorAdd("a", "b", "1");
+    g.findorAdd("b", "c", "1");
+    g.findorAdd("a", "d", "1");
+
+    g.remove("b","c");
+
+    CHECK_EQUAL( 2, g.edgeCount());
+}
+
 TEST(adjacent)
 {
     raven::cGraphData g;
@@ -171,6 +183,15 @@ TEST(cycle)
     auto act = dfs_cycle_finder(g,"a");
     CHECK_EQUAL(1,act.size());
     CHECK_EQUAL(5,act[0].size());
+}
+
+TEST( flows )
+{
+    raven::cGraphData g;
+    g.findorAdd("a", "b", "7");\
+    double f = flows(
+        g, "a", "b" );
+    CHECK_EQUAL(7.0,f);
 }
 
 main()

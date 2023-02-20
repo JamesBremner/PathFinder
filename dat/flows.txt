@@ -1,0 +1,16 @@
+format flows
+l a b 300
+l a c 140
+l a h 150
+l b e 400
+l b f 50
+l b d 250
+l c b 300
+l c g 250
+l d g 50
+l f g 500
+l h g 150
+s a
+e g
+
+

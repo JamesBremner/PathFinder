@@ -114,6 +114,10 @@ void cGUI::calculate()
                 calcCliques();
                 break;
 
+            case graph_calc::flows:
+                calcFlows();
+                break;
+
             case graph_calc::none:
                 break;
             }
@@ -241,7 +245,16 @@ void cGUI::calcCliques()
 {
     cliques(
         myGraph,
-        myResultText );
+        myResultText);
+}
+
+void cGUI::calcFlows()
+{
+    double flow = flows(
+        myGraph,
+        myStartName,
+        myEndName);
+    myResultText = "Total Flow = " + std::to_string(flow);
 }
 void cGUI::draw(PAINTSTRUCT &ps)
 {

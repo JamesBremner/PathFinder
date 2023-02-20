@@ -298,7 +298,7 @@ namespace raven
 
     void cliques(
         const cGraphData &g,
-        std::string& results )
+        std::string &results)
     {
         // working copy on input graph
         auto work = g;
@@ -313,7 +313,7 @@ namespace raven
         {
             std::vector<int> clique;
 
-            while ( ! finished )
+            while (!finished)
             {
                 // std::cout << "work.nodeCount " << work.nodeCount() << " " << clique.size() << "\n";
                 if (!clique.size())
@@ -342,12 +342,12 @@ namespace raven
                     // loop over nodes in clique
                     for (int v : clique)
                     {
-                        if( work.find(u,v) >= 0 ||
-                            work.find(v,u) >= 0 )
+                        if (work.find(u, v) >= 0 ||
+                            work.find(v, u) >= 0)
                         {
                             // found node in work that is connected to clique nodes.
                             // move it to clique
-                             std::cout << "add " << work.userName(u) << "\n";
+                            std::cout << "add " << work.userName(u) << "\n";
                             clique.push_back(u);
                             work.wVertexAttr(u, {"deleted"});
                             found = true;
@@ -378,7 +378,74 @@ namespace raven
             ss << "\n";
         }
         results = ss.str();
+    }
+    double flows(
+        const cGraphData &g,
+        const std::string &start,
+        const std::string &end)
+    {
 
+        int totalFlow = 0;
+
+        auto work = g;
+
+        while (1)
+        {
+            // find path
+            // std::cout << "links:\n" << linksText() << "\n";
+            auto p = path(work, start, end);
+            // std::cout << "pathsize " << myPath.size() << " ";
+            if (!p.first.size())
+                break;
+            // std::cout << "Path " << pathText() << "\n";
+
+            // maximum flow through path
+            int maxflow = INT_MAX;
+            int u = -1;
+            int v;
+            for (int v : p.first)
+            {
+                if (u >= 0)
+                {
+                    double cap = work.rEdgeAttr(u, v, 0);
+                    if (cap < maxflow)
+                    {
+                        maxflow = cap;
+                    }
+                }
+                u = v;
+            }
+
+            // consume capacity of links in path
+            u = -1;
+            for (int v : p.first)
+            {
+                if (u >= 0)
+                {
+                    double cap = work.rEdgeAttr(u, v, 0) - maxflow;
+                    if (cap <= 0)
+                    {
+                        work.remove(u, v);
+                    }
+                    else
+                    {
+                        work.wEdgeAttr(
+                            work.find(u, v),
+                            {std::to_string(cap)});
+
+                        if (!work.isDirected())
+                            work.wEdgeAttr(
+                                work.find(v, u),
+                                {std::to_string(cap)});
+                    }
+                }
+                u = v;
+            }
+
+            totalFlow += maxflow;
+        }
+
+        return totalFlow;
     }
 
 }

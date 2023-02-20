@@ -125,17 +125,32 @@ namespace raven
         if (0 > src || src > vertexCount() - 1 ||
             0 > dst || dst > vertexCount() - 1)
             return;
-        auto eit = std::find(vOutEdges[src].begin(), vOutEdges[src].end(), dst);
-        if (eit != vOutEdges[src].end())
+
+        for (auto eit = vOutEdges[src].begin();
+             eit != vOutEdges[src].end();
+             eit++)
         {
-            vEdgeDst[*eit] = -1;
-            vOutEdges[src].erase(eit);
+            if (vEdgeDst[*eit] == dst)
+            {
+                vEdgeDst[*eit] = -1;
+                vOutEdges[src].erase(eit);
+                break;
+            }
         }
-        eit = std::find(vOutEdges[dst].begin(), vOutEdges[dst].end(), src);
-        if (eit != vOutEdges[dst].end())
+
+        if (!isDirected())
         {
-            vEdgeDst[*eit] = -1;
-            vOutEdges[dst].erase(eit);
+            for (auto eit = vOutEdges[dst].begin();
+                 eit != vOutEdges[dst].end();
+                 eit++)
+            {
+                if (vEdgeDst[*eit] == src)
+                {
+                    vEdgeDst[*eit] = -1;
+                    vOutEdges[dst].erase(eit);
+                    break;
+                }
+            }
         }
     }
 
@@ -200,8 +215,8 @@ namespace raven
 
     double cGraphData::rVertexAttr(int vi, int ai) const
     {
-        auto s = rVertexAttrString(vi,ai);
-        if( s.empty() )
+        auto s = rVertexAttrString(vi, ai);
+        if (s.empty())
             return INT_MAX;
         return atof(s.c_str());
     }

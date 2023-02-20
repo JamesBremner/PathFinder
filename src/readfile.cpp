@@ -40,7 +40,6 @@ static void readSales(
             ifs >> sn1 >> sn2 >> scost;
             g.findorAdd(sn1, sn2, scost);
             break;
-
         }
 
         ifs >> stype;
@@ -218,10 +217,15 @@ graph_calc readfile(
         option = graph_calc::sales;
         readSales(g, ifs);
     }
-        else if (calc.find("cliques") != -1)
+    else if (calc.find("cliques") != -1)
     {
         option = graph_calc::cliques;
         readUncostedLinks(g, ifs);
+    }
+    else if (calc.find("flows") != -1)
+    {
+        option = graph_calc::flows;
+        readCostedLinks(g, ifs);
     }
     else
         throw std::runtime_error(

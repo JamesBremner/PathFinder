@@ -123,7 +123,12 @@ namespace raven
 
     void cliques(
         const cGraphData &g,
-        std::string& results );
+        std::string &results);
+
+    double flows(
+        const cGraphData &g,
+        const std::string &start,
+        const std::string &end);
 
     /// @brief Graph description in graphviz dot format
     /// @param g
