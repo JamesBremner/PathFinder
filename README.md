@@ -1,6 +1,6 @@
 # PathFinder
 
-Find paths through undirected graphs.
+Find paths through graphs with verrtices and edges.
 
 ## Applications
 
