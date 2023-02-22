@@ -29,6 +29,14 @@
             "group": { "kind": "build", "isDefault": true }
         },
         {
+            "label": "graphex",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe",
+            "args": ["-f", ".vscode/makefile", "graphex" ],
+            "problemMatcher": [ "$gcc" ],
+            "group": { "kind": "build", "isDefault": true }
+        },
+        {
             "label": "clean",
             "options": {
                 "cwd": "${workspaceFolder}"

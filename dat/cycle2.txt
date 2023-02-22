@@ -1,0 +1,11 @@
+format cycle
+l a b
+l b c
+l d a
+l c d
+l b e
+l e f
+l f g
+l g e
+
+

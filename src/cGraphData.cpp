@@ -33,6 +33,7 @@ namespace raven
             throw std::runtime_error("cGraphData::add duplicate vertex name " + vertexName);
         vVertexName.push_back(vertexName);
         vOutEdges.push_back({});
+        vInEdges.push_back({});
         vVertexAttr.push_back({});
         return vVertexName.size() - 1;
     }
@@ -66,6 +67,7 @@ namespace raven
 
         int iedge = vEdgeDst.size();
         vOutEdges[src].push_back(iedge);
+        vInEdges[dst].push_back(iedge);
         vEdgeDst.push_back(dst);
         vEdgeAttr.push_back({});
         vEdgeAttr[iedge].push_back(sAttr);
@@ -213,6 +215,14 @@ namespace raven
         return ret;
     }
 
+    std::vector<int> cGraphData::adjacentIn(int vi) const
+    {
+        std::vector<int> ret;
+        for (int ei : vInEdges[vi])
+            ret.push_back(vEdgeDst[ei]);
+        return ret;
+    }
+
     double cGraphData::rVertexAttr(int vi, int ai) const
     {
         auto s = rVertexAttrString(vi, ai);
@@ -281,7 +291,7 @@ namespace raven
             for (int ei : vOutEdges[vi])
             {
                 int wi = vEdgeDst[ei];
-                if (vi > wi)
+                if (( ! fDirected ) && (vi > wi))
                     continue;
                 ss << "l " << vn << " " << vVertexName[wi];
                 for (auto &sa : vEdgeAttr[ei])

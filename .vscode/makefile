@@ -15,7 +15,7 @@ static_link_flags = -static-libstdc++ -static-libgcc -static
 # folders
 ODIR = ./.vscode/obj
 
-OPT = -g
+OPT = -O2
 CCflags = -std=c++17 $(OPT) -D_mingw_
 
 # sources
@@ -45,14 +45,32 @@ OBJ_obstacle = \
 	$(ODIR)/autocell.o \
 	$(ODIR)/cxy.o \
 
+OBJ_graphex = \
+	$(ODIR)/graphex.o \
+	$(ODIR)/cGraphData.o \
+	$(ODIR)/GraphTheory.o \
+	$(ODIR)/cRunWatch.o
+
 DEPS = \
-	cGraphData.h
+	cGraphData.h GraphTheory.h
 
 ### COMPILE
+
+$(ODIR)/graphex.o : graphex.cpp $(DEPS)
+	g++ $<  \
+	-c -o $@ $(INCS) $(CCflags) \
+	-I../../code_ext/boost/boost1_78
+
+$(ODIR)/cRunWatch.o : cRunWatch.cpp
+	g++ $<  \
+	-c -o $@ $(INCS) $(CCflags) \
+	-I../../code_ext/boost/boost1_78
 
 $(ODIR)/%.o: %.cpp $(DEPS)
 	g++ $<  \
 	-c -o $@ $(INCS) $(CCflags)
+
+### LINK
 
 test: $(OBJ_test)
 	g++ -o bin/test.exe \
@@ -69,9 +87,17 @@ obstacle: $(OBJ_obstacle)
 	$^ $(OPT) \
 	$(static_link_flags) $(LIBS)
 
+graphex: $(OBJ_graphex)
+	g++ -o bin/graphex.exe \
+	$^ $(OPT) \
+	$(static_link_flags) $(LIBS)
+
+
+
+
 .PHONY: clean
 clean:
 	del /q .vscode\\obj\\*.o
 
-rebuild: clean test pathfinder obstacle
+rebuild: clean test pathfinder obstacle graphex
 

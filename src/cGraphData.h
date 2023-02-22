@@ -127,6 +127,12 @@ public:
 
     std::vector<std::string> adjacentOut(const std::string& name ) const;
 
+    /// @brief vertices that can reach specified vertex in one hop
+    /// @param vi 
+    /// @return 
+    std::vector<int> adjacentIn(int vi) const;
+
+
     double rVertexAttr(int vi, int ai) const;
     std::string rVertexAttrString(int vi, int ai ) const;
     double rEdgeAttr(int src, int dst, int ai) const;
@@ -155,6 +161,8 @@ private:
         vOutEdges[vi][wi] is the index of the with edge starting at the vith vertex
     */
     std::vector<std::vector<int>> vOutEdges;
+
+    std::vector<std::vector<int>> vInEdges;
 
     /* vertex indices of edge destinations
 
