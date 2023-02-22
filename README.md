@@ -24,4 +24,8 @@ A GUI that reads obstacle locations ( e.g. furniture in a room or crops in a fie
 
 Run unit tests
 
+### Graphex
+
+Run timing tests
+
 
