@@ -184,6 +184,24 @@ TEST(cycle)
     CHECK_EQUAL(1,act.size());
     CHECK_EQUAL(5,act[0].size());
 }
+TEST(cycle2)
+{
+    raven::cGraphData g;
+    g.directed();
+    g.findorAdd("a", "b", "1");
+    g.findorAdd("b", "c", "1");
+    g.findorAdd("d", "a", "1");
+    g.findorAdd("c", "d", "1");
+    g.findorAdd("b", "e", "1");
+    g.findorAdd("e", "f", "1");
+    g.findorAdd("f", "g", "1");
+    g.findorAdd("g", "e", "1");
+    
+
+    auto act = dfs_cycle_finder(g,"a");
+    CHECK_EQUAL(2,act.size());
+    CHECK_EQUAL(4,act[0].size());
+}
 
 TEST( flows )
 {
@@ -196,5 +214,6 @@ TEST( flows )
 
 main()
 {
+    std::cout << "run all tests\n";
     return raven::set::UnitTest::RunAllTests();
 }

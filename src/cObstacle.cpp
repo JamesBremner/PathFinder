@@ -165,8 +165,8 @@ void cObstacle::inputGraph()
                 std::to_string(d2));
             int v1 = mygraphdata.find(std::to_string(n1->ID()));
             int v2 = mygraphdata.find(std::to_string(n2->ID()));
-            mygraphdata.vertexAttr(v1,{std::to_string(w1),std::to_string(h1)});
-            mygraphdata.vertexAttr(v2,{std::to_string(w2),std::to_string(h2)});
+            mygraphdata.wVertexAttr(v1,{std::to_string(w1),std::to_string(h1)});
+            mygraphdata.wVertexAttr(v2,{std::to_string(w2),std::to_string(h2)});
         }
     std::ofstream ofs("../data/obstacle_graph.txt");
     if( ! ofs.is_open() )

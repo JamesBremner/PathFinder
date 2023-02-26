@@ -11,7 +11,7 @@
 
 raven::cGraphData theGraph;
 
- std::vector<std::string> tokenize(const std::string &line)
+std::vector<std::string> tokenize(const std::string &line)
 {
     std::vector<std::string> ret;
     std::stringstream sst(line);
@@ -21,7 +21,7 @@ raven::cGraphData theGraph;
     return ret;
 }
 
- std::vector<std::string> userQuery()
+std::vector<std::string> userQuery()
 {
     std::cout << "type query> ";
     std::string line;
@@ -29,7 +29,7 @@ raven::cGraphData theGraph;
     return tokenize(line);
 }
 
- void displayStatus()
+void displayStatus()
 {
     std::cout << "\n"
               << theGraph.vertexCount() << " vertices "
@@ -37,7 +37,7 @@ raven::cGraphData theGraph;
               << "\n\n";
 }
 
- void add(const std::vector<std::string> &q)
+void add(const std::vector<std::string> &q)
 {
     if (q.size() < 3)
         return;
@@ -86,10 +86,10 @@ void display(const std::vector<std::string> &q)
     }
     std::cout << "\n";
 
-    //std::cout << theGraph.text();
+    // std::cout << theGraph.text();
 }
 
- void read(const std::vector<std::string> &q)
+void read(const std::vector<std::string> &q)
 {
     if (q.size() < 2)
         return;
@@ -102,13 +102,19 @@ void display(const std::vector<std::string> &q)
     while (getline(ifs, line))
     {
         auto tokens = tokenize(line);
+        if (tokens.size() < 3)
+            continue;
         if (tokens[0].find("#") != -1)
             continue;
 
+        // int v1 = theGraph.findorAdd(tokens[1]);
+        // theGraph.wVertexAttr(v1, {std::to_string(rand() % 10), "0", "0"});
+        // int v2 = theGraph.findorAdd(tokens[2]);
+        // theGraph.wVertexAttr(v2, {std::to_string(rand() % 10), "0", "0"});
+        // theGraph.add(v1, v2);
+
         int v1 = theGraph.findorAdd(tokens[1]);
-        theGraph.wVertexAttr(v1, {std::to_string(rand() % 10), "0", "0"});
         int v2 = theGraph.findorAdd(tokens[2]);
-        theGraph.wVertexAttr(v2, {std::to_string(rand() % 10), "0", "0"});
         theGraph.add(v1, v2);
 
         count++;
@@ -118,12 +124,21 @@ void display(const std::vector<std::string> &q)
     displayStatus();
 }
 
- void ancestor_recurse(
+void cycles()
+{
+    auto cycles = dfs_cycle_finder(
+        theGraph,
+        // theGraph.userName(rand() % theGraph.vertexCount()));
+        theGraph.userName( 0 ));
+    std::cout << cycles.size() << " cycles\n";
+}
+
+void ancestor_recurse(
     int v,
     int depth,
     std::set<int> &setAncestors)
 {
-    if( depth > 5 )
+    if (depth > 5)
         return;
 
     // loop over imediate ancestors
@@ -133,18 +148,18 @@ void display(const std::vector<std::string> &q)
         setAncestors.insert(a);
 
         // look for deeper ancestors
-        ancestor_recurse(a, depth+1, setAncestors);
+        ancestor_recurse(a, depth + 1, setAncestors);
     }
 }
 
- void ancestor()
+void ancestor()
 {
-    #define REPEAT 1000
+#define REPEAT 1000
 
     // loop over vertices
     for (int r = 0; r < REPEAT; r++)
     {
-        //time profiler
+        // time profiler
         raven::set::cRunWatch aWatcher("ancestor");
 
         // select random node
@@ -166,19 +181,20 @@ void display(const std::vector<std::string> &q)
         theGraph.wVertexAttr(
             v,
             {theGraph.rVertexAttrString(v, 0),
-              std::to_string(average)});
+             std::to_string(average)});
 
-        //std::cout << v <<" "<< average << "\n";
+        // std::cout << v <<" "<< average << "\n";
     }
 }
 
- void help()
+void help()
 {
     std::cout << "\nSupported queries\n"
                  "add v1 v2 :     add link to graph\n"
                  "add random n :  add n random links to graph\n"
                  "read filepath : input graph links from file\n"
                  "display :       display links\n"
+                 "cyccles :       find cycles in graph\n"
                  "help :          this help display\n\n";
 }
 
@@ -207,6 +223,8 @@ main()
                 read(q);
             else if (q[0] == "ancestor")
                 ancestor();
+            else if (q[0] == "cycles")
+                cycles();
             else
                 std::cout << "unreqonized query\n";
         }

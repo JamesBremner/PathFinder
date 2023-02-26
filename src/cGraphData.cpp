@@ -63,6 +63,7 @@ namespace raven
             max++;
             vVertexName.resize(max, "@myIndex");
             vOutEdges.resize(max);
+            vInEdges.resize(max);
         }
 
         int iedge = vEdgeDst.size();
