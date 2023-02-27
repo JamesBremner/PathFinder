@@ -178,9 +178,8 @@ void cGUI::calcSpan()
 
 void cGUI::calcCycle()
 {
-    if( myStartName.empty() )
-        myStartName =  myGraph.userName(0);
-    auto vc = dfs_cycle_finder(myGraph, myStartName);
+    auto vc = dfs_cycle_finder(myGraph);
+    
     myResultText = std::to_string(vc.size()) + " cycles found\n\n";
     for (int k = 0; k < vc.size(); k++)
     {

@@ -180,7 +180,7 @@ TEST(cycle)
     g.findorAdd("d", "a", "1");
     g.findorAdd("c", "d", "1");
 
-    auto act = dfs_cycle_finder(g,"a");
+    auto act = dfs_cycle_finder(g);
     CHECK_EQUAL(1,act.size());
     CHECK_EQUAL(5,act[0].size());
 }
@@ -198,7 +198,7 @@ TEST(cycle2)
     g.findorAdd("g", "e", "1");
     
 
-    auto act = dfs_cycle_finder(g,"a");
+    auto act = dfs_cycle_finder(g);
     CHECK_EQUAL(2,act.size());
     CHECK_EQUAL(4,act[0].size());
 }

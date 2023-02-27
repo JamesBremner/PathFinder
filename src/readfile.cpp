@@ -161,11 +161,6 @@ static void readCycle(
             ifs >> sn1 >> sn2;
             g.findorAdd(sn1, sn2, "1");
         }
-        else if (stype[0] == 's')
-        {
-            ifs >> sn1;
-            theGUI.start(sn1);
-        }
         ifs >> stype;
     }
 }

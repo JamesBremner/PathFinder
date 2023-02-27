@@ -127,9 +127,7 @@ void read(const std::vector<std::string> &q)
 void cycles()
 {
     auto cycles = dfs_cycle_finder(
-        theGraph,
-        // theGraph.userName(rand() % theGraph.vertexCount()));
-        theGraph.userName( 0 ));
+        theGraph);
     std::cout << cycles.size() << " cycles\n";
 }
 
@@ -194,7 +192,7 @@ void help()
                  "add random n :  add n random links to graph\n"
                  "read filepath : input graph links from file\n"
                  "display :       display links\n"
-                 "cyccles :       find cycles in graph\n"
+                 "cycles :       find cycles in graph\n"
                  "help :          this help display\n\n";
 }
 

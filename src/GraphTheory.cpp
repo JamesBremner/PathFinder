@@ -246,8 +246,7 @@ namespace raven
 
     std::vector<std::vector<int>>
     dfs_cycle_finder(
-        const cGraphData &g,
-        const std::string &start)
+        const cGraphData &g)
     {
         if (!g.isDirected())
             throw std::runtime_error(
@@ -258,36 +257,76 @@ namespace raven
         // track visited vertices
         std::vector<bool> visited(g.vertexCount(), false);
 
-        // vertices waiting to be processed
-        std::stack<int> wait;
-
-        // start at the beginning
-        wait.push(g.find(start));
-
-        // continue until no more vertices need processing
-        while (!wait.empty())
+        while (true)
         {
-            int v = wait.top();
-            wait.pop();
-            if (!visited[v])
+            // check for unvisited vertices
+            int startIndex = -1;
+            for (int k = 0; k < visited.size(); k++)
             {
-                visited[v] = true;
-
-                for (int w : g.adjacentOut(v))
+                if (!visited[k])
                 {
-                    if (!visited[w])
+                    startIndex = k;
+                    break;
+                }
+            }
+            if (startIndex == -1)
+                break;
+
+            // vertices waiting to be processed
+            std::stack<int> wait;
+
+            // start from an unvisited vertex
+            wait.push(startIndex);
+
+            // continue until no more vertices need processing
+            while (!wait.empty())
+            {
+                int v = wait.top();
+                wait.pop();
+                if (!visited[v])
+                {
+                    visited[v] = true;
+
+                    for (int w : g.adjacentOut(v))
                     {
-                        wait.push(w);
-                    }
-                    else
-                    {
-                        // previously visited node, check for ancestor
-                        auto cycle = path(g, w, v);
-                        if (cycle.first.size() > 0)
+                        if (!visited[w])
                         {
-                            // found a cycle
-                            cycle.first.push_back(w);
-                            ret.push_back(cycle.first);
+                            wait.push(w);
+                        }
+                        else
+                        {
+                            // previously visited node, check for ancestor
+                            auto cycle = path(g, w, v);
+                            if (cycle.first.size() > 0)
+                            {
+                                cycle.first.push_back(w);
+
+                                // check this is a new cycle
+                                bool fnew = true;
+                                for (int kcycle = 0; kcycle < ret.size(); kcycle++)
+                                {
+                                    if (ret[kcycle].size() != cycle.first.size())
+                                        continue;
+                                    bool fsame = true;
+                                    for (int i = 0; i < cycle.first.size(); i++)
+                                    {
+                                        if (ret[kcycle][i] != cycle.first[i])
+                                        {
+                                            fsame = false;
+                                            break;
+                                        }
+                                    }
+                                    if( fsame )
+                                    {
+                                        fnew = false;
+                                        break;
+                                    }
+                                }
+                                if (fnew)
+                                {
+                                    ret.push_back(cycle.first);
+                                }
+                            }
                         }
                     }
                 }
@@ -447,5 +486,4 @@ namespace raven
 
         return totalFlow;
     }
-
 }

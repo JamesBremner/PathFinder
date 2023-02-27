@@ -107,13 +107,11 @@ namespace raven
 
     /// @brief cycle finder
     /// @param g
-    /// @param start
     /// @return vector of cycles
 
     std::vector<std::vector<int>>
     dfs_cycle_finder(
-        const cGraphData &g,
-        const std::string &start);
+        const cGraphData &g);
 
     /// @brief path visiting every node
 
