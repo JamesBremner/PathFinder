@@ -5,11 +5,11 @@
 #include <vector>
 #include <algorithm>
 #include <time.h>
-#include "cGraphData.h"
+#include "cGraph.h"
 #include "GraphTheory.h"
 #include "cRunWatch.h"
 
-raven::cGraphData theGraph;
+raven::graph::cGraph theGraph;
 
 std::vector<std::string> tokenize(const std::string &line)
 {
@@ -61,7 +61,7 @@ void add(const std::vector<std::string> &q)
             for (auto &p : vedge)
             {
                 raven::set::cRunWatch aWatcher("randomAdd");
-                theGraph.add(p.first, p.second, "1");
+                theGraph.add(p.first, p.second);
             }
         }
     }
@@ -69,7 +69,7 @@ void add(const std::vector<std::string> &q)
     {
         // add one specified link
 
-        theGraph.findorAdd(q[1], q[2], "1");
+        theGraph.findorAdd(q[1], q[2]);
     }
 
     displayStatus();
@@ -171,14 +171,14 @@ void ancestor()
         double total = 0;
         for (int a : setAncestors)
         {
-            total += theGraph.rVertexAttr(a, 0);
+            total += atof(theGraph.rVertexAttr(a, 0).c_str());
         }
         double average = total / setAncestors.size();
 
         // store average in vertex attributes
         theGraph.wVertexAttr(
             v,
-            {theGraph.rVertexAttrString(v, 0),
+            {theGraph.rVertexAttr(v, 0),
              std::to_string(average)});
 
         // std::cout << v <<" "<< average << "\n";

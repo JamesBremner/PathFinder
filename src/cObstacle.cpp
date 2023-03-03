@@ -5,7 +5,7 @@
 #include "cxy.h"
 #include <autocell.h>
 #include "cObstacle.h"
-#include "cGraphData.h"
+#include "cGraph.h"
 #include "GraphTheory.h"
 
 void read(
@@ -159,10 +159,10 @@ void cObstacle::inputGraph()
                 continue;
 
             // OK to connect
-            mygraphdata.findorAdd(
+            mygraphdata.wEdgeAttr(mygraphdata.findorAdd(
                 std::to_string(n1->ID()),
-                std::to_string(n2->ID()),
-                std::to_string(d2));
+                std::to_string(n2->ID())),
+                {std::to_string(d2)});
             int v1 = mygraphdata.find(std::to_string(n1->ID()));
             int v2 = mygraphdata.find(std::to_string(n2->ID()));
             mygraphdata.wVertexAttr(v1,{std::to_string(w1),std::to_string(h1)});
