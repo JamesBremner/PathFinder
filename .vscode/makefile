@@ -15,7 +15,7 @@ static_link_flags = -static-libstdc++ -static-libgcc -static
 # folders
 ODIR = ./.vscode/obj
 
-OPT = -O2
+OPT = -g
 CCflags = -std=c++17 $(OPT) -D_mingw_
 
 # sources
@@ -30,7 +30,8 @@ OBJ_test = \
 OBJ_pathfinder = \
 	$(ODIR)/pathfinder.o \
 	$(ODIR)/cPathFinderGUI.o \
-	$(ODIR)/cGraphData.o \
+	$(ODIR)/cVE.o \
+	$(ODIR)/cAttribute.o \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/tourNodes.o \
 	$(ODIR)/GraphViz.o \
@@ -40,7 +41,8 @@ OBJ_obstacle = \
 	$(ODIR)/obstacle.o \
 	$(ODIR)/cObstacleGUI.o \
 	$(ODIR)/cObstacle.o \
-	$(ODIR)/cGraphData.o \
+	$(ODIR)/cVE.o \
+	$(ODIR)/cAttribute.o \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/tourNodes.o \
 	$(ODIR)/autocell.o \
@@ -48,7 +50,8 @@ OBJ_obstacle = \
 
 OBJ_graphex = \
 	$(ODIR)/graphex.o \
-	$(ODIR)/cGraphData.o \
+	$(ODIR)/cVE.o \
+	$(ODIR)/cAttribute.o \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/cRunWatch.o
 
