@@ -1,9 +1,9 @@
 #include <fstream>
-#include "cGraphData.h"
+#include "cGraph.h"
 #include "cpathfinderGUI.h"
 
 static void readSales(
-    raven::cGraphData &g,
+    raven::graph::cGraph &g,
     std::ifstream &ifs)
 {
     g.clear();
@@ -38,7 +38,7 @@ static void readSales(
                     "Cannot mix cities and links");
             inputType = eInput::link;
             ifs >> sn1 >> sn2 >> scost;
-            g.findorAdd(sn1, sn2, scost);
+            g.wEdgeAttr(g.findorAdd(sn1, sn2), {scost});
             break;
         }
 
@@ -47,7 +47,7 @@ static void readSales(
 }
 
 static void readCostedLinks(
-    raven::cGraphData &g,
+    raven::graph::cGraph &g,
     std::ifstream &ifs)
 {
     g.clear();
@@ -67,7 +67,7 @@ static void readCostedLinks(
             break;
         case 'l':
             ifs >> sn1 >> sn2 >> scost;
-            g.findorAdd(sn1, sn2, scost);
+            g.wEdgeAttr(g.findorAdd(sn1, sn2), {scost});
             break;
         case 's':
             ifs >> sn1;
@@ -85,7 +85,7 @@ static void readCostedLinks(
     }
 }
 static void readUncostedLinks(
-    raven::cGraphData &g,
+    raven::graph::cGraph &g,
     std::ifstream &ifs)
 {
     g.clear();
@@ -105,7 +105,7 @@ static void readUncostedLinks(
             break;
         case 'l':
             ifs >> sn1 >> sn2;
-            g.findorAdd(sn1, sn2, "1");
+            g.findorAdd(sn1, sn2);
             break;
         case 's':
             ifs >> sn1;
@@ -123,7 +123,7 @@ static void readUncostedLinks(
     }
 }
 static void readObstacles(
-    raven::cGraphData &g,
+    raven::graph::cGraph &g,
     std::ifstream &ifs)
 {
     std::string stype, sn1, sn2, scost, sx, sy;
@@ -137,8 +137,8 @@ static void readObstacles(
         {
         case 'l':
             ifs >> sn1 >> sn2 >> scost;
-            ie = g.findorAdd(sn1, sn2, scost);
-            g.wEdgeAttr(ie, {sx, sy});
+            g.wEdgeAttr(g.findorAdd(sn1, sn2), {scost});
+            //g.wEdgeAttr(ie, {sx, sy});
             break;
         }
 
@@ -146,7 +146,7 @@ static void readObstacles(
     }
 }
 static void readCycle(
-    raven::cGraphData &g,
+    raven::graph::cGraph &g,
     std::ifstream &ifs)
 {
     g.clear();
@@ -159,7 +159,7 @@ static void readCycle(
         if (stype[0] == 'l')
         {
             ifs >> sn1 >> sn2;
-            g.findorAdd(sn1, sn2, "1");
+            g.findorAdd(sn1, sn2);
         }
         ifs >> stype;
     }
@@ -167,7 +167,7 @@ static void readCycle(
 
 
 graph_calc readfile(
-    raven::cGraphData &g,
+    raven::graph::cGraph &g,
     const std::string &fname)
 {
     graph_calc option = graph_calc::none;
@@ -203,7 +203,7 @@ graph_calc readfile(
 
         while (ifs.good())
         {
-            g.findorAdd(sn1, sn2, "1");
+            g.findorAdd(sn1, sn2);
             ifs >> sn1 >> sn2;
         }
     }

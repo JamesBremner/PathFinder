@@ -3,13 +3,13 @@
 #include <fstream>
 #include <filesystem>
 #include <windows.h>
-#include "cGraphData.h"
+#include "cGraph.h"
 
 namespace raven
-{
+{ namespace graph {
 
     std::string pathViz(
-        cGraphData &g,
+        cGraph &g,
         const std::vector<int> &vpath,
         bool all)
     {
@@ -104,7 +104,7 @@ namespace raven
         return f.str();
     }
 
-    void RunDOT(cGraphData &g,
+    void RunDOT(cGraph &g,
                 const std::string &pathViz)
     {
 
@@ -213,4 +213,5 @@ namespace raven
 
         Sleep(4000);
     }
+}
 }

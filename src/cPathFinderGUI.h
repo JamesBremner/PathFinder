@@ -1,5 +1,4 @@
 #include "wex.h"
-#include "cGraphData.h"
 #include "GraphTheory.h"
 
 class cStarterGUI
@@ -97,10 +96,10 @@ private:
     wex::panel &myplText;
     wex::panel &myplLayout;
     
-    raven::cGraphData myGraph;              // the input graph
-    raven::cGraphData myResultGraph;              // the result graph
+    raven::graph::cGraph myGraph;              // the input graph
+    raven::graph::cGraph myResultGraph;              // the result graph
 
-    raven::cTourNodes * mypTourNodes;
+    raven::graph::cTourNodes * mypTourNodes;
     std::string myfname;
     graph_calc myCalcOption;
     std::string myStartName;
@@ -144,5 +143,5 @@ extern cGUI theGUI;
 /// @return calculation option
 
 graph_calc readfile(
-    raven::cGraphData &g,
+    raven::graph::cGraph &g,
     const std::string &fname);

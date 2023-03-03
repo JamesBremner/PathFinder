@@ -1,3 +1,4 @@
+#pragma once
 #include "cVE.h"
 
 namespace raven

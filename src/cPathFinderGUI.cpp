@@ -194,7 +194,7 @@ void cGUI::calcCycle()
 void cGUI::calcTour()
 {
     delete mypTourNodes;
-    mypTourNodes = new raven::cTourNodes(myGraph);
+    mypTourNodes = new raven::graph::cTourNodes(myGraph);
     mypTourNodes->calculate();
 
     myResultText = "";
@@ -208,7 +208,7 @@ void cGUI::calcSales()
 {
     myResultText = "Sales calcultion NYI";
 
-    if (myGraph.rVertexAttr(0, 1) == INT_MAX)
+    if (myGraph.rVertexAttr(0, 1) == "")
     {
         // link specification
     }
@@ -218,16 +218,16 @@ void cGUI::calcSales()
         // link all cities with the square of the pythogorean distance between their locations
         for (int v1 = 0; v1 < myGraph.vertexCount(); v1++)
         {
-            double x1 = myGraph.rVertexAttr(v1, 0);
-            double y1 = myGraph.rVertexAttr(v1, 1);
+            double x1 = atof(myGraph.rVertexAttr(v1, 0).c_str());
+            double y1 = atof(myGraph.rVertexAttr(v1, 1).c_str());
             for (int v2 = v1 + 1; v2 < myGraph.vertexCount(); v2++)
             {
-                double x2 = myGraph.rVertexAttr(v2, 0);
-                double y2 = myGraph.rVertexAttr(v2, 1);
+                double x2 = atof(myGraph.rVertexAttr(v2, 0).c_str());
+                double y2 = atof(myGraph.rVertexAttr(v2, 1).c_str());
                 double dx = x2 - x1;
                 double dy = y2 - y1;
                 std::string dsq = std::to_string(dx * dx + dy * dy);
-                myGraph.add(v1, v2, dsq);
+                myGraph.wEdgeAttr(myGraph.add(v1, v2), {dsq});
             }
         }
     }
