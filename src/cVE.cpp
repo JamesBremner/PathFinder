@@ -1,53 +1,50 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
-#include "cGraphData.h"
+#include "cVE.h"
 
 namespace raven
-{
+{ namespace graph {
 
-    cGraphData::cGraphData()
+    cVE::cVE()
     {
         clear();
     }
 
-    void cGraphData::clear()
+    void cVE::clear()
     {
+        fDirected = false;
         fDirected = false;
         vVertexName.clear();
         vOutEdges.clear();
         vEdgeDst.clear();
-        vVertexAttr.clear();
-        vEdgeAttr.clear();
     }
 
-    void cGraphData::directed(bool f)
+    void cVE::directed(bool f)
     {
         fDirected = f;
     }
 
-    int cGraphData::add(const std::string &vertexName)
+    int cVE::add(const std::string &vertexName)
     {
         int index = find(vertexName);
         if (index >= 0)
-            throw std::runtime_error("cGraphData::add duplicate vertex name " + vertexName);
+            throw std::runtime_error("cVE::add duplicate vertex name " + vertexName);
         vVertexName.push_back(vertexName);
         vOutEdges.push_back({});
         vInEdges.push_back({});
-        vVertexAttr.push_back({});
         return vVertexName.size() - 1;
     }
-    int cGraphData::add(
+    int cVE::add(
         const std::string &srcName,
         const std::string &dstName)
     {
         return add(find(srcName), find(dstName));
     }
-    int cGraphData::add(int src, int dst,
-                        const std::string &sAttr)
+    int cVE::add(int src, int dst)
     {
         if (0 > src || 0 > dst)
-            throw std::runtime_error("cGraphData::add edge bad vertex index");
+            throw std::runtime_error("cVE::add edge bad vertex index");
 
         // check there is storage allocated for these vertices
         int max = vVertexName.size() - 1;
@@ -70,8 +67,6 @@ namespace raven
         vOutEdges[src].push_back(iedge);
         vInEdges[dst].push_back(iedge);
         vEdgeDst.push_back(dst);
-        vEdgeAttr.push_back({});
-        vEdgeAttr[iedge].push_back(sAttr);
 
         if (fDirected)
             return iedge;
@@ -80,12 +75,10 @@ namespace raven
         iedge++;
         vOutEdges[dst].push_back(iedge);
         vEdgeDst.push_back(src);
-        vEdgeAttr.push_back({});
-        vEdgeAttr[iedge].push_back(sAttr);
         return iedge;
     }
 
-    int cGraphData::findorAdd(const std::string vertexName)
+    int cVE::findorAdd(const std::string vertexName)
     {
         int index = find(vertexName);
         if (index < 0)
@@ -93,26 +86,23 @@ namespace raven
         return index;
     }
 
-    int cGraphData::findorAdd(
+    int cVE::findorAdd(
         const std::string &srcName,
-        const std::string &dstName,
-        const std::string &sAttr)
+        const std::string &dstName)
     {
         return add(
             findorAdd(srcName),
-            findorAdd(dstName),
-            sAttr);
+            findorAdd(dstName));
     }
-    int cGraphData::findorAdd(
+    int cVE::findorAdd(
         int src,
-        int dst,
-        const std::string &sAttr)
+        int dst)
     {
-        int ei = add(dst, src, sAttr);
+        int ei = add(dst, src);
         return ei;
     }
 
-    void cGraphData::remove(
+    void cVE::remove(
         const std::string &srcName,
         const std::string &dstName)
     {
@@ -121,7 +111,7 @@ namespace raven
             find(dstName));
     }
 
-    void cGraphData::remove(
+    void cVE::remove(
         int src,
         int dst)
     {
@@ -157,28 +147,14 @@ namespace raven
         }
     }
 
-    void cGraphData::wEdgeAttr(int ie, const std::vector<std::string> &vsAttr)
-    {
-        if (0 > ie || ie > vEdgeAttr.size() - 1)
-            throw std::runtime_error(
-                "cGraphData::eEdgAttr bad index");
-        vEdgeAttr[ie] = vsAttr;
-    }
-    void cGraphData::wVertexAttr(int iv, const std::vector<std::string> &vsAttr)
-    {
-        if (0 > iv || iv > vVertexAttr.size() - 1)
-            throw std::runtime_error(
-                "cGraphData::vertexAttr bad index");
-        vVertexAttr[iv] = vsAttr;
-    }
-    int cGraphData::edgeCount() const
+    int cVE::edgeCount() const
     {
         int c = vEdgeDst.size() - std::count(vEdgeDst.begin(), vEdgeDst.end(), -1);
         if (fDirected)
             return c;
         return c / 2;
     }
-    int cGraphData::find(const std::string &vertexName) const
+    int cVE::find(const std::string &vertexName) const
     {
         auto it = std::find(vVertexName.begin(), vVertexName.end(), vertexName);
         if (it == vVertexName.end())
@@ -188,7 +164,7 @@ namespace raven
         // return std::distance(vVertexName.begin(), it);
     }
 
-    int cGraphData::find(int src, int dst) const
+    int cVE::find(int src, int dst) const
     {
         for (int ei : vOutEdges[src])
         {
@@ -198,17 +174,17 @@ namespace raven
         return -1;
     }
 
-    std::vector<int> cGraphData::adjacentOut(int vi) const
+    std::vector<int> cVE::adjacentOut(int vi) const
     {
         if (0 > vi || vi > vOutEdges.size() - 1)
-            throw std::runtime_error("cGraphData::adjacentOut bad vertex index");
+            throw std::runtime_error("cVE::adjacentOut bad vertex index");
         std::vector<int> ret;
         for (int ei : vOutEdges[vi])
             ret.push_back(vEdgeDst[ei]);
         return ret;
     }
 
-    std::vector<std::string> cGraphData::adjacentOut(const std::string &name) const
+    std::vector<std::string> cVE::adjacentOut(const std::string &name) const
     {
         std::vector<std::string> ret;
         for (int i : adjacentOut(find(name)))
@@ -216,7 +192,7 @@ namespace raven
         return ret;
     }
 
-    std::vector<int> cGraphData::adjacentIn(int vi) const
+    std::vector<int> cVE::adjacentIn(int vi) const
     {
         std::vector<int> ret;
         for (int ei : vInEdges[vi])
@@ -224,37 +200,7 @@ namespace raven
         return ret;
     }
 
-    double cGraphData::rVertexAttr(int vi, int ai) const
-    {
-        auto s = rVertexAttrString(vi, ai);
-        if (s.empty())
-            return INT_MAX;
-        return atof(s.c_str());
-    }
-    std::string cGraphData::rVertexAttrString(int vi, int ai) const
-    {
-        if (0 > vi || vi > (int)vVertexName.size() - 1)
-            return "";
-        if (0 > ai || ai > (int)vVertexAttr[vi].size() - 1)
-            return "";
-        return vVertexAttr[vi][ai];
-    }
-
-    double cGraphData::rEdgeAttr(int src, int dst, int ai) const
-    {
-        return rEdgeAttr(find(src, dst), ai);
-    }
-    double cGraphData::rEdgeAttr(int ei, int ai) const
-    {
-        if (ei < 0)
-            return INT_MAX;
-        if (0 > ai || ai > vEdgeAttr[ei].size() - 1)
-            throw std::runtime_error(
-                "cGraphData::edgeAttr bad attribute index");
-        return atof(vEdgeAttr[ei][ai].c_str());
-    }
-
-    std::string cGraphData::userName(int i) const
+    std::string cVE::userName(int i) const
     {
         std::string ret = vVertexName[i];
         if (ret == "@myIndex")
@@ -262,7 +208,7 @@ namespace raven
         return ret;
     }
 
-    std::vector<std::string> cGraphData::userName(std::vector<int> vi) const
+    std::vector<std::string> cVE::userName(std::vector<int> vi) const
     {
         std::vector<std::string> ret;
         for (int i : vi)
@@ -270,7 +216,7 @@ namespace raven
         return ret;
     }
 
-    std::vector<std::string> cGraphData::vertexNames() const
+    std::vector<std::string> cVE::vertexNames() const
     {
         std::vector<std::string> ret;
         for (int kv = 0; kv < vVertexName.size(); kv++)
@@ -283,7 +229,7 @@ namespace raven
         return ret;
     }
 
-    std::string cGraphData::text() const
+    std::string cVE::text() const
     {
         std::stringstream ss;
         for (auto &vn : vVertexName)
@@ -295,8 +241,6 @@ namespace raven
                 if (( ! fDirected ) && (vi > wi))
                     continue;
                 ss << "l " << vn << " " << vVertexName[wi];
-                for (auto &sa : vEdgeAttr[ei])
-                    ss << " " << sa;
                 ss << "\n";
             }
         }
@@ -304,7 +248,7 @@ namespace raven
     }
 
     std::vector<std::pair<int, int>>
-    cGraphData::edgeList() const
+    cVE::edgeList() const
     {
         std::vector<std::pair<int, int>> ret;
         for (int vi = 0; vi < vVertexName.size(); vi++)
@@ -320,4 +264,5 @@ namespace raven
         return ret;
     }
 
+}
 }

@@ -4,7 +4,7 @@
 #include <stack>
 #include "GraphTheory.h"
 
-namespace raven {
+namespace raven { namespace graph {
 
 bool cTourNodes::visitor(
     int v)
@@ -200,5 +200,6 @@ std::vector<std::pair<int, int>>
 cTourNodes::spanTree_get() const
 {
     return spanTree.edgeList();
+}
 }
 }

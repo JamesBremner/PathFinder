@@ -1,14 +1,14 @@
 #pragma once
 #include <functional>
-#include "cGraphData.h"
+#include "cGraph.h"
 
 namespace raven
-{
+{ namespace graph {
 
     class cTourNodes
     {
     public:
-        cTourNodes(const cGraphData &theGraph)
+        cTourNodes(const cGraph &theGraph)
             : g(theGraph)
         {
         }
@@ -24,8 +24,8 @@ namespace raven
         spanTree_get() const;
 
     private:
-        const cGraphData &g;
-        cGraphData spanTree;
+        const cGraph &g;
+        cGraph spanTree;
 
         int dfsStart;
         int unvisited;
@@ -58,11 +58,11 @@ namespace raven
 
     std::pair<std::vector<int>, std::vector<double>>
     dijsktra(
-        const cGraphData &g,
+        const cGraph &g,
         const std::string &startName);
     std::pair<std::vector<int>, std::vector<double>>
     dijsktra(
-        const cGraphData &g,
+        const cGraph &g,
         int start);
 
     /// @brief find shortest path from start to end node
@@ -74,13 +74,13 @@ namespace raven
 
     std::pair<std::vector<int>, double>
     path(
-        const cGraphData &g,
+        const cGraph &g,
         const std::string &startName,
         const std::string &endName);
 
     std::pair<std::vector<int>, double>
     path(
-        const cGraphData &g,
+        const cGraph &g,
         int start,
         int end);
 
@@ -89,9 +89,9 @@ namespace raven
     /// @param startName root node
     /// @return graph - a tree rooted at start and visiting every node
 
-    cGraphData
+    cGraph
     spanningTree(
-        const cGraphData &g,
+        const cGraph &g,
         const std::string &startName);
 
     /// @brief depth first search
@@ -101,7 +101,7 @@ namespace raven
     /// visitor should return true, but false if the search should stop
 
     void dfs(
-        const cGraphData &g,
+        const cGraph &g,
         const std::string &startName,
         std::function<bool(int v)> visitor);
 
@@ -111,20 +111,20 @@ namespace raven
 
     std::vector<std::vector<int>>
     dfs_cycle_finder(
-        const cGraphData &g);
+        const cGraph &g);
 
     /// @brief path visiting every node
 
     std::vector<int>
     tourNodes(
-        const cGraphData &g);
+        const cGraph &g);
 
     void cliques(
-        const cGraphData &g,
+        const cGraph &g,
         std::string &results);
 
     double flows(
-        const cGraphData &g,
+        const cGraph &g,
         const std::string &start,
         const std::string &end);
 
@@ -135,7 +135,7 @@ namespace raven
     /// @return string in graphviz dot format
 
     std::string pathViz(
-        cGraphData &g,
+        cGraph &g,
         const std::vector<int> &vpath,
         bool all);
 
@@ -144,6 +144,7 @@ namespace raven
     /// @param[in] pathViz string in graphviz dot format
 
     void RunDOT(
-        cGraphData &g,
+        cGraph &g,
         const std::string &pathViz);
+}
 }

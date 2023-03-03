@@ -5,11 +5,11 @@
 #include "GraphTheory.h"
 
 namespace raven
-{
+{ namespace graph {
 
     std::pair<std::vector<int>, std::vector<double>>
     dijsktra(
-        const cGraphData &g,
+        const cGraph &g,
         const std::string &startName)
     {
         return dijsktra(
@@ -18,7 +18,7 @@ namespace raven
     }
     std::pair<std::vector<int>, std::vector<double>>
     dijsktra(
-        const cGraphData &g,
+        const cGraph &g,
         int start)
     {
         // shortest distance from start to each node
@@ -63,7 +63,7 @@ namespace raven
 
                 // Update dist[v] only if total weight of path from src to  v through u is
                 // smaller than current value of dist[v]
-                double cost = g.rEdgeAttr(uidx, vp, 0);
+                double cost = atof(g.rEdgeAttr(g.find(uidx, vp), 0).c_str());
                 if (dist[uidx] + cost < dist[vp])
                 {
                     dist[vp] = dist[uidx] + cost;
@@ -78,7 +78,7 @@ namespace raven
 
     std::pair<std::vector<int>, double>
     path(
-        const cGraphData &g,
+        const cGraph &g,
         const std::string &startName,
         const std::string &endName)
     {
@@ -90,7 +90,7 @@ namespace raven
 
     std::pair<std::vector<int>, double>
     path(
-        const cGraphData &g,
+        const cGraph &g,
         int start,
         int end)
     {
@@ -120,12 +120,12 @@ namespace raven
 
         return std::make_pair(vpath, result.second[end]);
     }
-    cGraphData
+    cGraph
     spanningTree(
-        const cGraphData &g,
+        const cGraph &g,
         const std::string &startName)
     {
-        cGraphData spanTree;
+        cGraph spanTree;
 
         int start = g.find(startName);
 
@@ -141,8 +141,7 @@ namespace raven
         auto w = va[0];
         spanTree.findorAdd(
             g.userName(v),
-            g.userName(w),
-            "1");
+            g.userName(w));
         // std::cout << "add span " << g.userName(v) << " " << g.userName(w) << "\n";
         visited[v] = true;
         visited[w] = true;
@@ -169,7 +168,7 @@ namespace raven
                     if (v > w)
                         continue;
 
-                    double cost = g.rEdgeAttr(v, w, 0);
+                    double cost = atof(g.rEdgeAttr(g.find(v, w), 0).c_str());
                     if (cost > 0)
                     {
                         if (cost < min_cost)
@@ -184,8 +183,7 @@ namespace raven
             // add cheapest link between node in tree to node not yet in tree
             spanTree.findorAdd(
                 g.userName(bestLink.first),
-                g.userName(bestLink.second),
-                "1");
+                g.userName(bestLink.second));
             // std::cout << "add span " << g.userName(bestLink.first) << " " << g.userName(bestLink.second) << "\n";
             // std::cout << spanTree.text();
             visited[bestLink.first] = true;
@@ -198,7 +196,7 @@ namespace raven
     }
 
     void dfs(
-        const cGraphData &g,
+        const cGraph &g,
         const std::string &startName,
         std::function<bool(int v)> visitor)
     {
@@ -246,7 +244,7 @@ namespace raven
 
     std::vector<std::vector<int>>
     dfs_cycle_finder(
-        const cGraphData &g)
+        const cGraph &g)
     {
         if (!g.isDirected())
             throw std::runtime_error(
@@ -336,7 +334,7 @@ namespace raven
     }
 
     void cliques(
-        const cGraphData &g,
+        const cGraph &g,
         std::string &results)
     {
         // working copy on input graph
@@ -360,7 +358,7 @@ namespace raven
                     // start by moving an arbitrary node to the clique from the work graph
                     for (int vi = 0; vi < work.vertexCount(); vi++)
                     {
-                        if (work.rVertexAttrString(vi, 0) == "deleted")
+                        if (work.rVertexAttr(vi, 0) == "deleted")
                             continue;
                         clique.push_back(vi);
                         work.wVertexAttr(vi, {"deleted"});
@@ -374,7 +372,7 @@ namespace raven
                 finished = true;
                 for (int u = 0; u < work.vertexCount(); u++)
                 {
-                    if (work.rVertexAttrString(u, 0) == "deleted")
+                    if (work.rVertexAttr(u, 0) == "deleted")
                         continue;
                     finished = false;
 
@@ -419,7 +417,7 @@ namespace raven
         results = ss.str();
     }
     double flows(
-        const cGraphData &g,
+        const cGraph &g,
         const std::string &start,
         const std::string &end)
     {
@@ -446,7 +444,7 @@ namespace raven
             {
                 if (u >= 0)
                 {
-                    double cap = work.rEdgeAttr(u, v, 0);
+                    double cap = atof(work.rEdgeAttr(work.find(u, v), 0).c_str());
                     if (cap < maxflow)
                     {
                         maxflow = cap;
@@ -461,7 +459,7 @@ namespace raven
             {
                 if (u >= 0)
                 {
-                    double cap = work.rEdgeAttr(u, v, 0) - maxflow;
+                    double cap = atof(work.rEdgeAttr(work.find(u, v), 0).c_str()) - maxflow;
                     if (cap <= 0)
                     {
                         work.remove(u, v);
@@ -469,13 +467,9 @@ namespace raven
                     else
                     {
                         work.wEdgeAttr(
-                            work.find(u, v),
+                            u, v,
                             {std::to_string(cap)});
 
-                        if (!work.isDirected())
-                            work.wEdgeAttr(
-                                work.find(v, u),
-                                {std::to_string(cap)});
                     }
                 }
                 u = v;
@@ -486,4 +480,5 @@ namespace raven
 
         return totalFlow;
     }
+}
 }

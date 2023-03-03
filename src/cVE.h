@@ -2,14 +2,14 @@
 #include <string>
 #include <vector>
 
-namespace raven {
+namespace raven { namespace graph {
 
 /// @brief A graph of vertices connected by edges
-class cGraphData
+class cVE
 {
 public:
 
-    cGraphData();
+    cVE();
 
     void clear();
 
@@ -37,7 +37,6 @@ public:
     /// @return edge index
     /*  
     The vertices need not exist ( if not they will be added )
-    The vertex name must be the sting format index
 
     For large graphs this is much faster than adding edges by vertex names
     but the vertex names must be the vertex indices.
@@ -45,8 +44,7 @@ public:
     */
     int add(
         int src,
-        int dst,
-        const std::string &sAttr = "1");
+        int dst);
 
     /// @brief add edge, add required vertices
     /// @param srcName
@@ -55,12 +53,10 @@ public:
     /// @return edge index
     int findorAdd(
         const std::string &srcName,
-        const std::string &dstName,
-        const std::string &sAttr);
+        const std::string &dstName);
     int findorAdd(
         int src,
-        int dst,
-        const std::string &sAttr);
+        int dst);
 
     void remove(
         const std::string &srcName,
@@ -69,15 +65,7 @@ public:
         int src,
         int dst     );
 
-    /// @brief write edge attributes
-    /// @param ie edge index
-    /// @param vsAttr vector of strings to replace vertex attributes
-    void wEdgeAttr( int ie, const std::vector<std::string>& vsAttr );
 
-    /// @brief write vertex attributes
-    /// @param iv vertex index
-    /// @param vsAttr vector of strings to replace vertex attributes
-    void wVertexAttr( int iv, const std::vector<std::string>& vsAttr );
 
     //////////////////////// GETTERS
 
@@ -132,12 +120,6 @@ public:
     /// @return 
     std::vector<int> adjacentIn(int vi) const;
 
-
-    double rVertexAttr(int vi, int ai) const;
-    std::string rVertexAttrString(int vi, int ai ) const;
-    double rEdgeAttr(int src, int dst, int ai) const;
-    double rEdgeAttr(int ei, int ai) const;
-
     /// @brief human readable edge list
     /// @return text
 
@@ -170,18 +152,7 @@ private:
     */
     std::vector<int> vEdgeDst;
 
-    /** vertex attributes
-     *
-     *  vVertexAttr[vi][ai] is a string representing the aith attribute of the vith vertex
-     */
-
-    std::vector<std::vector<std::string>> vVertexAttr;
-
-    /* edge attributes
-
-        vEdgeAttr[ei][ai] is a string representing the aith attribute of the eith edge
-    */
-    std::vector<std::vector<std::string>> vEdgeAttr;
 };
 
+}
 }
