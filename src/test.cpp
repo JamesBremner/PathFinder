@@ -103,9 +103,9 @@ TEST(spanningTree)
     g.findorAdd("b", "c");
     g.findorAdd("a", "d");
     std::string expected(
-        "l b a 1\n"
-        "l b c 1\n"
-        "l a d 1\n");
+        "l b a\n"
+        "l b c\n"
+        "l a d\n");
 
     CHECK_EQUAL(expected, spanningTree(g, "a").text());
 }
@@ -205,7 +205,9 @@ TEST(cycle2)
 TEST( flows )
 {
     raven::graph::cGraph g;
+    g.directed(false);
     g.wEdgeAttr(g.findorAdd("a", "b"), {"7"});
+    g.wEdgeAttr(g.findorAdd("b", "a"), {"7"});
     double f = flows(
         g, "a", "b" );
     CHECK_EQUAL(7.0,f);
