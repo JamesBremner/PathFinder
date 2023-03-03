@@ -4,6 +4,9 @@
 namespace raven
 {
     namespace graph {
+
+    /// @brief graph vertex and edge attributes
+    
     class cAttribute 
     {
     public:

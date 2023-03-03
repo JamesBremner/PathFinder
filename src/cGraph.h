@@ -6,10 +6,14 @@ namespace raven
 {
     namespace graph
     {
+        /// @brief A graph of vertices connected by edges, with vertex and edge attribute
 
         class cGraph : public cVE
         {
         public:
+
+        // writers
+
             void wVertexAttr(
                 int vi,
                 const std::vector<std::string> &vsAttr)
@@ -31,6 +35,9 @@ namespace raven
                     myAtt.wEdgeAttr(find(v2, v1), vsAttr);
             }
 
+
+            // readers
+            
             std::string rVertexAttr( int vi, int ai ) const
             {
                 return myAtt.rVertexAttr( vi, ai );
