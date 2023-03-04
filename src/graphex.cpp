@@ -37,6 +37,23 @@ void displayStatus()
               << "\n\n";
 }
 
+void gen(const std::vector<std::string> &q)
+{
+    int vmax = atoi(q[1].c_str());
+    theGraph.clear();
+    for (int k = 0; k < vmax; k++)
+    {
+        theGraph.add("V" + std::to_string(k));
+    }
+    for (int k = 0; k < vmax; k++)
+    {
+        for (int kl = 0; kl < 5; kl++)
+        {
+            theGraph.add(rand() % vmax, rand() % vmax);
+        }
+    }
+    displayStatus();
+}
 void add(const std::vector<std::string> &q)
 {
     if (q.size() < 3)
@@ -113,8 +130,11 @@ void read(const std::vector<std::string> &q)
         // theGraph.wVertexAttr(v2, {std::to_string(rand() % 10), "0", "0"});
         // theGraph.add(v1, v2);
 
-        int v1 = theGraph.findorAdd(tokens[1]);
-        int v2 = theGraph.findorAdd(tokens[2]);
+        // int v1 = theGraph.findorAdd(tokens[1]);
+        // int v2 = theGraph.findorAdd(tokens[2]);
+        int v1 = atoi(tokens[1].c_str());
+        int v2 = atoi(tokens[2].c_str());
+
         theGraph.add(v1, v2);
 
         count++;
@@ -129,6 +149,12 @@ void cycles()
     auto cycles = dfs_cycle_finder(
         theGraph);
     std::cout << cycles.size() << " cycles\n";
+}
+
+void s2s()
+{
+    auto s2s = sourceToSink(theGraph);
+    std::cout << s2s.size() << " sources\n";
 }
 
 void ancestor_recurse(
@@ -192,7 +218,8 @@ void help()
                  "add random n :  add n random links to graph\n"
                  "read filepath : input graph links from file\n"
                  "display :       display links\n"
-                 "cycles :       find cycles in graph\n"
+                 "cycles :        find cycles in graph\n"
+                 "s2s :           find source to sink connections"
                  "help :          this help display\n\n";
 }
 
@@ -223,6 +250,11 @@ main()
                 ancestor();
             else if (q[0] == "cycles")
                 cycles();
+            else if (q[0] == "s2s")
+                s2s();
+            else if (q[0] == "gen")
+                gen(q);
+
             else
                 std::cout << "unreqonized query\n";
         }

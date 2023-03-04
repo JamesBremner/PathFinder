@@ -53,17 +53,15 @@ namespace raven
 
     /// @brief find shortest path from start node to every other
     /// @param g
-    /// @param startName
-    /// @return pair: vector of preceeding node index for every node, vector of cost of path from start to vertex
+    /// @param start vertex index
+    /// @param[out] dist shortest distance from start to each node
+    /// @param[out] pred previous node on shortest path to each node
 
-    std::pair<std::vector<int>, std::vector<double>>
-    dijsktra(
+    void dijsktra(
         const cGraph &g,
-        const std::string &startName);
-    std::pair<std::vector<int>, std::vector<double>>
-    dijsktra(
-        const cGraph &g,
-        int start);
+        int start,
+        std::vector<double>& dist,
+        std::vector<int>& pred);
 
     /// @brief find shortest path from start to end node
     /// @param g
@@ -123,10 +121,25 @@ namespace raven
         const cGraph &g,
         std::string &results);
 
+    /// @brief Maximum flow between two vertices
+    /// @param g 
+    /// @param start 
+    /// @param end 
+    /// @return 
+    
     double flows(
         const cGraph &g,
         const std::string &start,
         const std::string &end);
+
+    /// @brief Find connected source and sinks
+    /// @param g the graph
+    /// @return A vector of vectors containing a source index and the connected sink indices
+    ///
+    /// A source has a zero in-degree, a sink has a zero out-degree
+
+    std::vector<std::vector<int>> sourceToSink(
+        const cGraph &g);
 
     /// @brief Graph description in graphviz dot format
     /// @param g

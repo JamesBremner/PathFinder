@@ -49,7 +49,6 @@ public:
     /// @brief add edge, add required vertices
     /// @param srcName
     /// @param dstName
-    /// @param sAttr single attribute value, string representation
     /// @return edge index
     int findorAdd(
         const std::string &srcName,
@@ -58,12 +57,14 @@ public:
         int src,
         int dst);
 
-    void remove(
-        const std::string &srcName,
-        const std::string &dstName);
+    // void remove(
+    //     const std::string &srcName,
+    //     const std::string &dstName);
     void remove(
         int src,
         int dst     );
+    void remove(
+        int ei );
 
 
 

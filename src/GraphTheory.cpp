@@ -9,25 +9,28 @@ namespace raven
     namespace graph
     {
 
-        std::pair<std::vector<int>, std::vector<double>>
-        dijsktra(
+        // std::pair<std::vector<int>, std::vector<double>>
+        // dijsktra(
+        //     const cGraph &g,
+        //     const std::string &startName)
+        // {
+        //     return dijsktra(
+        //         g,
+        //         g.find(startName));
+        // }
+        void dijsktra(
             const cGraph &g,
-            const std::string &startName)
-        {
-            return dijsktra(
-                g,
-                g.find(startName));
-        }
-        std::pair<std::vector<int>, std::vector<double>>
-        dijsktra(
-            const cGraph &g,
-            int start)
+            int start,
+            std::vector<double> &dist,
+            std::vector<int> &pred)
         {
             // shortest distance from start to each node
-            std::vector<double> dist(g.vertexCount(), INT_MAX);
+            dist.clear();
+            dist.resize(g.vertexCount(), INT_MAX);
 
             // previous node on shortest path to each node
-            std::vector<int> pred(g.vertexCount(), -1);
+            pred.clear();
+            pred.resize(g.vertexCount(), -1);
 
             std::vector<bool> sptSet(g.vertexCount(), false); // sptSet[i] will be true if vertex i is included in shortest
                                                               // path tree or shortest distance from src to i is finalized
@@ -73,9 +76,6 @@ namespace raven
                     }
                 }
             }
-
-            // std::pair<std::vector<int>,std:vector<double>> ret { std::makepred,dist}
-            return std::make_pair(pred, dist);
         }
 
         std::pair<std::vector<int>, double>
@@ -103,24 +103,26 @@ namespace raven
                 return std::make_pair(vpath, -1);
 
             // run the Dijsktra algorithm
-            auto result = dijsktra(g, start);
+            std::vector<double> dist;
+            std::vector<int> pred;
+            dijsktra(g, start, dist, pred);
 
             // check that end is reachable from start
-            if (result.first[end] == -1)
+            if (pred[end] == -1)
                 return std::make_pair(vpath, -1);
 
             vpath.push_back(end);
             int next = end;
             while (1)
             {
-                next = result.first[next];
+                next = pred[next];
                 vpath.push_back(next);
                 if (next == start)
                     break;
             }
             std::reverse(vpath.begin(), vpath.end());
 
-            return std::make_pair(vpath, result.second[end]);
+            return std::make_pair(vpath, dist[end]);
         }
         cGraph
         spanningTree(
@@ -174,7 +176,7 @@ namespace raven
                         int ei = g.find(v, w);
                         if (ei < 0)
                             continue;
-                            
+
                         // track cheapest edge
                         double cost = atof(g.rEdgeAttr(ei, 0).c_str());
 
@@ -485,5 +487,43 @@ namespace raven
 
             return totalFlow;
         }
+        std::vector<std::vector<int>> sourceToSink(
+            const cGraph &g)
+        {
+            std::vector<std::vector<int>> ret;
+
+            // find sinks
+            std::vector<int> vsink;
+            for (int vi = 0; vi < g.vertexCount(); vi++)
+            {
+                if (!g.adjacentOut(vi).size())
+                    vsink.push_back(vi);
+            }
+
+            // loop over vertices
+            for (int vi = 0; vi < g.vertexCount(); vi++)
+            {
+                // check for source
+                if (g.adjacentIn(vi).size())
+                    continue;
+
+                // find path to every other vertex
+                std::vector<double> dist;
+                std::vector<int> pred;
+                dijsktra(g, vi, dist, pred);
+
+                // find connected sinks
+                std::vector<int> vConnected;
+                vConnected.push_back(vi);
+                for (int si : vsink)
+                {
+                    if (pred[si] >= 0)
+                        vConnected.push_back(si);
+                }
+                ret.push_back(vConnected);
+            }
+            return ret;
+        }
+
     }
 }

@@ -3,6 +3,53 @@
 #include "cutest.h"
 #include "GraphTheory.h"
 
+TEST(sourceToSink)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    g.findorAdd("a", "b");
+    g.findorAdd("b", "e");
+    g.findorAdd("b", "d");
+    g.findorAdd("c", "d");
+
+    auto res = sourceToSink( g );
+
+    auto dbg = g.userName(res[1]);
+
+    CHECK_EQUAL(2,res.size());
+    std::vector<std::string> exp1 { "a","e","d"};
+    CHECK(std::equal(
+        exp1.begin(),
+        exp1.end(),
+        g.userName(res[0]).begin() ));
+    std::vector<std::string> exp2 { "c","d"};
+    CHECK(std::equal(
+        exp2.begin(),
+        exp2.end(),
+        g.userName(res[1]).begin() ));
+}
+
+TEST(removeLink)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    g.findorAdd("a", "b");
+    g.findorAdd("b", "c");
+    g.findorAdd("a", "d");
+
+    g.remove(g.find(g.find("b"), g.find("c")));
+
+    CHECK_EQUAL(2, g.edgeCount());
+    CHECK(g.find(g.find("a"), g.find("b")) >= 0);
+    CHECK(g.find(g.find("b"), g.find("b")) == -1);
+    CHECK(g.find(g.find("a"), g.find("d")) >= 0);
+    int ei = g.find(g.find("a"), g.find("d"));
+    CHECK(ei >= 0);
+
+    g.remove(ei);
+
+    CHECK_EQUAL(1, g.edgeCount());
+}
 
 TEST(findorAdd)
 {
@@ -32,31 +79,19 @@ TEST(edgebyindex)
         act.begin()));
 }
 
-TEST( attributes)
+TEST(attributes)
 {
     raven::graph::cGraph g;
     int v1 = g.add("a");
     int v2 = g.add("b");
-    int ei = g.add("a","b");
-    g.wVertexAttr(v1,{"10","11","12"});
-    g.wVertexAttr(v2,{"20","21","22"});
-    g.wEdgeAttr(ei,{"50","51","52"});
+    int ei = g.add("a", "b");
+    g.wVertexAttr(v1, {"10", "11", "12"});
+    g.wVertexAttr(v2, {"20", "21", "22"});
+    g.wEdgeAttr(ei, {"50", "51", "52"});
 
-    CHECK_EQUAL("11",g.rVertexAttr(v1,1));
-    CHECK_EQUAL("22",g.rVertexAttr(v2,2));
-    CHECK_EQUAL("50",g.rEdgeAttr(ei,0));
-}
-
-TEST( removeLink )
-{
-    raven::graph::cGraph g;
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("a", "d");
-
-    g.remove("b","c");
-
-    CHECK_EQUAL( 2, g.edgeCount());
+    CHECK_EQUAL("11", g.rVertexAttr(v1, 1));
+    CHECK_EQUAL("22", g.rVertexAttr(v2, 2));
+    CHECK_EQUAL("50", g.rEdgeAttr(ei, 0));
 }
 
 TEST(adjacent)
@@ -180,8 +215,8 @@ TEST(cycle)
     g.findorAdd("c", "d");
 
     auto act = dfs_cycle_finder(g);
-    CHECK_EQUAL(1,act.size());
-    CHECK_EQUAL(5,act[0].size());
+    CHECK_EQUAL(1, act.size());
+    CHECK_EQUAL(5, act[0].size());
 }
 TEST(cycle2)
 {
@@ -195,22 +230,21 @@ TEST(cycle2)
     g.findorAdd("e", "f");
     g.findorAdd("f", "g");
     g.findorAdd("g", "e");
-    
 
     auto act = dfs_cycle_finder(g);
-    CHECK_EQUAL(2,act.size());
-    CHECK_EQUAL(4,act[0].size());
+    CHECK_EQUAL(2, act.size());
+    CHECK_EQUAL(4, act[0].size());
 }
 
-TEST( flows )
+TEST(flows)
 {
     raven::graph::cGraph g;
     g.directed(false);
     g.wEdgeAttr(g.findorAdd("a", "b"), {"7"});
     g.wEdgeAttr(g.findorAdd("b", "a"), {"7"});
     double f = flows(
-        g, "a", "b" );
-    CHECK_EQUAL(7.0,f);
+        g, "a", "b");
+    CHECK_EQUAL(7.0, f);
 }
 
 main()
