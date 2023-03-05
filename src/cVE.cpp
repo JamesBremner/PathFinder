@@ -113,41 +113,41 @@ namespace raven
         //         find(dstName));
         // }
 
-        void cVE::remove(
-            int src,
-            int dst)
-        {
-            if (0 > src || src > vertexCount() - 1 ||
-                0 > dst || dst > vertexCount() - 1)
-                return;
+        // void cVE::remove(
+        //     int src,
+        //     int dst)
+        // {
+        //     if (0 > src || src > vertexCount() - 1 ||
+        //         0 > dst || dst > vertexCount() - 1)
+        //         return;
 
-            for (auto eit = vOutEdges[src].begin();
-                 eit != vOutEdges[src].end();
-                 eit++)
-            {
-                if (vEdgeDst[*eit] == dst)
-                {
-                    vEdgeDst[*eit] = -1;
-                    vOutEdges[src].erase(eit);
-                    break;
-                }
-            }
+        //     for (auto eit = vOutEdges[src].begin();
+        //          eit != vOutEdges[src].end();
+        //          eit++)
+        //     {
+        //         if (vEdgeDst[*eit] == dst)
+        //         {
+        //             vEdgeDst[*eit] = -1;
+        //             vOutEdges[src].erase(eit);
+        //             break;
+        //         }
+        //     }
 
-            if (!isDirected())
-            {
-                for (auto eit = vOutEdges[dst].begin();
-                     eit != vOutEdges[dst].end();
-                     eit++)
-                {
-                    if (vEdgeDst[*eit] == src)
-                    {
-                        vEdgeDst[*eit] = -1;
-                        vOutEdges[dst].erase(eit);
-                        break;
-                    }
-                }
-            }
-        }
+        //     if (!isDirected())
+        //     {
+        //         for (auto eit = vOutEdges[dst].begin();
+        //              eit != vOutEdges[dst].end();
+        //              eit++)
+        //         {
+        //             if (vEdgeDst[*eit] == src)
+        //             {
+        //                 vEdgeDst[*eit] = -1;
+        //                 vOutEdges[dst].erase(eit);
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
 
         void cVE::remove(
             int ei)
@@ -164,14 +164,15 @@ namespace raven
                     if (*it == ei)
                     {
                         vOutEdges[src].erase(it);
-                        for( auto it2 = vInEdges[vEdgeDst[ei]].begin();
-                            it2 != vInEdges[vEdgeDst[ei]].end();
-                            it2++)
-                            if( *it2 == ei  ) {
-                                vInEdges[vEdgeDst[ei]].erase( it2 );
+                        for (auto it2 = vInEdges[vEdgeDst[ei]].begin();
+                             it2 != vInEdges[vEdgeDst[ei]].end();
+                             it2++)
+                            if (*it2 == ei)
+                            {
+                                vInEdges[vEdgeDst[ei]].erase(it2);
                                 break;
                             }
-                        vEdgeDst.erase(vEdgeDst.begin()+ei);
+                        vEdgeDst[ei] = -1;
                         found = true;
                         break;
                     }
@@ -179,8 +180,17 @@ namespace raven
                 if (found)
                     break;
             }
-            if( isDirected() )
+            if (isDirected())
                 return;
+            for (auto it = vOutEdges[dst].begin();
+                 it != vOutEdges[dst].end();
+                 it++)
+            {
+                if (vEdgeDst[*it] == src)
+                    vEdgeDst[*it] = -1;
+                vOutEdges[dst].erase(it);
+                break;
+            }
         }
 
         int cVE::edgeCount() const

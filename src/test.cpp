@@ -32,6 +32,9 @@ TEST(sourceToSink)
 TEST(removeLink)
 {
     raven::graph::cGraph g;
+
+    // directed
+
     g.directed();
     g.findorAdd("a", "b");
     g.findorAdd("b", "c");
@@ -43,12 +46,40 @@ TEST(removeLink)
     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
     CHECK(g.find(g.find("b"), g.find("b")) == -1);
     CHECK(g.find(g.find("a"), g.find("d")) >= 0);
+
     int ei = g.find(g.find("a"), g.find("d"));
     CHECK(ei >= 0);
 
     g.remove(ei);
 
-    CHECK_EQUAL(1, g.edgeCount());
+    CHECK(g.find(g.find("a"), g.find("b")) >= 0);
+    CHECK(g.find(g.find("b"), g.find("b")) == -1);
+    CHECK(g.find(g.find("a"), g.find("d")) >= -1);
+
+    // undirected
+
+    g.clear();
+    g.findorAdd("a", "b");
+    g.findorAdd("b", "c");
+    g.findorAdd("a", "d");
+    CHECK_EQUAL(3, g.edgeCount());
+
+    g.remove(g.find(g.find("b"), g.find("c")));
+
+    CHECK_EQUAL(2, g.edgeCount());
+    CHECK(g.find(g.find("a"), g.find("b")) >= 0);
+    CHECK(g.find(g.find("b"), g.find("b")) == -1);
+    CHECK(g.find(g.find("a"), g.find("d")) >= 0);
+
+    ei = g.find(g.find("a"), g.find("d"));
+    CHECK(ei >= 0);
+
+    g.remove(ei);
+
+    CHECK(g.find(g.find("a"), g.find("b")) >= 0);
+    CHECK(g.find(g.find("b"), g.find("b")) == -1);
+    CHECK(g.find(g.find("a"), g.find("d")) >= -1);
+
 }
 
 TEST(findorAdd)

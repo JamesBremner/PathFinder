@@ -57,12 +57,13 @@ public:
         int src,
         int dst);
 
+
     // void remove(
-    //     const std::string &srcName,
-    //     const std::string &dstName);
-    void remove(
-        int src,
-        int dst     );
+    //     int src,
+    //     int dst     );
+
+    /// @brief remove edge
+    /// @param ei edge index
     void remove(
         int ei );
 
