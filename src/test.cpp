@@ -31,46 +31,46 @@ TEST(sourceToSink)
 
  TEST(removeLink)
  {
-    CHECK( false );
-//     raven::graph::cGraph g;
 
-//     // directed
+    raven::graph::cGraph g;
 
-//     g.directed();
-//     g.findorAdd("a", "b");
-//     g.findorAdd("b", "c");
-//     g.findorAdd("a", "d");
+    // directed
 
-//     g.remove(g.find(g.find("b"), g.find("c")));
+    g.directed();
+    g.findorAdd("a", "b");
+    g.findorAdd("b", "c");
+    g.findorAdd("a", "d");
 
-//     CHECK_EQUAL(2, g.edgeCount());
-//     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
-//     CHECK(g.find(g.find("b"), g.find("b")) == -1);
-//     CHECK(g.find(g.find("a"), g.find("d")) >= 0);
+    g.remove(g.find(g.find("b"), g.find("c")));
 
-//     int ei = g.find(g.find("a"), g.find("d"));
-//     CHECK(ei >= 0);
+    CHECK_EQUAL(2, g.edgeCount());
+    CHECK(g.find(g.find("a"), g.find("b")) >= 0);
+    CHECK(g.find(g.find("b"), g.find("b")) == -1);
+    CHECK(g.find(g.find("a"), g.find("d")) >= 0);
 
-//     g.remove(ei);
+    int ei = g.find(g.find("a"), g.find("d"));
+    CHECK(ei >= 0);
 
-//     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
-//     CHECK(g.find(g.find("b"), g.find("b")) == -1);
-//     CHECK(g.find(g.find("a"), g.find("d")) >= -1);
+    g.remove(ei);
 
-//     // undirected
+    CHECK(g.find(g.find("a"), g.find("b")) >= 0);
+    CHECK(g.find(g.find("b"), g.find("b")) == -1);
+    CHECK(g.find(g.find("a"), g.find("d")) >= -1);
 
-//     g.clear();
-//     g.findorAdd("a", "b");
-//     g.findorAdd("b", "c");
-//     g.findorAdd("a", "d");
-//     CHECK_EQUAL(3, g.edgeCount());
+    // undirected
 
-//     g.remove(g.find(g.find("b"), g.find("c")));
+    g.clear();
+    g.findorAdd("a", "b");
+    g.findorAdd("b", "c");
+    g.findorAdd("a", "d");
+    CHECK_EQUAL(3, g.edgeCount());
 
-//     CHECK_EQUAL(2, g.edgeCount());
-//     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
-//     CHECK(g.find(g.find("b"), g.find("b")) == -1);
-//     CHECK(g.find(g.find("a"), g.find("d")) >= 0);
+    g.remove(g.find(g.find("b"), g.find("c")));
+
+    CHECK_EQUAL(2, g.edgeCount());
+    CHECK(g.find(g.find("a"), g.find("b")) >= 0);
+    CHECK(g.find(g.find("b"), g.find("b")) == -1);
+    CHECK(g.find(g.find("a"), g.find("d")) >= 0);
 
 //     ei = g.find(g.find("a"), g.find("d"));
 //     CHECK(ei >= 0);
@@ -285,11 +285,9 @@ TEST(flows)
     g.wEdgeAttr(g.findorAdd("a", "b"), {"7"});
     g.wEdgeAttr(g.findorAdd("b", "a"), {"7"});
 
-     CHECK(false);
-
-    // double f = flows(
-    //     g, "a", "b");
-    // CHECK_EQUAL(7.0, f);
+    double f = flows(
+        g, "a", "b");
+    CHECK_EQUAL(7.0, f);
 }
 
 main()

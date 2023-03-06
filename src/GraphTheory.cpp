@@ -457,6 +457,7 @@ namespace raven
                         double cap = atof(work.rEdgeAttr(work.find(u, v), 0).c_str()) - maxflow;
                         if (cap <= 0)
                         {
+                            // link capacity filled, remove
                             work.remove(work.find(u, v));
                         }
                         else

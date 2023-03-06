@@ -47,7 +47,7 @@ void gen(const std::vector<std::string> &q)
     }
     for (int k = 0; k < vmax; k++)
     {
-        for (int kl = 0; kl < 5; kl++)
+        for (int kl = 0; kl < 3; kl++)
         {
             theGraph.add(rand() % vmax, rand() % vmax);
         }
