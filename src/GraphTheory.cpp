@@ -9,15 +9,6 @@ namespace raven
     namespace graph
     {
 
-        // std::pair<std::vector<int>, std::vector<double>>
-        // dijsktra(
-        //     const cGraph &g,
-        //     const std::string &startName)
-        // {
-        //     return dijsktra(
-        //         g,
-        //         g.find(startName));
-        // }
         void dijsktra(
             const cGraph &g,
             int start,
@@ -143,9 +134,7 @@ namespace raven
                 throw std::runtime_error(
                     "spanning tree start vertex unconnected");
             auto w = va[0];
-            spanTree.findorAdd(
-                g.userName(v),
-                g.userName(w));
+            spanTree.findorAdd(v,w);
             // std::cout << "add span " << g.userName(v) << " " << g.userName(w) << "\n";
             visited[v] = true;
             visited[w] = true;
@@ -189,9 +178,7 @@ namespace raven
                 }
 
                 // add cheapest link between node in tree to node not yet in tree
-                spanTree.findorAdd(
-                    g.userName(bestLink.first),
-                    g.userName(bestLink.second));
+                spanTree.findorAdd(bestLink.first,bestLink.second);
                 // std::cout << "add span " << g.userName(bestLink.first) << " " << g.userName(bestLink.second) << "\n";
                 // std::cout << spanTree.text();
                 visited[bestLink.first] = true;

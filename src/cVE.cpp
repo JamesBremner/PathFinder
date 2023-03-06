@@ -15,10 +15,11 @@ namespace raven
 
         void cVE::clear()
         {
+            myVertexCount = 0;
             fDirected = false;
             fDirected = false;
-            vVertexName.clear();
             vOutEdges.clear();
+            vInEdges.clear();
             vEdgeDst.clear();
         }
 
@@ -27,43 +28,32 @@ namespace raven
             fDirected = f;
         }
 
-        int cVE::add(const std::string &vertexName)
+        int cVE::add()
         {
-            int index = find(vertexName);
-            if (index >= 0)
-                throw std::runtime_error("cVE::add duplicate vertex name " + vertexName);
-            vVertexName.push_back(vertexName);
-            vOutEdges.push_back({});
-            vInEdges.push_back({});
-            return vVertexName.size() - 1;
+            myVertexCount++;
+            vOutEdges.resize(myVertexCount);
+            vInEdges.resize(myVertexCount);
+            return myVertexCount - 1;
         }
-        int cVE::add(
-            const std::string &srcName,
-            const std::string &dstName)
+        void cVE::add(int i)
         {
-            return add(find(srcName), find(dstName));
+            if (i < myVertexCount)
+                return;
+
+            // allocate storage for new vertices
+            myVertexCount = i + 1;
+            vOutEdges.resize(i+1);
+            vInEdges.resize(i+1);
         }
+
         int cVE::add(int src, int dst)
         {
             if (0 > src || 0 > dst)
                 throw std::runtime_error("cVE::add edge bad vertex index");
 
-            // check there is storage allocated for these vertices
-            int max = vVertexName.size() - 1;
-            if (src > max || dst > max)
-            {
-
-                // allocate storage for new vertices
-                // the new vertex names are set to '@myIndex'
-                // which indicates the name is the index formatted as a string
-                max = src;
-                if (dst > src)
-                    max = dst;
-                max++;
-                vVertexName.resize(max, "@myIndex");
-                vOutEdges.resize(max);
-                vInEdges.resize(max);
-            }
+            // ensure there is storage allocated for these vertices
+            add( src );
+            add( dst);
 
             int iedge = vEdgeDst.size();
             vOutEdges[src].push_back(iedge);
@@ -80,22 +70,6 @@ namespace raven
             return iedge;
         }
 
-        int cVE::findorAdd(const std::string vertexName)
-        {
-            int index = find(vertexName);
-            if (index < 0)
-                index = add(vertexName);
-            return index;
-        }
-
-        int cVE::findorAdd(
-            const std::string &srcName,
-            const std::string &dstName)
-        {
-            return add(
-                findorAdd(srcName),
-                findorAdd(dstName));
-        }
         int cVE::findorAdd(
             int src,
             int dst)
@@ -152,45 +126,45 @@ namespace raven
         void cVE::remove(
             int ei)
         {
-            if (0 > ei || ei > vEdgeDst.size() - 1)
-                return;
-            int dst = vEdgeDst[ei];
-            int src;
-            bool found = false;
-            for (src = 0; src < vVertexName.size(); src++)
-            {
-                for (auto it = vOutEdges[src].begin(); it != vOutEdges[src].end(); it++)
-                {
-                    if (*it == ei)
-                    {
-                        vOutEdges[src].erase(it);
-                        for (auto it2 = vInEdges[vEdgeDst[ei]].begin();
-                             it2 != vInEdges[vEdgeDst[ei]].end();
-                             it2++)
-                            if (*it2 == ei)
-                            {
-                                vInEdges[vEdgeDst[ei]].erase(it2);
-                                break;
-                            }
-                        vEdgeDst[ei] = -1;
-                        found = true;
-                        break;
-                    }
-                }
-                if (found)
-                    break;
-            }
-            if (isDirected())
-                return;
-            for (auto it = vOutEdges[dst].begin();
-                 it != vOutEdges[dst].end();
-                 it++)
-            {
-                if (vEdgeDst[*it] == src)
-                    vEdgeDst[*it] = -1;
-                vOutEdges[dst].erase(it);
-                break;
-            }
+            // if (0 > ei || ei > vEdgeDst.size() - 1)
+            //     return;
+            // int dst = vEdgeDst[ei];
+            // int src;
+            // bool found = false;
+            // for (src = 0; src < vVertexName.size(); src++)
+            // {
+            //     for (auto it = vOutEdges[src].begin(); it != vOutEdges[src].end(); it++)
+            //     {
+            //         if (*it == ei)
+            //         {
+            //             vOutEdges[src].erase(it);
+            //             for (auto it2 = vInEdges[vEdgeDst[ei]].begin();
+            //                  it2 != vInEdges[vEdgeDst[ei]].end();
+            //                  it2++)
+            //                 if (*it2 == ei)
+            //                 {
+            //                     vInEdges[vEdgeDst[ei]].erase(it2);
+            //                     break;
+            //                 }
+            //             vEdgeDst[ei] = -1;
+            //             found = true;
+            //             break;
+            //         }
+            //     }
+            //     if (found)
+            //         break;
+            // }
+            // if (isDirected())
+            //     return;
+            // for (auto it = vOutEdges[dst].begin();
+            //      it != vOutEdges[dst].end();
+            //      it++)
+            // {
+            //     if (vEdgeDst[*it] == src)
+            //         vEdgeDst[*it] = -1;
+            //     vOutEdges[dst].erase(it);
+            //     break;
+            // }
         }
 
         int cVE::edgeCount() const
@@ -200,15 +174,7 @@ namespace raven
                 return c;
             return c / 2;
         }
-        int cVE::find(const std::string &vertexName) const
-        {
-            auto it = std::find(vVertexName.begin(), vVertexName.end(), vertexName);
-            if (it == vVertexName.end())
-                return -1;
-            int i = it - vVertexName.begin();
-            return i;
-            // return std::distance(vVertexName.begin(), it);
-        }
+        // int cVE::find(const std::string &vertexName) const
 
         int cVE::find(int src, int dst) const
         {
@@ -230,14 +196,6 @@ namespace raven
             return ret;
         }
 
-        std::vector<std::string> cVE::adjacentOut(const std::string &name) const
-        {
-            std::vector<std::string> ret;
-            for (int i : adjacentOut(find(name)))
-                ret.push_back(vVertexName[i]);
-            return ret;
-        }
-
         std::vector<int> cVE::adjacentIn(int vi) const
         {
             std::vector<int> ret;
@@ -246,62 +204,64 @@ namespace raven
             return ret;
         }
 
-        std::string cVE::userName(int i) const
-        {
-            std::string ret = vVertexName[i];
-            if (ret == "@myIndex")
-                return std::to_string(i);
-            return ret;
-        }
+        // std::string cVE::userName(int i) const
+        // {
+        //     std::string ret = vVertexName[i];
+        //     if (ret == "@myIndex")
+        //         return std::to_string(i);
+        //     return ret;
+        // }
 
-        std::vector<std::string> cVE::userName(std::vector<int> vi) const
-        {
-            std::vector<std::string> ret;
-            for (int i : vi)
-                ret.push_back(userName(i));
-            return ret;
-        }
+        // std::vector<std::string> cVE::userName(std::vector<int> vi) const
+        // {
+        //     std::vector<std::string> ret;
+        //     for (int i : vi)
+        //         ret.push_back(userName(i));
+        //     return ret;
+        // }
 
-        std::vector<std::string> cVE::vertexNames() const
-        {
-            std::vector<std::string> ret;
-            for (int kv = 0; kv < vVertexName.size(); kv++)
-            {
-                if (vVertexName[kv] == "@myIndex")
-                    ret.push_back(std::to_string(kv));
-                else
-                    ret.push_back(vVertexName[kv]);
-            }
-            return ret;
-        }
+        // std::vector<std::string> cVE::vertexNames() const
+        // {
+        //     std::vector<std::string> ret;
+        //     for (int kv = 0; kv < vVertexName.size(); kv++)
+        //     {
+        //         if (vVertexName[kv] == "@myIndex")
+        //             ret.push_back(std::to_string(kv));
+        //         else
+        //             ret.push_back(vVertexName[kv]);
+        //     }
+        //     return ret;
+        // }
 
-        std::string cVE::text() const
-        {
-            std::stringstream ss;
-            for (auto &vn : vVertexName)
-            {
-                int vi = find(vn);
-                for (int ei : vOutEdges[vi])
-                {
-                    int wi = vEdgeDst[ei];
-                    if ((!fDirected) && (vi > wi))
-                        continue;
-                    ss << "l " << vn << " " << vVertexName[wi];
-                    ss << "\n";
-                }
-            }
-            return ss.str();
-        }
+        // std::string cVE::text() const
+        // {
+        //     std::stringstream ss;
+        //     for (auto &vn : vVertexName)
+        //     {
+        //         int vi = find(vn);
+        //         for (int ei : vOutEdges[vi])
+        //         {
+        //             int wi = vEdgeDst[ei];
+        //             if ((!fDirected) && (vi > wi))
+        //                 continue;
+        //             ss << "l " << vn << " " << vVertexName[wi];
+        //             ss << "\n";
+        //         }
+        //     }
+        //     return ss.str();
+        // }
 
         std::vector<std::pair<int, int>>
         cVE::edgeList() const
         {
             std::vector<std::pair<int, int>> ret;
-            for (int vi = 0; vi < vVertexName.size(); vi++)
+            for (int vi = 0; vi < myVertexCount; vi++)
             {
                 for (int ei : vOutEdges[vi])
                 {
                     int wi = vEdgeDst[ei];
+                    if (wi < 0)
+                        continue;
                     if (vi > wi)
                         continue;
                     ret.push_back(std::make_pair(vi, wi));

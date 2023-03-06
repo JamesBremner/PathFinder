@@ -6,12 +6,22 @@ namespace raven
     namespace graph {
 
     /// @brief graph vertex and edge attributes
-    
+
     class cAttribute 
     {
     public:
 
         void clear();
+
+        void resizeVertex( int c )
+        {
+            vVertexName.resize(c);
+            vVertexAttr.resize(c);
+        }
+        void add( const std::string& name )
+        {
+            vVertexName.push_back( name );
+        }
 
         /// @brief write vertex attributes
         /// @param iv vertex index
@@ -37,12 +47,22 @@ namespace raven
         /// @return string representation of attribute
         std::string rEdgeAttr(int ei, int ai ) const;
 
+        int find( const std::string& name ) const;
+
+        std::string userName( int vi ) const
+        {
+            return vVertexName[vi];
+        }
+
+
+
     private:
         /** vertex attributes
          *
          *  vVertexAttr[vi][ai] is a string representing the aith attribute of the vith vertex
          */
 
+        std::vector<std::string> vVertexName;
         std::vector<std::vector<std::string>> vVertexAttr;
 
         /* edge attributes

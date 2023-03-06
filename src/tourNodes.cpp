@@ -60,9 +60,7 @@ int cTourNodes::isLeafJump(int v)
             continue;
 
         // check for link to other leaf in original graph
-        if (g.find(
-                g.find(spanTree.userName(v)),
-                g.find(spanTree.userName(f))) != -1)
+        if (g.find( v, f ) != -1 )
             return f;
 
         // there is no escape from this leaf without revisiting nodes

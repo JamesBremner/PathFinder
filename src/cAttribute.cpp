@@ -1,9 +1,11 @@
 #include <stdexcept>
+#include <algorithm>
 #include "cAttribute.h"
 namespace raven
 { namespace graph {
     void cAttribute::clear()
     {
+        vVertexName.clear();
         vVertexAttr.clear();
         vEdgeAttr.clear();
     }
@@ -44,5 +46,14 @@ namespace raven
             return "";
         return vEdgeAttr[ei][ai];
     }
+    int cAttribute::find( const std::string& name ) const
+    {
+        auto it = std::find(
+            vVertexName.begin(),vVertexName.end(), name );
+        if( it == vVertexName.end())
+            return -1;
+        return it - vVertexName.begin();
+    }
+
 }
 }
