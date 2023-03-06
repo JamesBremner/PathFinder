@@ -1,6 +1,6 @@
 # PathFinder
 
-Find paths through graphs with verrtices and edges.
+Find paths through graphs with vertices and edges.
 
 ## Applications
 
