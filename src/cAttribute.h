@@ -13,15 +13,27 @@ namespace raven
 
         void clear();
 
+        /// @brief Change number of vertices
+        /// @param c new vertex count
+
         void resizeVertex( int c )
         {
             vVertexName.resize(c);
             vVertexAttr.resize(c);
         }
+
+        /// @brief add a vertex
+        /// @param name name of new vertes
+
         void add( const std::string& name )
         {
             vVertexName.push_back( name );
         }
+
+        /// @brief write vertex name
+        /// @param iv 
+        /// @param name 
+
         void wVertexName( int iv, const std::string& name )
         {
             vVertexName[iv] = name;
@@ -51,8 +63,16 @@ namespace raven
         /// @return string representation of attribute
         std::string rEdgeAttr(int ei, int ai ) const;
 
+        /// @brief vertex index from name
+        /// @param name 
+        /// @return index
+
         int find( const std::string& name ) const;
 
+        /// @brief  vertex name from index
+        /// @param vi 
+        /// @return vertex name
+        
         std::string userName( int vi ) const
         {
             return vVertexName[vi];
