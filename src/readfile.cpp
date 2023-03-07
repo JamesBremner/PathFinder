@@ -126,24 +126,8 @@ static void readObstacles(
     raven::graph::cGraph &g,
     std::ifstream &ifs)
 {
-    std::string stype, sn1, sn2, scost, sx, sy;
-    int ie;
-
-    ifs >> stype;
-
-    while (ifs.good())
-    {
-        switch (stype[0])
-        {
-        case 'l':
-            ifs >> sn1 >> sn2 >> scost;
-            g.wEdgeAttr(g.findorAdd(sn1, sn2), {scost});
-            //g.wEdgeAttr(ie, {sx, sy});
-            break;
-        }
-
-        ifs >> stype;
-    }
+    throw std::runtime_error(
+        "Input file must be processed using the obstacle application");
 }
 static void readCycle(
     raven::graph::cGraph &g,
@@ -164,7 +148,6 @@ static void readCycle(
         ifs >> stype;
     }
 }
-
 
 graph_calc readfile(
     raven::graph::cGraph &g,
@@ -214,6 +197,11 @@ graph_calc readfile(
         readCostedLinks(g, ifs);
     }
     else if (calc.find("obs") != -1)
+    {
+        option = graph_calc::obs;
+        readObstacles(g, ifs);
+    }
+    else if (calc.find("farm") != -1)
     {
         option = graph_calc::obs;
         readObstacles(g, ifs);
