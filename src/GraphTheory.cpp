@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <stack>
+#include <set>
 #include "GraphTheory.h"
 
 namespace raven
@@ -115,12 +116,24 @@ namespace raven
 
             return std::make_pair(vpath, dist[end]);
         }
+
+        void cSpanningTree::add(
+            const cGraph &g,
+            int v, int w)
+        {
+            mySpanningTree.findorAdd(v, w);
+            mySpanningTree.wVertexName(v, g.userName(v));
+            mySpanningTree.wVertexName(w, g.userName(w));
+            myVertexSet.insert(v);
+            myVertexSet.insert(w);
+        }
+
         cGraph
         spanningTree(
             const cGraph &g,
             const std::string &startName)
         {
-            cGraph spanTree;
+            cSpanningTree ST;
 
             int start = g.find(startName);
 
@@ -134,13 +147,14 @@ namespace raven
                 throw std::runtime_error(
                     "spanning tree start vertex unconnected");
             auto w = va[0];
-            spanTree.findorAdd(v,w);
-            // std::cout << "add span " << g.userName(v) << " " << g.userName(w) << "\n";
+            ST.add(g, v, w);
+
             visited[v] = true;
             visited[w] = true;
 
+
             // while nodes remain outside of span
-            while (g.vertexCount() > spanTree.vertexCount())
+            while (g.vertexCount() > ST.vertexCount())
             {
                 double min_cost = INT_MAX;
                 std::pair<int, int> bestLink;
@@ -178,21 +192,19 @@ namespace raven
                 }
 
                 // add cheapest link between node in tree to node not yet in tree
-                spanTree.findorAdd(bestLink.first,bestLink.second);
-                // std::cout << "add span " << g.userName(bestLink.first) << " " << g.userName(bestLink.second) << "\n";
-                // std::cout << spanTree.text();
+                ST.add(g, bestLink.first, bestLink.second);
+
                 visited[bestLink.first] = true;
                 visited[bestLink.second] = true;
+
             }
 
-            // std::cout << "spanTree return\n"
-            //           << spanTree.text();
-            return spanTree;
+            return ST.mySpanningTree;
         }
 
         void dfs(
             const cGraph &g,
-            const std::string &startName,
+            int startIndex,
             std::function<bool(int v)> visitor)
         {
             // track visited vertices
@@ -207,10 +219,6 @@ namespace raven
                 4 Keep repeating steps 2 and 3 until the stack is empty.
             */
 
-            int startIndex = g.find(startName);
-            if (startIndex < 0)
-                throw std::runtime_error(
-                    "dfs bad start " + startName);
             wait.push(startIndex);
 
             while (!wait.empty())

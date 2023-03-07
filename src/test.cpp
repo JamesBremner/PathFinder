@@ -3,34 +3,13 @@
 #include "cutest.h"
 #include "GraphTheory.h"
 
-TEST(sourceToSink)
+
+
+
+
+
+TEST(removeLink)
 {
-    raven::graph::cGraph g;
-    g.directed();
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "e");
-    g.findorAdd("b", "d");
-    g.findorAdd("c", "d");
-
-    auto res = sourceToSink( g );
-
-    auto dbg = g.userName(res[1]);
-
-    CHECK_EQUAL(2,res.size());
-    std::vector<std::string> exp1 { "a","e","d"};
-    CHECK(std::equal(
-        exp1.begin(),
-        exp1.end(),
-        g.userName(res[0]).begin() ));
-    std::vector<std::string> exp2 { "c","d"};
-    CHECK(std::equal(
-        exp2.begin(),
-        exp2.end(),
-        g.userName(res[1]).begin() ));
-}
-
- TEST(removeLink)
- {
 
     raven::graph::cGraph g;
 
@@ -72,16 +51,15 @@ TEST(sourceToSink)
     CHECK(g.find(g.find("b"), g.find("b")) == -1);
     CHECK(g.find(g.find("a"), g.find("d")) >= 0);
 
-//     ei = g.find(g.find("a"), g.find("d"));
-//     CHECK(ei >= 0);
+    //     ei = g.find(g.find("a"), g.find("d"));
+    //     CHECK(ei >= 0);
 
-//     g.remove(ei);
+    //     g.remove(ei);
 
-//     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
-//     CHECK(g.find(g.find("b"), g.find("b")) == -1);
-//     CHECK(g.find(g.find("a"), g.find("d")) >= -1);
-
- }
+    //     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
+    //     CHECK(g.find(g.find("b"), g.find("b")) == -1);
+    //     CHECK(g.find(g.find("a"), g.find("d")) >= -1);
+}
 
 TEST(findorAdd)
 {
@@ -169,16 +147,19 @@ TEST(spanningTree)
     g.findorAdd("a", "b");
     g.findorAdd("b", "c");
     g.findorAdd("a", "d");
-    std::string expected(
-        "l b a\n"
-        "l b c\n"
-        "l a d\n");
 
-    auto res = spanningTree(g,"a").edgeList();
+    std::vector<std::pair<int, int>> expected{
+        {0, 1},
+        {0, 3},
+        {1, 2}};
 
-    CHECK( false );
+    auto res = spanningTree(g, "a").edgeList();
 
-    //CHECK_EQUAL(expected, spanningTree(g, "a").text());
+    CHECK_EQUAL(3, res.size());
+
+    CHECK(std::equal(
+        expected.begin(), expected.end(),
+        res.begin()));
 }
 
 TEST(dfs)
@@ -189,7 +170,7 @@ TEST(dfs)
     g.findorAdd("a", "d");
 
     std::vector<int> visited;
-    dfs(g, "a",
+    dfs(g, g.find("a"),
         [&](int v)
         {
             visited.push_back(v);
@@ -211,17 +192,17 @@ TEST(tourNodes)
     g.findorAdd("a", "d");
     raven::graph::cTourNodes tourer(g);
 
-    CHECK(false);
+    // CHECK(false);
 
-    // tourer.calculate();
-    // auto tour = tourer.getTour();
+    tourer.calculate();
+    auto tour = tourer.getTour();
 
-    // std::vector<std::string> expected{"c", "b", "a", "d"};
-    // auto actual = g.userName(tour);
-    // CHECK(std::equal(
-    //     expected.begin(),
-    //     expected.end(),
-    //     actual.begin()));
+    std::vector<std::string> expected{"d", "a", "b", "c"};
+    auto actual = g.userName(tour);
+    CHECK(std::equal(
+        expected.begin(),
+        expected.end(),
+        actual.begin()));
 }
 
 TEST(tourNodes2)
@@ -234,17 +215,17 @@ TEST(tourNodes2)
     g.findorAdd("c", "d");
     raven::graph::cTourNodes tourer(g);
 
-     CHECK(false);
+    //CHECK(false);
 
-    // tourer.calculate();
-    // auto tour = tourer.getTour();
+    tourer.calculate();
+    auto tour = tourer.getTour();
 
-    // std::vector<std::string> expected{"b", "c", "d", "a"};
-    // auto actual = g.userName(tour);
-    // CHECK(std::equal(
-    //     expected.begin(),
-    //     expected.end(),
-    //     actual.begin()));
+    std::vector<std::string> expected{"a", "d", "c", "b"};
+    auto actual = g.userName(tour);
+    CHECK(std::equal(
+        expected.begin(),
+        expected.end(),
+        actual.begin()));
 }
 
 TEST(cycle)
@@ -290,8 +271,33 @@ TEST(flows)
     CHECK_EQUAL(7.0, f);
 }
 
+TEST(sourceToSink)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    g.findorAdd("a", "b");
+    g.findorAdd("b", "e");
+    g.findorAdd("b", "d");
+    g.findorAdd("c", "d");
+
+    auto res = sourceToSink(g);
+
+    auto dbg = g.userName(res[1]);
+
+    CHECK_EQUAL(2, res.size());
+    std::vector<std::string> exp1{"a", "e", "d"};
+    CHECK(std::equal(
+        exp1.begin(),
+        exp1.end(),
+        g.userName(res[0]).begin()));
+    std::vector<std::string> exp2{"c", "d"};
+    CHECK(std::equal(
+        exp2.begin(),
+        exp2.end(),
+        g.userName(res[1]).begin()));
+}
+
 main()
 {
-    std::cout << "run all tests\n";
     return raven::set::UnitTest::RunAllTests();
 }

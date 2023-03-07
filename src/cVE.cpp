@@ -126,45 +126,45 @@ namespace raven
         void cVE::remove(
             int ei)
         {
-            // if (0 > ei || ei > vEdgeDst.size() - 1)
-            //     return;
-            // int dst = vEdgeDst[ei];
-            // int src;
-            // bool found = false;
-            // for (src = 0; src < vVertexName.size(); src++)
-            // {
-            //     for (auto it = vOutEdges[src].begin(); it != vOutEdges[src].end(); it++)
-            //     {
-            //         if (*it == ei)
-            //         {
-            //             vOutEdges[src].erase(it);
-            //             for (auto it2 = vInEdges[vEdgeDst[ei]].begin();
-            //                  it2 != vInEdges[vEdgeDst[ei]].end();
-            //                  it2++)
-            //                 if (*it2 == ei)
-            //                 {
-            //                     vInEdges[vEdgeDst[ei]].erase(it2);
-            //                     break;
-            //                 }
-            //             vEdgeDst[ei] = -1;
-            //             found = true;
-            //             break;
-            //         }
-            //     }
-            //     if (found)
-            //         break;
-            // }
-            // if (isDirected())
-            //     return;
-            // for (auto it = vOutEdges[dst].begin();
-            //      it != vOutEdges[dst].end();
-            //      it++)
-            // {
-            //     if (vEdgeDst[*it] == src)
-            //         vEdgeDst[*it] = -1;
-            //     vOutEdges[dst].erase(it);
-            //     break;
-            // }
+            if (0 > ei || ei > vEdgeDst.size() - 1)
+                return;
+            int dst = vEdgeDst[ei];
+            int src;
+            bool found = false;
+            for (src = 0; src < myVertexCount; src++)
+            {
+                for (auto it = vOutEdges[src].begin(); it != vOutEdges[src].end(); it++)
+                {
+                    if (*it == ei)
+                    {
+                        vOutEdges[src].erase(it);
+                        for (auto it2 = vInEdges[vEdgeDst[ei]].begin();
+                             it2 != vInEdges[vEdgeDst[ei]].end();
+                             it2++)
+                            if (*it2 == ei)
+                            {
+                                vInEdges[vEdgeDst[ei]].erase(it2);
+                                break;
+                            }
+                        vEdgeDst[ei] = -1;
+                        found = true;
+                        break;
+                    }
+                }
+                if (found)
+                    break;
+            }
+            if (isDirected())
+                return;
+            for (auto it = vOutEdges[dst].begin();
+                 it != vOutEdges[dst].end();
+                 it++)
+            {
+                if (vEdgeDst[*it] == src)
+                    vEdgeDst[*it] = -1;
+                vOutEdges[dst].erase(it);
+                break;
+            }
         }
 
         int cVE::edgeCount() const

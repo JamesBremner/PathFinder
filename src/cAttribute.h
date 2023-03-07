@@ -22,6 +22,10 @@ namespace raven
         {
             vVertexName.push_back( name );
         }
+        void wVertexName( int iv, const std::string& name )
+        {
+            vVertexName[iv] = name;
+        }
 
         /// @brief write vertex attributes
         /// @param iv vertex index

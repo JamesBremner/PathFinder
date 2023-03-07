@@ -1,4 +1,5 @@
 #pragma once
+#include <set>
 #include <functional>
 #include "cGraph.h"
 
@@ -51,6 +52,22 @@ namespace raven
             const std::vector<int> &visp);
     };
 
+    class cSpanningTree
+    {
+        public:
+        cGraph mySpanningTree;
+        std::set<int> myVertexSet;
+
+        void add( 
+            const cGraph &g,
+            int v, int w );
+
+        int vertexCount() const
+        {
+            return myVertexSet.size();
+        }
+    };
+
     /// @brief find shortest path from start node to every other
     /// @param g
     /// @param start vertex index
@@ -94,13 +111,13 @@ namespace raven
 
     /// @brief depth first search
     /// @param g
-    /// @param startName
+    /// @param startIndex
     /// @param visitor function to call when a new node is reached
     /// visitor should return true, but false if the search should stop
 
     void dfs(
         const cGraph &g,
-        const std::string &startName,
+        int startIndex,
         std::function<bool(int v)> visitor);
 
     /// @brief cycle finder
@@ -126,7 +143,7 @@ namespace raven
     /// @param start 
     /// @param end 
     /// @return 
-    
+
     double flows(
         const cGraph &g,
         const std::string &start,

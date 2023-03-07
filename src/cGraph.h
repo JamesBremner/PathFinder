@@ -19,6 +19,10 @@ namespace raven
                 myAtt.clear();
             }
 
+            void wVertexName( int iv, const std::string& name )
+            {
+                myAtt.wVertexName(iv,name);
+            }
             void wVertexAttr(
                 int vi,
                 const std::vector<std::string> &vsAttr)
@@ -84,7 +88,7 @@ namespace raven
             /// @brief vertex index from name
             /// @param name 
             /// @return 
-            
+
             int find(const std::string &name) const
             {
                 return myAtt.find(name);

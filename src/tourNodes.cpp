@@ -137,15 +137,15 @@ void cTourNodes::calculate()
             // depth first search
             dfs(
                 spanTree,
-                g.userName(dfsStart),
+                dfsStart,
                 std::bind(
                     cTourNodes::visitor, this,
                     std::placeholders::_1));
 
         }
-        std::cout << "tourNodes revisited " << revisited.size()
-                  << " unvisited " << unvisited
-                  << " start " << g.userName(spanTreeRoot) << "\n";
+        // std::cout << "tourNodes revisited " << revisited.size()
+        //           << " unvisited " << unvisited
+        //           << " start " << g.userName(spanTreeRoot) << "\n";
 
         // check for 'perfect' tour
         if ((!revisited.size()) && (!unvisited))
