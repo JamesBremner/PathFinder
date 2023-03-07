@@ -168,11 +168,11 @@ void cObstacle::inputGraph()
             mygraphdata.wVertexAttr(v1,{std::to_string(w1),std::to_string(h1)});
             mygraphdata.wVertexAttr(v2,{std::to_string(w2),std::to_string(h2)});
         }
-    std::ofstream ofs("../data/obstacle_graph.txt");
-    if( ! ofs.is_open() )
-        throw std::runtime_error("Cannot open input grapg file");
-    ofs << "format obs\n";
-    ofs << mygraphdata.text();
+    // std::ofstream ofs("../data/obstacle_graph.txt");
+    // if( ! ofs.is_open() )
+    //     throw std::runtime_error("Cannot open input grapg file");
+    // ofs << "format obs\n";
+    // ofs << mygraphdata.text();
 }
 
 void cObstacle::tourNodesGD()

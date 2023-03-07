@@ -227,7 +227,7 @@ void cGUI::calcSales()
                 double dx = x2 - x1;
                 double dy = y2 - y1;
                 std::string dsq = std::to_string(dx * dx + dy * dy);
-                myGraph.wEdgeAttr(myGraph.add(v1, v2), {dsq});
+                myGraph.wEdgeAttr(myGraph.findorAdd(v1, v2), {dsq});
             }
         }
     }

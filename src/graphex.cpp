@@ -49,7 +49,7 @@ void gen(const std::vector<std::string> &q)
     {
         for (int kl = 0; kl < 3; kl++)
         {
-            theGraph.add(rand() % vmax, rand() % vmax);
+            theGraph.findorAdd(rand() % vmax, rand() % vmax);
         }
     }
     displayStatus();
@@ -78,7 +78,7 @@ void add(const std::vector<std::string> &q)
             for (auto &p : vedge)
             {
                 raven::set::cRunWatch aWatcher("randomAdd");
-                theGraph.add(p.first, p.second);
+                theGraph.findorAdd(p.first, p.second);
             }
         }
     }
@@ -135,7 +135,7 @@ void read(const std::vector<std::string> &q)
         int v1 = atoi(tokens[1].c_str());
         int v2 = atoi(tokens[2].c_str());
 
-        theGraph.add(v1, v2);
+        theGraph.findorAdd(v1, v2);
 
         count++;
         if (count % 10000 == 0)

@@ -25,9 +25,9 @@ namespace raven
         f << graphvizgraph << " G {\n";
 
         // loop over vertices
-        for (auto &n : g.vertexNames())
+        for (int vi = 0; vi<g.vertexCount();vi++)
         {
-            f << n
+            f << g.userName( vi )
               << " [  penwidth = 3.0 ];\n";
         }
 
