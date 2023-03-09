@@ -159,25 +159,45 @@ void cObstacle::inputGraph()
                 continue;
 
             // OK to connect
-            mygraphdata.wEdgeAttr(mygraphdata.findorAdd(
-                std::to_string(n1->ID()),
-                std::to_string(n2->ID())),
+
+            auto sn1 = std::to_string(n1->ID());
+            auto sn2 = std::to_string(n2->ID());
+            mygraphdata.wEdgeAttr(
+                mygraphdata.findorAdd(sn1, sn2),
                 {std::to_string(d2)});
-            int v1 = mygraphdata.find(std::to_string(n1->ID()));
-            int v2 = mygraphdata.find(std::to_string(n2->ID()));
-            mygraphdata.wVertexAttr(v1,{std::to_string(w1),std::to_string(h1)});
-            mygraphdata.wVertexAttr(v2,{std::to_string(w2),std::to_string(h2)});
+            mygraphdata.wEdgeAttr(
+                mygraphdata.findorAdd(sn2, sn1),
+                {std::to_string(d2)});
+            mygraphdata.wVertexAttr(
+                mygraphdata.find(sn1),
+                {std::to_string(w1), std::to_string(h1)});
+            mygraphdata.wVertexAttr(
+                mygraphdata.find(sn2),
+                    {std::to_string(w2),std::to_string(h2)});
         }
-    // std::ofstream ofs("../data/obstacle_graph.txt");
-    // if( ! ofs.is_open() )
-    //     throw std::runtime_error("Cannot open input grapg file");
-    // ofs << "format obs\n";
-    // ofs << mygraphdata.text();
 }
 
 void cObstacle::tourNodesGD()
 {
-    //tourNodes( mygraphdata );
+    raven::graph::cTourNodes T(mygraphdata);
+    T.calculate();
+    std::cout << "unvisited " << T.unvisitedCount()
+              << ", revisited " << T.revisitedCount()
+              << ", nodes " << mygraphdata.vertexCount()
+              << "\n";
+
+    myTour.clear();
+    std::tuple<std::string,int,int> loc;
+    for( int n : T.getTour() ) {
+        std::get<0>(loc) = mygraphdata.userName(n);
+        A->coords(
+            std::get<1>(loc),std::get<2>(loc),
+            A->cell(atoi(std::get<0>(loc).c_str())));
+
+        myTour.push_back( loc );
+    }
+    myUnvisitedCount = T.unvisitedCount();
+    myRevisitedCount = T.revisitedCount();
 }
 
 double cObstacle::linkCost(link_t &l) const

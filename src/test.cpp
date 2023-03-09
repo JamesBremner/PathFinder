@@ -5,8 +5,60 @@
 
 
 
+TEST(findorAdd)
+{
+    raven::graph::cGraph g;
+    g.findorAdd("a", "b");
+    g.findorAdd("b", "c");
+    CHECK_EQUAL(2, g.edgeCount());
+
+    g.clear();
+    g.directed();
+    g.findorAdd("a", "b");
+    g.findorAdd("b", "c");
+    CHECK_EQUAL(2, g.edgeCount());
+
+    g.clear();
+    g.directed();
+    g.findorAdd("a", "b");
+    g.findorAdd("b", "c");
+    g.findorAdd("a", "d");
+
+    int nb = g.find("b");
+    int nc = g.find("c");
+    CHECK(nb != -1 );
+    CHECK(nc != -1 );
+
+    int ei = g.find(nb,nc);
+    CHECK(ei!=-1);
+
+    g.clear();
+    g.directed();
+    int ab = g.findorAdd("a", "b");
+    int ba = g.findorAdd("b", "a");
+    CHECK_EQUAL(0,ab);
+    CHECK_EQUAL(1,ba);
+
+    g.clear();
+     ab = g.findorAdd("a", "b");
+     ba = g.findorAdd("b", "a");
+    CHECK_EQUAL(0,ab);
+    CHECK_EQUAL(1,ba);
+
+}
 
 
+TEST(flows)
+{
+    raven::graph::cGraph g;
+
+    g.wEdgeAttr(g.findorAdd("a", "b"), {"7"});
+
+    double f = flows(
+        g, "a", "b");
+        
+    CHECK_EQUAL(7.0, f);
+}
 
 TEST(removeLink)
 {
@@ -20,14 +72,19 @@ TEST(removeLink)
     g.findorAdd("b", "c");
     g.findorAdd("a", "d");
 
-    g.remove(g.find(g.find("b"), g.find("c")));
+    int nb = g.find("b");
+    int nc = g.find("c");
+    int ei = g.find(nb,nc);
+
+   // g.remove(g.find(g.find("b"), g.find("c")));
+   g.remove(ei);
 
     CHECK_EQUAL(2, g.edgeCount());
     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
     CHECK(g.find(g.find("b"), g.find("b")) == -1);
     CHECK(g.find(g.find("a"), g.find("d")) >= 0);
 
-    int ei = g.find(g.find("a"), g.find("d"));
+    ei = g.find(g.find("a"), g.find("d"));
     CHECK(ei >= 0);
 
     g.remove(ei);
@@ -61,19 +118,7 @@ TEST(removeLink)
     //     CHECK(g.find(g.find("a"), g.find("d")) >= -1);
 }
 
-TEST(findorAdd)
-{
-    raven::graph::cGraph g;
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    CHECK_EQUAL(2, g.edgeCount());
 
-    g.clear();
-    g.directed();
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    CHECK_EQUAL(2, g.edgeCount());
-}
 
 TEST(edgebyindex)
 {
@@ -192,11 +237,12 @@ TEST(tourNodes)
     g.findorAdd("a", "d");
     raven::graph::cTourNodes tourer(g);
 
-    // CHECK(false);
-
     tourer.calculate();
-    auto tour = tourer.getTour();
 
+    CHECK_EQUAL(0,tourer.unvisitedCount());
+    CHECK_EQUAL(0,tourer.revisitedCount());
+
+    auto tour = tourer.getTour();
     std::vector<std::string> expected{"d", "a", "b", "c"};
     auto actual = g.userName(tour);
     CHECK(std::equal(
@@ -214,8 +260,6 @@ TEST(tourNodes2)
     g.findorAdd("a", "d");
     g.findorAdd("c", "d");
     raven::graph::cTourNodes tourer(g);
-
-    //CHECK(false);
 
     tourer.calculate();
     auto tour = tourer.getTour();
@@ -259,17 +303,7 @@ TEST(cycle2)
     CHECK_EQUAL(4, act[0].size());
 }
 
-TEST(flows)
-{
-    raven::graph::cGraph g;
-    g.directed(false);
-    g.wEdgeAttr(g.findorAdd("a", "b"), {"7"});
-    g.wEdgeAttr(g.findorAdd("b", "a"), {"7"});
 
-    double f = flows(
-        g, "a", "b");
-    CHECK_EQUAL(7.0, f);
-}
 
 TEST(sourceToSink)
 {

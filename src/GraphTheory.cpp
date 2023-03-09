@@ -167,7 +167,6 @@ namespace raven
                     v = kv;
 
                     // loop over adjacent nodes not in span
-                    auto dbg = g.adjacentOut(v);
                     for (auto w : g.adjacentOut(v))
                     {
                         if (visited[w])
@@ -182,8 +181,7 @@ namespace raven
 
                         // track cheapest edge
                         double cost = atof(g.rEdgeAttr(ei, 0).c_str());
-
-                        if (cost < min_cost)
+                        if ( cost < min_cost)
                         {
                             min_cost = cost;
                             bestLink = std::make_pair(v, w);
@@ -419,6 +417,7 @@ namespace raven
             }
             results = ss.str();
         }
+        
         double flows(
             const cGraph &g,
             const std::string &start,

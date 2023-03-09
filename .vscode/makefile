@@ -43,6 +43,7 @@ OBJ_obstacle = \
 	$(ODIR)/cObstacle.o \
 	$(ODIR)/cVE.o \
 	$(ODIR)/cAttribute.o \
+	$(ODIR)/cGraph.o \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/tourNodes.o \
 	$(ODIR)/autocell.o \

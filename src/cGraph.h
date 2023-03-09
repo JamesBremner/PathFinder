@@ -64,7 +64,7 @@ namespace raven
                 int d = find(dstName);
                 if (d < 0)
                     d = add(dstName);
-                return cVE::add(s, d);
+                return cVE::findorAdd( s, d );
             }
 
             int findorAdd(int s, int d)
@@ -121,6 +121,8 @@ namespace raven
                     ret.push_back(userName(i));
                 return ret;
             }
+
+            std::string text();
 
         private:
             cAttribute myAtt;

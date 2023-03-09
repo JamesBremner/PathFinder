@@ -72,10 +72,17 @@ void cGUI::ConstructMenu()
             fm.update();
         });
     vfile.append(
-        "Route",
+        "Route plot",
         [&](const std::string &title)
         {
             myViewType = eView::route;
+            fm.update();
+        });
+    vfile.append(
+        "Route list",
+        [&](const std::string &title)
+        {
+            myViewType = eView::routelist;
             fm.update();
         });
     mbar.append("View", vfile);
@@ -88,7 +95,7 @@ void cGUI::draw(PAINTSTRUCT &ps)
 
     fm.text("Obstacles " + myfname);
 
-    int scale = 10;
+    int scale = 20;
 
     wex::shapes S(ps);
     int W, H;
@@ -122,27 +129,30 @@ void cGUI::draw(PAINTSTRUCT &ps)
 
         S.color(0xFF0000);
         S.penThick(1);
-        sspath << std::get<0>(myObstacle.path()[0])->ID();
-        for (auto &pl : myObstacle.path())
-        {
-            auto n1 = std::get<0>(pl);
-            auto n2 = std::get<1>(pl);
-            int w, h, w2, h2;
-            grid->coords(
-                w, h, n1);
-            grid->coords(
-                w2, h2, n2);
-            S.line({scale * w, scale * h, scale * w2, scale * h2});
+        // sspath << std::get<0>(myObstacle.path()[0])->ID();
+        // for (auto &pl : myObstacle.path())
+        // {
+        //     auto n1 = std::get<0>(pl);
+        //     auto n2 = std::get<1>(pl);
+        //     int w, h, w2, h2;
+        //     grid->coords(
+        //         w, h, n1);
+        //     grid->coords(
+        //         w2, h2, n2);
+        //     // S.line({scale * w, scale * h, scale * w2, scale * h2});
 
-            sspath << " -> " << n2->ID();
-            pathCount++;
-            if (pathCount > 15)
-            {
-                sspath << "\r\n";
-                pathCount = 0;
-            }
-        }
-        S.text(sspath.str(), {scale, H * scale, 1000, 1000});
+        //     sspath << " -> " << n2->ID();
+        //     pathCount++;
+        //     if (pathCount > 15)
+        //     {
+        //         sspath << "\r\n";
+        //         pathCount = 0;
+        //     }
+        // }
+
+        drawTour(S, scale);
+
+        //S.text(sspath.str(), {scale, H * scale, 1000, 1000});
         // S.text(
         //     "Nodes revisited " +
         //     std::to_string(myObstacle.NodesRevisited().size()),
@@ -150,6 +160,11 @@ void cGUI::draw(PAINTSTRUCT &ps)
         std::cout << "Nodes revisited " << myObstacle.NodesRevisited().size() << " : ";
         for (auto n : myObstacle.NodesRevisited())
             std::cout << n->ID() << " ";
+
+        break;
+
+    case eView::routelist:
+        drawRouteList(S);
         break;
 
     case eView::span:
@@ -166,6 +181,28 @@ void cGUI::draw(PAINTSTRUCT &ps)
         }
         break;
     }
+}
+void cGUI::drawRouteList(wex::shapes &S)
+{
+    std::stringstream sspath;
+    int pathCount = 0;
+    sspath << std::get<0>(myObstacle.path()[0])->ID();
+    for (auto &pl : myObstacle.path())
+    {
+        auto n1 = std::get<0>(pl);
+        auto n2 = std::get<1>(pl);
+        sspath << " -> " << n2->ID();
+        pathCount++;
+        if (pathCount > 15)
+        {
+            sspath << "\r\n";
+            pathCount = 0;
+        }
+    }
+    sspath << "\r\n"
+           << "Nodes revisited " << myObstacle.NodesRevisited().size();
+
+    S.text(sspath.str(), {5, 5, 1000, 1000});
 }
 void cGUI::drawInput(wex::shapes &S)
 {
@@ -205,4 +242,24 @@ void cGUI::drawObstacles(
             S.color(0x000000);
             S.text(s, {w * scale, h * scale});
         }
+}
+
+void cGUI::drawTour(wex::shapes &S, int scale)
+{
+
+    int W, H;
+    myObstacle.size(W, H);
+    std::stringstream ss;
+    auto prev = myObstacle.tour()[0];
+    for (auto &loc : myObstacle.tour())
+    {
+        S.line({scale * std::get<1>(prev), scale * std::get<2>(prev),
+                scale * std::get<1>(loc), scale * std::get<2>(loc)});
+        ss << std::get<0>(loc) << "->";
+        prev = loc;
+    }
+    ss << "\n\rUnvisited " << myObstacle.unvisitedCount() 
+        << " Revisited " << myObstacle.revisitedCount();
+        
+    S.text(ss.str(), {scale, H * scale, 1000, 1000});
 }

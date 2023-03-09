@@ -42,8 +42,8 @@ namespace raven
 
             // allocate storage for new vertices
             myVertexCount = i + 1;
-            vOutEdges.resize(i+1);
-            vInEdges.resize(i+1);
+            vOutEdges.resize(i + 1);
+            vInEdges.resize(i + 1);
         }
 
         int cVE::add(int src, int dst)
@@ -52,8 +52,8 @@ namespace raven
                 throw std::runtime_error("cVE::add edge bad vertex index");
 
             // ensure there is storage allocated for these vertices
-            add( src );
-            add( dst);
+            add(src);
+            add(dst);
 
             int iedge = vEdgeDst.size();
             vOutEdges[src].push_back(iedge);
@@ -64,9 +64,9 @@ namespace raven
                 return iedge;
 
             // add reverse edge for undirected graphs
-            iedge++;
-            vOutEdges[dst].push_back(iedge);
+            vOutEdges[dst].push_back(iedge+1);
             vEdgeDst.push_back(src);
+
             return iedge;
         }
 
@@ -74,7 +74,9 @@ namespace raven
             int src,
             int dst)
         {
-            int ei = add(dst, src);
+            int ei = find(src,dst);
+            if( ei < 0 )
+                ei = add(src, dst);
             return ei;
         }
 
@@ -204,52 +206,18 @@ namespace raven
             return ret;
         }
 
-        // std::string cVE::userName(int i) const
-        // {
-        //     std::string ret = vVertexName[i];
-        //     if (ret == "@myIndex")
-        //         return std::to_string(i);
-        //     return ret;
-        // }
-
-        // std::vector<std::string> cVE::userName(std::vector<int> vi) const
-        // {
-        //     std::vector<std::string> ret;
-        //     for (int i : vi)
-        //         ret.push_back(userName(i));
-        //     return ret;
-        // }
-
-        // std::vector<std::string> cVE::vertexNames() const
-        // {
-        //     std::vector<std::string> ret;
-        //     for (int kv = 0; kv < vVertexName.size(); kv++)
-        //     {
-        //         if (vVertexName[kv] == "@myIndex")
-        //             ret.push_back(std::to_string(kv));
-        //         else
-        //             ret.push_back(vVertexName[kv]);
-        //     }
-        //     return ret;
-        // }
-
-        // std::string cVE::text() const
-        // {
-        //     std::stringstream ss;
-        //     for (auto &vn : vVertexName)
-        //     {
-        //         int vi = find(vn);
-        //         for (int ei : vOutEdges[vi])
-        //         {
-        //             int wi = vEdgeDst[ei];
-        //             if ((!fDirected) && (vi > wi))
-        //                 continue;
-        //             ss << "l " << vn << " " << vVertexName[wi];
-        //             ss << "\n";
-        //         }
-        //     }
-        //     return ss.str();
-        // }
+        int cVE::source(int ei) const
+        {
+            for (int vi = 0; vi < myVertexCount; vi++)
+                for( int e : vOutEdges[vi] )
+                    if (e == ei)
+                        return vi;
+            return -1;
+        }
+        int cVE::dest(int ei) const
+        {
+            return vEdgeDst[ei];
+        }
 
         std::vector<std::pair<int, int>>
         cVE::edgeList() const

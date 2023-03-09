@@ -70,15 +70,6 @@ public:
 
     int find(const std::string &vertexName) const;
 
-
-    /// @brief vertex names from vertex indices
-    /// @param vi vector of indices
-    /// @return vector of names
-
-    std::vector<std::string> userName(std::vector<int> vi) const;
-
-    std::vector<std::string> vertexNames() const;
-
     /// @brief find edge
     /// @param src 
     /// @param dst 
@@ -98,6 +89,9 @@ public:
     /// @param vi 
     /// @return 
     std::vector<int> adjacentIn(int vi) const;
+
+    int source( int ei ) const;
+    int dest( int ei ) const;
 
     /// @brief human readable edge list
     /// @return text

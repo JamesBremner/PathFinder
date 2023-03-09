@@ -60,7 +60,7 @@ namespace raven
         /// @brief read edge attributes
         /// @param ei edge index
         /// @param ai attrinute index
-        /// @return string representation of attribute
+        /// @return string representation of attribute, "" if edge or attribute doen't exist
         std::string rEdgeAttr(int ei, int ai ) const;
 
         /// @brief vertex index from name
@@ -72,7 +72,7 @@ namespace raven
         /// @brief  vertex name from index
         /// @param vi 
         /// @return vertex name
-        
+
         std::string userName( int vi ) const
         {
             return vVertexName[vi];

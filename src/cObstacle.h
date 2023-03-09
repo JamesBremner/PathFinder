@@ -21,7 +21,7 @@ public:
      */
     int myType;
 
-    bool fvisited;      ///< true if cell has been visited by the robot's path
+    bool fvisited; ///< true if cell has been visited by the robot's path
 };
 
 typedef std::tuple<cOCell *, cOCell *, double> link_t;
@@ -30,41 +30,43 @@ typedef std::vector<link_t> vlink_t;
 class cObstacle
 {
 
-    int nx, ny;                  ///< grid size
+    int nx, ny; ///< grid size
 
     /**
      * @brief radius of robot's coverage
-     * 
+     *
      * >0 maximum distance, diagonal or orthogonal, in grid points
      * -1 the obstacles are spaced 2 grid points apart, with room for the robot to pass between
      * -999 initial, unset value
-     * 
+     *
      */
-    int myView;                   ///< view radius
+    int myView; ///< view radius
 
     cell::cAutomaton<cOCell> *A; ///< 2D grid
     std::vector<cOCell *> vN;    ///< nodes to be included in path
     vlink_t vL;                  ///< links between nodes
     raven::graph::cGraph mygraphdata;
     vlink_t vPath;
+    std::vector<std::tuple<std::string, int, int>> myTour;
+    int myRevisitedCount;
+    int myUnvisitedCount;
     std::vector<cOCell *> myNodesRevisited;
     vlink_t mySpanningTree;
     bool myfrect;               /// true if grid is rectangular
-    std::vector< cxy > myPolygon;   /// polygon vertices for non-rectangular grid
+    std::vector<cxy> myPolygon; /// polygon vertices for non-rectangular grid
 
 public:
-
     cObstacle()
-    : myView( -999 )
-    , myfrect( true )
-    {}
+        : myView(-999), myfrect(true)
+    {
+    }
 
     void clear();
 
     /// @brief set grid size
-    /// @param x 
-    /// @param y 
-    void grid( int x, int y );
+    /// @param x
+    /// @param y
+    void grid(int x, int y);
 
     /// @brief set grid to be not rectangular
     void poly()
@@ -73,30 +75,30 @@ public:
     }
 
     /// @brief Add vertex to polgon arounf grid
-    /// @param p 
-    void polyAdd( const cxy& p )
+    /// @param p
+    void polyAdd(const cxy &p)
     {
-        myPolygon.push_back( p );
+        myPolygon.push_back(p);
     }
 
     /// @brief set robot view radius
-    /// @param v 
-    void view( int v )
+    /// @param v
+    void view(int v)
     {
         myView = v;
     }
 
     /// @brief get robot view radius
-    /// @return 
+    /// @return
     int view() const
     {
         return myView;
     }
 
     /// @brief Set obstacle at location
-    /// @param x 
-    /// @param y 
-    void obstacle( int x, int y );
+    /// @param x
+    /// @param y
+    void obstacle(int x, int y);
 
     /// @brief construct nodes to be visited
     void unobstructedPoints();
@@ -146,13 +148,28 @@ public:
 
     vlink_t path() const
     {
-        if( ! vPath.size() )
+        if (!vPath.size())
             throw std::runtime_error("No path");
         return vPath;
+    }
+    std::vector<std::tuple<std::string, int, int>> tour() const
+    {
+        if (!myTour.size())
+            throw std::runtime_error("No tour");
+        return myTour;
     }
     std::vector<cOCell *> NodesRevisited() const
     {
         return myNodesRevisited;
+    }
+
+    int unvisitedCount() const
+    {
+        return myUnvisitedCount;
+    }
+    int revisitedCount() const
+    {
+        return myRevisitedCount;
     }
 
     vlink_t spanningTree_get()
@@ -164,7 +181,6 @@ public:
     void tourSpanningTree();
 
 private:
-
     /// @brief calculate and set link cost squared
     /// @param l
     /// @return
@@ -182,7 +198,7 @@ private:
     /// @param n1 node 1
     /// @param n2 node 2
     /// @param vlink links to search
-    /// @return link. If no link, null link with -ve cost 
+    /// @return link. If no link, null link with -ve cost
     link_t getLink(
         cOCell *n1, cOCell *n2,
         const vlink_t &vlink);
@@ -192,7 +208,7 @@ private:
 
     void tour(
         vlink_t &connectedLeaves,
-        cOCell * start );
+        cOCell *start);
 
     /// @brief Find closest unvisited node
     /// @param start start node
@@ -209,29 +225,26 @@ private:
     /// @brief Add connection to path, marking 2nd node as visited
     /// @param node1 the current node on path
     /// @param node2 the destination node where path goes next
-    void pathAdd( 
-        cOCell * node1,
-        cOCell * node2   );
+    void pathAdd(
+        cOCell *node1,
+        cOCell *node2);
 
     /// @brief find path starting at a leaf node visiting every node with fewest revisits to the same nodes
-    /// @param leaves 
-    /// @param connectedLeaves 
+    /// @param leaves
+    /// @param connectedLeaves
     void findBestPath(
-        std::vector<cOCell *>& leaves,
-        vlink_t& connectedLeaves    );
+        std::vector<cOCell *> &leaves,
+        vlink_t &connectedLeaves);
 
     /// @brief Find tree that connects all required nodes
     /// @param start index to root node, defaults to 0
-    void spanningTree( int start = 0 );
+    void spanningTree(int start = 0);
 };
 
-    /// @brief read layout of obstacles from file
-    /// @param cObstacle instance to read into
-    /// @param fname file name
-    /// Free function
-    void read(
-        cObstacle& obs,
-        const std::string &fname);
-
-
-
+/// @brief read layout of obstacles from file
+/// @param cObstacle instance to read into
+/// @param fname file name
+/// Free function
+void read(
+    cObstacle &obs,
+    const std::string &fname);

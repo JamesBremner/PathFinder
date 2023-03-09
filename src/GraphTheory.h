@@ -24,6 +24,13 @@ namespace raven
         std::vector<std::pair<int, int>>
         spanTree_get() const;
 
+        int unvisitedCount() const{
+            return unvisited;
+        }
+        int revisitedCount() const {
+            return revisited.size();
+        }
+
     private:
         const cGraph &g;
         cGraph spanTree;
@@ -47,6 +54,8 @@ namespace raven
         /// @return -2 no unvisited leaves
 
         int isLeafJump(int v);
+
+        int PathToUnvisited();
 
         std::vector<int> vectorgraphIndexFromSpanIndex(
             const std::vector<int> &visp);
