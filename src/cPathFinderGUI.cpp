@@ -194,8 +194,8 @@ void cGUI::calcCycle()
 void cGUI::calcTour()
 {
     delete mypTourNodes;
-    mypTourNodes = new raven::graph::cTourNodes(myGraph);
-    mypTourNodes->calculate();
+    mypTourNodes = new raven::graph::cTourNodes();
+    mypTourNodes->calculate(myGraph);
 
     myResultText = "";
     for (int v : mypTourNodes->getTour())

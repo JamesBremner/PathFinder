@@ -56,7 +56,7 @@ TEST(flows)
 
     double f = flows(
         g, "a", "b");
-        
+
     CHECK_EQUAL(7.0, f);
 }
 
@@ -235,9 +235,9 @@ TEST(tourNodes)
     g.findorAdd("a", "b");
     g.findorAdd("b", "c");
     g.findorAdd("a", "d");
-    raven::graph::cTourNodes tourer(g);
+    raven::graph::cTourNodes tourer;
 
-    tourer.calculate();
+    tourer.calculate(g);
 
     CHECK_EQUAL(0,tourer.unvisitedCount());
     CHECK_EQUAL(0,tourer.revisitedCount());
@@ -259,9 +259,9 @@ TEST(tourNodes2)
     g.findorAdd("b", "c");
     g.findorAdd("a", "d");
     g.findorAdd("c", "d");
-    raven::graph::cTourNodes tourer(g);
+    raven::graph::cTourNodes tourer;
 
-    tourer.calculate();
+    tourer.calculate(g);
     auto tour = tourer.getTour();
 
     std::vector<std::string> expected{"a", "d", "c", "b"};
