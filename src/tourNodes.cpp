@@ -63,7 +63,7 @@ namespace raven
                     continue;
 
                 // check for link to other leaf in original graph
-                if (g.find(v, f) != -1)
+                if (g->find(v, f) != -1)
                     return f;
 
                 // there is no escape from this leaf without revisiting nodes
@@ -88,21 +88,23 @@ namespace raven
             tour.push_back(v);
         }
 
-        void cTourNodes::calculate()
+        void cTourNodes::calculate(const cGraph &graph)
         {
+            g = &graph;
+
             auto best = tour;
             int bestUnvisited = INT_MAX;
             std::vector<int>bestRevisited;
 
             // loop over nodes, starting the spanning tree at each
-            for (int spanTreeRoot = 0; spanTreeRoot < g.vertexCount(); spanTreeRoot++)
+            for (int spanTreeRoot = 0; spanTreeRoot < g->vertexCount(); spanTreeRoot++)
             {
                 // find a spanning tree
                 // note: spanTree.userName( vi ) == g.userName( vi )
 
                 spanTree = spanningTree(
-                    g,
-                    g.userName(spanTreeRoot));
+                    *g,
+                    g->userName(spanTreeRoot));
                 if (!spanTree.vertexCount())
                     continue;
 
@@ -181,7 +183,7 @@ namespace raven
 
             std::cout << "bestPath ";
             for (int isp : best)
-                std::cout << g.userName(isp) << ' ';
+                std::cout << g->userName(isp) << ' ';
             std::cout << "\n\n";
 
             tour = best;
@@ -195,18 +197,18 @@ namespace raven
             std::vector<int> bestPath;
 
             // loop over nodes
-            for (int target = 0; target < g.vertexCount(); target++)
+            for (int target = 0; target < g->vertexCount(); target++)
             {
                 // check for visited
-                if (spanVisited[spanTree.find(g.userName(target))])
+                if (spanVisited[spanTree.find(g->userName(target))])
                     continue;
 
                 // find bets path  from last node in tour
                 // allowing node revisits
                 auto pathret = path(
                     spanTree,
-                    spanTree.find(g.userName(tour.back())),
-                    spanTree.find(g.userName(target)));
+                    spanTree.find(g->userName(tour.back())),
+                    spanTree.find(g->userName(target)));
 
                 // check for a shorter path
                 if (pathret.first.size() && pathret.first.size() < bestHops)
@@ -234,7 +236,7 @@ namespace raven
         {
             std::vector<int> ret;
             for (int isp : visp)
-                ret.push_back(g.find(spanTree.userName(isp)));
+                ret.push_back(g->find(spanTree.userName(isp)));
             return ret;
         }
 

@@ -79,6 +79,7 @@ private:
         routelist,
         span,
         input,
+        calculating,
     };
     eView myViewType;
     std::string myfname;

@@ -1,7 +1,7 @@
 #pragma once
 #include <autocell.h>
 #include "cxy.h"
-#include "cGraph.h"
+#include "GraphTheory.h"
 
 /// @brief 2D grid cell that can contain obstacles
 
@@ -43,10 +43,9 @@ class cObstacle
     std::vector<cOCell *> vN;    ///< nodes to be included in path
 
     raven::graph::cGraph mygraphdata;
-
+    raven::graph::cTourNodes myRouteCalculator;
     std::vector<std::tuple<std::string, int, int>> myTour;
-    int myRevisitedCount;
-    int myUnvisitedCount;
+
     std::vector<cOCell *> myNodesRevisited;
 
     bool myfrect;               /// true if grid is rectangular
@@ -148,11 +147,11 @@ public:
 
     int unvisitedCount() const
     {
-        return myUnvisitedCount;
+        return myRouteCalculator.unvisitedCount();
     }
     int revisitedCount() const
     {
-        return myRevisitedCount;
+        return myRouteCalculator.revisitedCount();
     }
 
     // vlink_t spanningTree_get()

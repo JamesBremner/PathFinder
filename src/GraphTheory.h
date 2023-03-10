@@ -9,12 +9,12 @@ namespace raven
     class cTourNodes
     {
     public:
-        cTourNodes(const cGraph &theGraph)
-            : g(theGraph)
-        {
-        }
+        // cTourNodes(const cGraph &theGraph)
+        //     : g(theGraph)
+        // {
+        // }
 
-        void calculate();
+        void calculate(const cGraph &g);
 
         std::vector<int> getTour() const
         {
@@ -32,7 +32,7 @@ namespace raven
         }
 
     private:
-        const cGraph &g;
+        const cGraph  * g;
         cGraph spanTree;
 
         int dfsStart;
@@ -53,7 +53,7 @@ namespace raven
         /// @return -1 no jump required
         /// @return -2 no unvisited leaves
 
-        int isLeafJump(int v);
+        int isLeafJump( int v);
 
         int PathToUnvisited();
 

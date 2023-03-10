@@ -150,16 +150,15 @@ void cObstacle::connect()
 
 void cObstacle::tourNodes()
 {
-    raven::graph::cTourNodes T(mygraphdata);
-    T.calculate();
-    std::cout << "unvisited " << T.unvisitedCount()
-              << ", revisited " << T.revisitedCount()
+    myRouteCalculator.calculate(mygraphdata);
+    std::cout << "unvisited " << myRouteCalculator.unvisitedCount()
+              << ", revisited " << myRouteCalculator.revisitedCount()
               << ", nodes " << mygraphdata.vertexCount()
               << "\n";
 
     myTour.clear();
     std::tuple<std::string,int,int> loc;
-    for( int n : T.getTour() ) {
+    for( int n : myRouteCalculator.getTour() ) {
         std::get<0>(loc) = mygraphdata.userName(n);
         A->coords(
             std::get<1>(loc),std::get<2>(loc),
@@ -167,8 +166,6 @@ void cObstacle::tourNodes()
 
         myTour.push_back( loc );
     }
-    myUnvisitedCount = T.unvisitedCount();
-    myRevisitedCount = T.revisitedCount();
 }
 
 std::string cObstacle::draw(int w, int h) const

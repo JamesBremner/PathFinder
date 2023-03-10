@@ -37,6 +37,11 @@ void cGUI::ConstructMenu()
                      {
                          myfname = fb.open();
                          read(myObstacle, myfname);
+
+                        myViewType = eView::calculating;
+                        fm.update();
+                        myViewType = eView::route;
+                         
                          myObstacle.unobstructedPoints();
 
                          myObstacle.connect();
@@ -92,7 +97,7 @@ void cGUI::draw(PAINTSTRUCT &ps)
 
     fm.text("Obstacles " + myfname);
 
-    int scale = 20;
+    int scale = 10;
 
     wex::shapes S(ps);
     int W, H;
@@ -177,6 +182,10 @@ void cGUI::draw(PAINTSTRUCT &ps)
         //     S.line({scale * w, scale * h, scale * w2, scale * h2});
         // }
         break;
+
+        case eView::calculating:
+            S.text("Calculating...",{10,10});
+            break;
     }
 }
 void cGUI::drawRouteList(wex::shapes &S)
