@@ -24,9 +24,6 @@ public:
     bool fvisited; ///< true if cell has been visited by the robot's path
 };
 
-typedef std::tuple<cOCell *, cOCell *, double> link_t;
-typedef std::vector<link_t> vlink_t;
-
 class cObstacle
 {
 
@@ -44,14 +41,14 @@ class cObstacle
 
     cell::cAutomaton<cOCell> *A; ///< 2D grid
     std::vector<cOCell *> vN;    ///< nodes to be included in path
-    vlink_t vL;                  ///< links between nodes
+
     raven::graph::cGraph mygraphdata;
-    vlink_t vPath;
+
     std::vector<std::tuple<std::string, int, int>> myTour;
     int myRevisitedCount;
     int myUnvisitedCount;
     std::vector<cOCell *> myNodesRevisited;
-    vlink_t mySpanningTree;
+
     bool myfrect;               /// true if grid is rectangular
     std::vector<cxy> myPolygon; /// polygon vertices for non-rectangular grid
 
@@ -103,10 +100,9 @@ public:
     /// @brief construct nodes to be visited
     void unobstructedPoints();
 
-    void inputGraph();
-    void tourNodesGD();
+    void tourNodes();
 
-    /// @brief connect nodes, avoiding obstacles
+    /// @brief connect neighbors, avoiding obstacles
     void connect();
 
     /// @brief display for point at w,h
@@ -124,13 +120,6 @@ public:
         h = ny;
     }
 
-    /// @brief get links
-    /// @return
-    vlink_t links()
-    {
-        return vL;
-    }
-
     /// @brief get grid
     /// @return
     cell::cAutomaton<cOCell> *grid()
@@ -139,19 +128,13 @@ public:
     }
 
     /// @brief Is link blocked by obstacle
-    /// @param x1,y1 col,row indeices of
+    /// @param x1,y1 col,row indices
     /// @param y1
     /// @param x2
     /// @param y2
     /// @return
     bool isBlocked(int x1, int y1, int x2, int y2);
 
-    vlink_t path() const
-    {
-        if (!vPath.size())
-            throw std::runtime_error("No path");
-        return vPath;
-    }
     std::vector<std::tuple<std::string, int, int>> tour() const
     {
         if (!myTour.size())
@@ -172,73 +155,13 @@ public:
         return myRevisitedCount;
     }
 
-    vlink_t spanningTree_get()
-    {
-        return mySpanningTree;
-    }
-
-    /// @brief Find practical tour visiting all required nodes
-    void tourSpanningTree();
+    // vlink_t spanningTree_get()
+    // {
+    //     return mySpanningTree;
+    // }
 
 private:
-    /// @brief calculate and set link cost squared
-    /// @param l
-    /// @return
-    double linkCost(link_t &l) const;
 
-    /// @brief adjacent cells, reachable with 1 hop
-    /// @param n cell
-    /// @param vlink allowed links
-    /// @return vector of called adjacent to n
-    std::vector<cOCell *> adjacent(
-        cOCell *n,
-        const vlink_t &vlink);
-
-    /// @brief get link between nodes
-    /// @param n1 node 1
-    /// @param n2 node 2
-    /// @param vlink links to search
-    /// @return link. If no link, null link with -ve cost
-    link_t getLink(
-        cOCell *n1, cOCell *n2,
-        const vlink_t &vlink);
-
-    cOCell *closestUnvisitedConnected(
-        cOCell *v, vlink_t &vLink);
-
-    void tour(
-        vlink_t &connectedLeaves,
-        cOCell *start);
-
-    /// @brief Find closest unvisited node
-    /// @param start start node
-    /// @param vlink allowed links
-    /// @param path path from start to nearest
-    /// @return pointer to nearest unvisited node
-    ///
-    /// Uses Dijsktra alorithm
-    cOCell *ClosestUnvisited(
-        cOCell *start,
-        vlink_t &vlink,
-        std::vector<cOCell *> &path);
-
-    /// @brief Add connection to path, marking 2nd node as visited
-    /// @param node1 the current node on path
-    /// @param node2 the destination node where path goes next
-    void pathAdd(
-        cOCell *node1,
-        cOCell *node2);
-
-    /// @brief find path starting at a leaf node visiting every node with fewest revisits to the same nodes
-    /// @param leaves
-    /// @param connectedLeaves
-    void findBestPath(
-        std::vector<cOCell *> &leaves,
-        vlink_t &connectedLeaves);
-
-    /// @brief Find tree that connects all required nodes
-    /// @param start index to root node, defaults to 0
-    void spanningTree(int start = 0);
 };
 
 /// @brief read layout of obstacles from file

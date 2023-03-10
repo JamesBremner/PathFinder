@@ -40,10 +40,7 @@ void cGUI::ConstructMenu()
                          myObstacle.unobstructedPoints();
 
                          myObstacle.connect();
-                         myObstacle.tourSpanningTree();
-
-                         myObstacle.inputGraph();
-                         myObstacle.tourNodesGD();
+                         myObstacle.tourNodes();
 
                          fm.update();
                      }
@@ -168,41 +165,33 @@ void cGUI::draw(PAINTSTRUCT &ps)
         break;
 
     case eView::span:
-        S.color(0x0000FF);
-        S.penThick(2);
-        for (auto &pl : myObstacle.spanningTree_get())
-        {
-            int w, h, w2, h2;
-            grid->coords(
-                w, h, std::get<0>(pl));
-            grid->coords(
-                w2, h2, std::get<1>(pl));
-            S.line({scale * w, scale * h, scale * w2, scale * h2});
-        }
+        // S.color(0x0000FF);
+        // S.penThick(2);
+        // for (auto &pl : myObstacle.spanningTree_get())
+        // {
+        //     int w, h, w2, h2;
+        //     grid->coords(
+        //         w, h, std::get<0>(pl));
+        //     grid->coords(
+        //         w2, h2, std::get<1>(pl));
+        //     S.line({scale * w, scale * h, scale * w2, scale * h2});
+        // }
         break;
     }
 }
 void cGUI::drawRouteList(wex::shapes &S)
 {
-    std::stringstream sspath;
-    int pathCount = 0;
-    sspath << std::get<0>(myObstacle.path()[0])->ID();
-    for (auto &pl : myObstacle.path())
+    std::stringstream ss;
+    for (auto &loc : myObstacle.tour())
     {
-        auto n1 = std::get<0>(pl);
-        auto n2 = std::get<1>(pl);
-        sspath << " -> " << n2->ID();
-        pathCount++;
-        if (pathCount > 15)
-        {
-            sspath << "\r\n";
-            pathCount = 0;
-        }
+        ss << std::get<0>(loc) << "->";
     }
-    sspath << "\r\n"
-           << "Nodes revisited " << myObstacle.NodesRevisited().size();
+    ss << "\n\rUnvisited " << myObstacle.unvisitedCount() 
+        << " Revisited " << myObstacle.revisitedCount();
 
-    S.text(sspath.str(), {5, 5, 1000, 1000});
+    S.text(ss.str(), {5,5, 1000, 1000});
+
+
 }
 void cGUI::drawInput(wex::shapes &S)
 {
@@ -260,6 +249,6 @@ void cGUI::drawTour(wex::shapes &S, int scale)
     }
     ss << "\n\rUnvisited " << myObstacle.unvisitedCount() 
         << " Revisited " << myObstacle.revisitedCount();
-        
+
     S.text(ss.str(), {scale, H * scale, 1000, 1000});
 }
