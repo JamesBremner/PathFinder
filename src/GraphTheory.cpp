@@ -117,6 +117,56 @@ namespace raven
             return std::make_pair(vpath, dist[end]);
         }
 
+        std::vector<std::vector<int>>
+        allPaths(
+            const cGraph &g,
+            const std::string &startName,
+            const std::string &endName)
+        {
+            std::vector<std::vector<int>> ret;
+
+            // copy input graph to working graph
+            cGraph work = g;
+
+            bool fnew = true;
+            while (fnew)
+            {
+                // find new path
+                auto p = path(work, startName, endName).first;
+                if (!p.size())
+                    break;
+
+                // check path is really new
+                for (auto &prevPath : ret)
+                {
+                    if (std::equal(
+                            prevPath.begin(), prevPath.end(),
+                            p.begin()))
+                    {
+                        fnew = false;
+                        break;
+                    }
+                }
+                // check new path was found
+                if (!fnew)
+                    break;
+
+                // add new path to return
+                ret.push_back(p);
+
+                // increment cost of path links
+                for (int k = 1; k < p.size(); k++)
+                {
+                    int ei = work.find(p[k - 1], p[k]);
+                    int cost = atoi(work.rEdgeAttr(ei, 0).c_str()) + 1;
+                    work.wEdgeAttr(
+                        ei,
+                        {std::to_string(cost)});
+                }
+            }
+            return ret;
+        }
+
         void cSpanningTree::add(
             const cGraph &g,
             int v, int w)
@@ -152,7 +202,6 @@ namespace raven
             visited[v] = true;
             visited[w] = true;
 
-
             // while nodes remain outside of span
             while (g.vertexCount() > ST.vertexCount())
             {
@@ -181,7 +230,7 @@ namespace raven
 
                         // track cheapest edge
                         double cost = atof(g.rEdgeAttr(ei, 0).c_str());
-                        if ( cost < min_cost)
+                        if (cost < min_cost)
                         {
                             min_cost = cost;
                             bestLink = std::make_pair(v, w);
@@ -194,7 +243,6 @@ namespace raven
 
                 visited[bestLink.first] = true;
                 visited[bestLink.second] = true;
-
             }
 
             return ST.mySpanningTree;
@@ -417,7 +465,7 @@ namespace raven
             }
             results = ss.str();
         }
-        
+
         double flows(
             const cGraph &g,
             const std::string &start,

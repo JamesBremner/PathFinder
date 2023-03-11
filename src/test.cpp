@@ -185,6 +185,30 @@ TEST(dijsktra)
         expected.end(),
         g.userName(path(g, "a", "c").first).begin()));
 }
+TEST(allpaths)
+{
+    raven::graph::cGraph g;
+    g.findorAdd("a", "b");
+    g.findorAdd("b", "c");
+    g.findorAdd("a", "d");
+    g.findorAdd("d", "c");
+
+    auto act = allPaths(g,"a","c");
+
+    CHECK_EQUAL( 2, act.size() );
+
+     std::vector<std::string> expected1{"a", "d", "c"};
+     CHECK(std::equal(
+         expected1.begin(),
+         expected1.end(),
+         g.userName(act[0]).begin()));
+
+     std::vector<std::string> expected2{"a", "b", "c"};
+     CHECK(std::equal(
+         expected2.begin(),
+         expected2.end(),
+         g.userName(act[1]).begin()));
+}
 
 TEST(spanningTree)
 {

@@ -1,0 +1,7 @@
+format cycle
+l 1 2
+l 1 4
+l 2 3
+l 3 1
+l 4 5
+l 5 1

@@ -102,6 +102,12 @@ namespace raven
         const std::string &startName,
         const std::string &endName);
 
+    std::vector<std::vector<int>>
+    allPaths(
+        const cGraph &g,
+        const std::string &startName,
+        const std::string &endName);
+
     std::pair<std::vector<int>, double>
     path(
         const cGraph &g,

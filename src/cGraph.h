@@ -73,13 +73,26 @@ namespace raven
                 cVE::add(d);
                 myAtt.resizeVertex( vertexCount() );
                 return cVE::add(s, d);
-            }
-            // readers
+             }
+
+
+            ////////// readers
+
+            /// @brief read vertex attribute
+            /// @param vi vertex index
+            /// @param ai attribute index
+            /// @return attribute in string format
 
             std::string rVertexAttr(int vi, int ai) const
             {
                 return myAtt.rVertexAttr(vi, ai);
             }
+
+            /// @brief read edge attribute
+            /// @param ei edge index
+            /// @param ai attribute index
+            /// @return attribute in string format
+
             std::string rEdgeAttr(int ei, int ai) const
             {
                 return myAtt.rEdgeAttr(ei, ai);
@@ -87,7 +100,7 @@ namespace raven
 
             /// @brief vertex index from name
             /// @param name 
-            /// @return 
+            /// @return vertex index
 
             int find(const std::string &name) const
             {
@@ -108,10 +121,19 @@ namespace raven
                 return s;
             }
 
+            /// @brief edge index from vertex indices
+            /// @param s source vertex index
+            /// @param d destination vertex index
+            /// @return edge index
+
             int find(int s, int d) const
             {
                 return cVE::find(s, d);
             }
+
+            /// @brief vertex user names
+            /// @param vi vector of vertex indices
+            /// @return vector of user names
 
             std::vector<std::string>
             userName(const std::vector<int> &vi) const
@@ -122,6 +144,8 @@ namespace raven
                 return ret;
             }
 
+            /// @brief human readable graph deecription
+            /// @return 
             std::string text();
 
         private:
