@@ -118,6 +118,9 @@ void cGUI::calculate()
                 calcFlows();
                 break;
 
+            case graph_calc::allpaths:
+                calcAllPaths();
+
             case graph_calc::none:
                 break;
             }
@@ -179,7 +182,7 @@ void cGUI::calcSpan()
 void cGUI::calcCycle()
 {
     auto vc = dfs_cycle_finder(myGraph);
-    
+
     myResultText = std::to_string(vc.size()) + " cycles found\n\n";
     for (int k = 0; k < vc.size(); k++)
     {
@@ -190,6 +193,24 @@ void cGUI::calcCycle()
     }
     myViewType = eView::route;
 }
+
+void cGUI::calcAllPaths()
+{
+    auto vc = allPaths(
+        myGraph,
+        myStartName,
+        myEndName);
+    myResultText = std::to_string(vc.size()) + " paths found\n\n";
+    for (int k = 0; k < vc.size(); k++)
+    {
+        for (auto &sv : myGraph.userName(vc[k]))
+            myResultText += sv + " ";
+
+        myResultText += "\n";
+    }
+    myViewType = eView::route;
+}
+
 
 void cGUI::calcTour()
 {

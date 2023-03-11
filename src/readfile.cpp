@@ -226,6 +226,11 @@ graph_calc readfile(
         option = graph_calc::flows;
         readCostedLinks(g, ifs);
     }
+    else if (calc.find("allpaths") != -1)
+    {
+        option = graph_calc::allpaths;
+        readUncostedLinks(g, ifs);
+    }
     else
         throw std::runtime_error(
             "bad calculation type ");

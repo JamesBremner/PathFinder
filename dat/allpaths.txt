@@ -1,0 +1,10 @@
+format allpaths
+l a b
+l b c
+l a d
+l d c
+l a e
+l e c
+s a
+e c
+
