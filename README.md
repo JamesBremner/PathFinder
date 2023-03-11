@@ -15,6 +15,7 @@ A GUI that reads text files specifying a graph and the path to be found
  * __Sales__ Path that visits every location specified on a 2D plane. [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Sales)
  * __Cliques__ Find maximal cliques in graph. [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Cliques)
  * __Flows__ Maximum flow through network between two vertices.  [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Flows)
+ * __All Paths__  Find all the paths between two nodes in a directed graph. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/All-Paths)
  
 ### Obstacles
 
