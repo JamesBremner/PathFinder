@@ -2,6 +2,7 @@
 #include <iostream>
 #include "cutest.h"
 #include "GraphTheory.h"
+#include "cGrid2D.h"
 
 
 
@@ -353,6 +354,14 @@ TEST(sourceToSink)
         exp2.begin(),
         exp2.end(),
         g.userName(res[1]).begin()));
+}
+
+TEST( cGrid2D )
+{
+    cGrid2D g;
+    g.extDim(2,1);
+    CHECK_EQUAL( 5, g.index(2,1));
+    CHECK_EQUAL( 4, g.index(1,1));
 }
 
 main()
