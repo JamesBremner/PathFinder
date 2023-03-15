@@ -118,6 +118,10 @@ void cGUI::calculate()
                 calcFlows();
                 break;
 
+            case graph_calc::multiflows:
+                calcMultiFlows();
+                break;
+
             case graph_calc::allpaths:
                 calcAllPaths();
 
@@ -139,10 +143,12 @@ void cGUI::calcCost()
 {
     if (myStartName.empty() || myEndName.empty())
         throw std::runtime_error("No path endpoints");
+    if( ! myStartName.size())
+        throw std::runtime_error("No start");
 
     auto result = path(
         myGraph,
-        myStartName,
+        myStartName.back(),
         myEndName);
 
     if (!result.first.size())
@@ -167,8 +173,8 @@ void cGUI::calcCost()
 void cGUI::calcSpan()
 {
     if (myStartName.empty())
-        myStartName = myGraph.userName(0);
-    myResultGraph = spanningTree(myGraph, myStartName);
+        myStartName.push_back( myGraph.userName(0) );
+    myResultGraph = spanningTree(myGraph, myStartName.back());
     myViewType = eView::span;
     auto viz = pathViz(
         myResultGraph,
@@ -198,7 +204,7 @@ void cGUI::calcAllPaths()
 {
     auto vc = allPaths(
         myGraph,
-        myStartName,
+        myStartName.back(),
         myEndName);
     myResultText = std::to_string(vc.size()) + " paths found\n\n";
     for (int k = 0; k < vc.size(); k++)
@@ -274,8 +280,19 @@ void cGUI::calcFlows()
 {
     double flow = flows(
         myGraph,
-        myStartName,
-        myEndName);
+        myGraph.find(myStartName.back()),
+        myGraph.find(myEndName));
+    myResultText = "Total Flow = " + std::to_string(flow);
+}
+void cGUI::calcMultiFlows()
+{
+    std::vector<int> vstart;
+    for( auto& n : myStartName )
+        vstart.push_back( myGraph.find(n) );
+    double flow = multiflows(
+        myGraph,
+        vstart,
+        myGraph.find( myEndName)    );
     myResultText = "Total Flow = " + std::to_string(flow);
 }
 void cGUI::draw(PAINTSTRUCT &ps)

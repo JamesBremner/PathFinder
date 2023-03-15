@@ -1,4 +1,5 @@
 format flows
+g
 l a b 300
 l a c 140
 l a h 150

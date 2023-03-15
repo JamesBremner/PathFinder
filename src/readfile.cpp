@@ -221,6 +221,11 @@ graph_calc readfile(
         option = graph_calc::cliques;
         readUncostedLinks(g, ifs);
     }
+    else if (calc.find("multiflows") != -1)
+    {
+        option = graph_calc::multiflows;
+        readCostedLinks(g, ifs);
+    }
     else if (calc.find("flows") != -1)
     {
         option = graph_calc::flows;

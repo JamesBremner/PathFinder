@@ -1,0 +1,13 @@
+format multiflows
+g
+l src a 210
+l src2 b 50
+l a b 200
+l a c 200
+l b d 500
+l c d 500
+s src
+s src2
+e d
+
+

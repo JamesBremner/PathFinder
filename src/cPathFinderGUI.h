@@ -76,7 +76,9 @@ enum class graph_calc
     sales,
     cliques,
     flows,
+    multiflows,
     allpaths,
+
 };
 
 class cGUI : public cStarterGUI
@@ -86,7 +88,7 @@ public:
 
     void start(const std::string &name)
     {
-        myStartName = name;
+        myStartName.push_back( name );
     }
     void end(const std::string &name)
     {
@@ -103,7 +105,7 @@ private:
     raven::graph::cTourNodes * mypTourNodes;
     std::string myfname;
     graph_calc myCalcOption;
-    std::string myStartName;
+    std::vector<std::string> myStartName;
     std::string myEndName;
     std::string myResultText;
 
@@ -125,6 +127,7 @@ private:
     void calcTour();
     void calcCliques();
     void calcFlows();
+    void calcMultiFlows();
     void calcAllPaths();
 
     void draw(PAINTSTRUCT &ps);
