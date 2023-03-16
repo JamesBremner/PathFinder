@@ -16,6 +16,7 @@ A GUI that reads text files specifying a graph and the path to be found
  * __Cliques__ Find maximal cliques in graph. [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Cliques)
  * __Flows__ Maximum flow through network between two vertices.  [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Flows)
  * __All Paths__  Find all the paths between two nodes in a directed graph. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/All-Paths)
+ * __Probabilities__ Find the probability that an end node can be reached when links are available with specified probability [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/Probabilities)
  
 ### Obstacles
 
