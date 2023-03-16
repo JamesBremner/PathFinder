@@ -1,0 +1,9 @@
+format probs
+l u c 0.3
+l u d 0.5
+l c a 0.2
+l c b 0.2
+l d b 0.4
+l a v 0.1
+l b v 0.1
+e v

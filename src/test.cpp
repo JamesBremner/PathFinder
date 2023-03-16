@@ -4,7 +4,51 @@
 #include "GraphTheory.h"
 #include "cGrid2D.h"
 
+TEST(probs)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    int e = g.findorAdd("a", "c");
+    g.wEdgeAttr(e, {"0.5"});
+    e = g.findorAdd("b", "c");
+    g.wEdgeAttr(e, {"0.5"});
+    int act = 100 * probs(
+                        g,
+                        g.find("c"));
 
+    CHECK_EQUAL(75, act);
+
+    //     l u c 0.3
+    // l u d 0.5
+    // l c a 0.2
+    // l c b 0.2
+    // l d b 0.4
+    // l a v 0.1
+    // l b v 0.1
+    // e v
+
+    g.clear();
+    g.directed();
+    e = g.findorAdd("u", "c");
+    g.wEdgeAttr(e, {"0.3"});
+    e = g.findorAdd("u", "d");
+    g.wEdgeAttr(e, {"0.5"});
+    e = g.findorAdd("c", "a");
+    g.wEdgeAttr(e, {"0.2"});
+    e = g.findorAdd("c", "b");
+    g.wEdgeAttr(e, {"0.2"});
+    e = g.findorAdd("d", "b");
+    g.wEdgeAttr(e, {"0.4"});
+    e = g.findorAdd("a", "v");
+    g.wEdgeAttr(e, {"0.1"});
+    e = g.findorAdd("b", "v");
+    g.wEdgeAttr(e, {"0.1"});
+
+    act = 100 * probs(
+                    g,
+                    g.find("v"));
+    CHECK_EQUAL(3, act);
+}
 
 TEST(findorAdd)
 {
@@ -27,36 +71,35 @@ TEST(findorAdd)
 
     int nb = g.find("b");
     int nc = g.find("c");
-    CHECK(nb != -1 );
-    CHECK(nc != -1 );
+    CHECK(nb != -1);
+    CHECK(nc != -1);
 
-    int ei = g.find(nb,nc);
-    CHECK(ei!=-1);
+    int ei = g.find(nb, nc);
+    CHECK(ei != -1);
 
     g.clear();
     g.directed();
     int ab = g.findorAdd("a", "b");
     int ba = g.findorAdd("b", "a");
-    CHECK_EQUAL(0,ab);
-    CHECK_EQUAL(1,ba);
+    CHECK_EQUAL(0, ab);
+    CHECK_EQUAL(1, ba);
 
     g.clear();
-     ab = g.findorAdd("a", "b");
-     ba = g.findorAdd("b", "a");
-    CHECK_EQUAL(0,ab);
-    CHECK_EQUAL(1,ba);
-
+    ab = g.findorAdd("a", "b");
+    ba = g.findorAdd("b", "a");
+    CHECK_EQUAL(0, ab);
+    CHECK_EQUAL(1, ba);
 }
-
 
 TEST(flows)
 {
     raven::graph::cGraph g;
+    g.directed();
 
     g.wEdgeAttr(g.findorAdd("a", "b"), {"7"});
 
     double f = flows(
-        g, "a", "b");
+        g, g.find("a"), g.find("b"));
 
     CHECK_EQUAL(7.0, f);
 }
@@ -75,10 +118,10 @@ TEST(removeLink)
 
     int nb = g.find("b");
     int nc = g.find("c");
-    int ei = g.find(nb,nc);
+    int ei = g.find(nb, nc);
 
-   // g.remove(g.find(g.find("b"), g.find("c")));
-   g.remove(ei);
+    // g.remove(g.find(g.find("b"), g.find("c")));
+    g.remove(ei);
 
     CHECK_EQUAL(2, g.edgeCount());
     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
@@ -118,8 +161,6 @@ TEST(removeLink)
     //     CHECK(g.find(g.find("b"), g.find("b")) == -1);
     //     CHECK(g.find(g.find("a"), g.find("d")) >= -1);
 }
-
-
 
 TEST(edgebyindex)
 {
@@ -194,21 +235,21 @@ TEST(allpaths)
     g.findorAdd("a", "d");
     g.findorAdd("d", "c");
 
-    auto act = allPaths(g,"a","c");
+    auto act = allPaths(g, g.find("a"), g.find("c"));
 
-    CHECK_EQUAL( 2, act.size() );
+    CHECK_EQUAL(2, act.size());
 
-     std::vector<std::string> expected1{"a", "d", "c"};
-     CHECK(std::equal(
-         expected1.begin(),
-         expected1.end(),
-         g.userName(act[0]).begin()));
+    std::vector<std::string> expected1{"a", "d", "c"};
+    CHECK(std::equal(
+        expected1.begin(),
+        expected1.end(),
+        g.userName(act[0]).begin()));
 
-     std::vector<std::string> expected2{"a", "b", "c"};
-     CHECK(std::equal(
-         expected2.begin(),
-         expected2.end(),
-         g.userName(act[1]).begin()));
+    std::vector<std::string> expected2{"a", "b", "c"};
+    CHECK(std::equal(
+        expected2.begin(),
+        expected2.end(),
+        g.userName(act[1]).begin()));
 }
 
 TEST(spanningTree)
@@ -264,8 +305,8 @@ TEST(tourNodes)
 
     tourer.calculate(g);
 
-    CHECK_EQUAL(0,tourer.unvisitedCount());
-    CHECK_EQUAL(0,tourer.revisitedCount());
+    CHECK_EQUAL(0, tourer.unvisitedCount());
+    CHECK_EQUAL(0, tourer.revisitedCount());
 
     auto tour = tourer.getTour();
     std::vector<std::string> expected{"d", "a", "b", "c"};
@@ -328,8 +369,6 @@ TEST(cycle2)
     CHECK_EQUAL(4, act[0].size());
 }
 
-
-
 TEST(sourceToSink)
 {
     raven::graph::cGraph g;
@@ -356,12 +395,12 @@ TEST(sourceToSink)
         g.userName(res[1]).begin()));
 }
 
-TEST( cGrid2D )
+TEST(cGrid2D)
 {
     cGrid2D g;
-    g.extDim(2,1);
-    CHECK_EQUAL( 5, g.index(2,1));
-    CHECK_EQUAL( 4, g.index(1,1));
+    g.extDim(2, 1);
+    CHECK_EQUAL(5, g.index(2, 1));
+    CHECK_EQUAL(4, g.index(1, 1));
 }
 
 main()

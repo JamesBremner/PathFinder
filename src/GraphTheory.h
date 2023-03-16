@@ -106,11 +106,17 @@ namespace raven
             const std::string &startName,
             const std::string &endName);
 
+        /// @brief find all paths between two nodes
+        /// @param g
+        /// @param start
+        /// @param end
+        /// @return vector of vectors of node indices on paths
+
         std::vector<std::vector<int>>
         allPaths(
             const cGraph &g,
-            const std::string &startName,
-            const std::string &endName);
+            int start,
+            int end);
 
         std::pair<std::vector<int>, double>
         path(
@@ -169,7 +175,7 @@ namespace raven
             int end);
 
         /// @brief Maximum flow through graph with multiple sources
-        /// @param g 
+        /// @param g
         /// @param vsource vector of source vertex indices
         /// @param end sink vertex index
         /// @return maximum flow
@@ -179,14 +185,16 @@ namespace raven
             const std::vector<int> &vsource,
             int end);
 
-            /// @brief Find connected source and sinks
-            /// @param g the graph
-            /// @return A vector of vectors containing a source index and the connected sink indices
-            ///
-            /// A source has a zero in-degree, a sink has a zero out-degree
+        /// @brief Find connected source and sinks
+        /// @param g the graph
+        /// @return A vector of vectors containing a source index and the connected sink indices
+        ///
+        /// A source has a zero in-degree, a sink has a zero out-degree
 
-            std::vector<std::vector<int>> sourceToSink(
-                const cGraph &g);
+        std::vector<std::vector<int>> sourceToSink(
+            const cGraph &g);
+
+        double probs(cGraph &g, int end);
 
         /// @brief Graph description in graphviz dot format
         /// @param g

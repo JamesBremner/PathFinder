@@ -125,6 +125,9 @@ void cGUI::calculate()
             case graph_calc::allpaths:
                 calcAllPaths();
 
+            case graph_calc::probs:
+                calcProbs();
+
             case graph_calc::none:
                 break;
             }
@@ -204,8 +207,8 @@ void cGUI::calcAllPaths()
 {
     auto vc = allPaths(
         myGraph,
-        myStartName.back(),
-        myEndName);
+        myGraph.find(myStartName.back()),
+        myGraph.find(myEndName));
     myResultText = std::to_string(vc.size()) + " paths found\n\n";
     for (int k = 0; k < vc.size(); k++)
     {
@@ -294,6 +297,14 @@ void cGUI::calcMultiFlows()
         vstart,
         myGraph.find( myEndName)    );
     myResultText = "Total Flow = " + std::to_string(flow);
+}
+
+void cGUI::calcProbs()
+{
+    double p = probs(
+        myGraph,
+        myGraph.find( myEndName)    );
+    myResultText = "Probability " + std::to_string( p );
 }
 void cGUI::draw(PAINTSTRUCT &ps)
 {

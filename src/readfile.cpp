@@ -190,7 +190,11 @@ graph_calc readfile(
             ifs >> sn1 >> sn2;
         }
     }
-
+    else if (calc.find("probs") != -1)
+    {
+        option = graph_calc::probs;
+        readCostedLinks(g, ifs);
+    }
     else if (calc.find("tour") != -1)
     {
         option = graph_calc::tour;
@@ -236,6 +240,7 @@ graph_calc readfile(
         option = graph_calc::allpaths;
         readUncostedLinks(g, ifs);
     }
+
     else
         throw std::runtime_error(
             "bad calculation type ");

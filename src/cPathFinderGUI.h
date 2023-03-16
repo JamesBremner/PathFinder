@@ -78,6 +78,7 @@ enum class graph_calc
     flows,
     multiflows,
     allpaths,
+    probs,
 
 };
 
@@ -129,6 +130,7 @@ private:
     void calcFlows();
     void calcMultiFlows();
     void calcAllPaths();
+    void calcProbs();
 
     void draw(PAINTSTRUCT &ps);
     void drawLayout(PAINTSTRUCT &ps);

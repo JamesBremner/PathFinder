@@ -202,7 +202,7 @@ namespace raven
         {
             std::vector<int> ret;
             for (int ei : vInEdges[vi])
-                ret.push_back(vEdgeDst[ei]);
+                ret.push_back(source(ei));
             return ret;
         }
 
