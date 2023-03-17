@@ -4,50 +4,24 @@
 #include "GraphTheory.h"
 #include "cGrid2D.h"
 
-TEST(probs)
+TEST(alloc)
 {
     raven::graph::cGraph g;
     g.directed();
-    int e = g.findorAdd("a", "c");
-    g.wEdgeAttr(e, {"0.5"});
-    e = g.findorAdd("b", "c");
-    g.wEdgeAttr(e, {"0.5"});
-    int act = 100 * probs(
-                        g,
-                        g.find("c"));
+    g.findorAdd("child1", "chore1");
+    g.findorAdd("child1", "chore2");
+    g.findorAdd("child1", "chore3");
+    g.findorAdd("child2", "chore1");
+    g.findorAdd("child2", "chore2");
+    g.findorAdd("child2", "chore3");
 
-    CHECK_EQUAL(75, act);
+    auto act = alloc(g);
 
-    //     l u c 0.3
-    // l u d 0.5
-    // l c a 0.2
-    // l c b 0.2
-    // l d b 0.4
-    // l a v 0.1
-    // l b v 0.1
-    // e v
-
-    g.clear();
-    g.directed();
-    e = g.findorAdd("u", "c");
-    g.wEdgeAttr(e, {"0.3"});
-    e = g.findorAdd("u", "d");
-    g.wEdgeAttr(e, {"0.5"});
-    e = g.findorAdd("c", "a");
-    g.wEdgeAttr(e, {"0.2"});
-    e = g.findorAdd("c", "b");
-    g.wEdgeAttr(e, {"0.2"});
-    e = g.findorAdd("d", "b");
-    g.wEdgeAttr(e, {"0.4"});
-    e = g.findorAdd("a", "v");
-    g.wEdgeAttr(e, {"0.1"});
-    e = g.findorAdd("b", "v");
-    g.wEdgeAttr(e, {"0.1"});
-
-    act = 100 * probs(
-                    g,
-                    g.find("v"));
-    CHECK_EQUAL(3, act);
+    std::vector<std::string> exp{"child1", "chore2", "child2", "chore3"};
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        act.begin()));
 }
 
 TEST(findorAdd)
@@ -98,8 +72,10 @@ TEST(flows)
 
     g.wEdgeAttr(g.findorAdd("a", "b"), {"7"});
 
+    std::vector<int> vEdgeFlow;
     double f = flows(
-        g, g.find("a"), g.find("b"));
+        g, g.find("a"), g.find("b"),
+        vEdgeFlow);
 
     CHECK_EQUAL(7.0, f);
 }
@@ -401,6 +377,52 @@ TEST(cGrid2D)
     g.extDim(2, 1);
     CHECK_EQUAL(5, g.index(2, 1));
     CHECK_EQUAL(4, g.index(1, 1));
+}
+
+TEST(probs)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    int e = g.findorAdd("a", "c");
+    g.wEdgeAttr(e, {"0.5"});
+    e = g.findorAdd("b", "c");
+    g.wEdgeAttr(e, {"0.5"});
+    int act = 100 * probs(
+                        g,
+                        g.find("c"));
+
+    CHECK_EQUAL(75, act);
+
+    //     l u c 0.3
+    // l u d 0.5
+    // l c a 0.2
+    // l c b 0.2
+    // l d b 0.4
+    // l a v 0.1
+    // l b v 0.1
+    // e v
+
+    g.clear();
+    g.directed();
+    e = g.findorAdd("u", "c");
+    g.wEdgeAttr(e, {"0.3"});
+    e = g.findorAdd("u", "d");
+    g.wEdgeAttr(e, {"0.5"});
+    e = g.findorAdd("c", "a");
+    g.wEdgeAttr(e, {"0.2"});
+    e = g.findorAdd("c", "b");
+    g.wEdgeAttr(e, {"0.2"});
+    e = g.findorAdd("d", "b");
+    g.wEdgeAttr(e, {"0.4"});
+    e = g.findorAdd("a", "v");
+    g.wEdgeAttr(e, {"0.1"});
+    e = g.findorAdd("b", "v");
+    g.wEdgeAttr(e, {"0.1"});
+
+    act = 100 * probs(
+                    g,
+                    g.find("v"));
+    CHECK_EQUAL(3, act);
 }
 
 main()

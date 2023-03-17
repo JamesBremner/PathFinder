@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <stack>
 #include <set>
@@ -466,10 +467,12 @@ namespace raven
             results = ss.str();
         }
 
-        double flows(
+        double
+        flows(
             const cGraph &g,
             int start,
-            int end)
+            int end,
+            std::vector<int>& vEdgeFlow )
         {
             if (!g.isDirected())
                 throw std::runtime_error(
@@ -477,6 +480,7 @@ namespace raven
 
             int totalFlow = 0;
 
+            // copy graph to working graph
             auto work = g;
 
             while (1)
@@ -531,6 +535,25 @@ namespace raven
                 totalFlow += maxflow;
             }
 
+            vEdgeFlow.clear();
+            for (int ei = 0; ei < g.edgeCount(); ei++)
+            {
+                double f;
+                if (work.dest(ei) == -1)
+                    f = atof(g.rEdgeAttr(ei, 0).c_str());
+                else
+                {
+                    double oc = atof(g.rEdgeAttr(ei, 0).c_str());
+                    double wc = atof(work.rEdgeAttr(ei, 0).c_str());
+                    f = oc - wc;
+                }
+                vEdgeFlow.push_back( f );
+                // if (f > 0)
+                //     std::cout << g.userName(g.source(ei))
+                //               << " " << g.userName(g.dest(ei))
+                //               << " " << f << "\n";
+            }
+
             return totalFlow;
         }
 
@@ -540,12 +563,14 @@ namespace raven
             int end)
         {
             double totalmultiflow = 0;
+            std::vector<int> vEdgeFlow;
             for (int s : vsource)
             {
                 totalmultiflow += flows(
                     g,
                     s,
-                    end);
+                    end,
+                    vEdgeFlow);
             }
             return totalmultiflow;
         }
@@ -684,6 +709,52 @@ namespace raven
             }
 
             return atof(g.rVertexAttr(end, 0).c_str());
+        }
+        std::vector<std::string> alloc(cGraph &g)
+        {
+            // identify unique agents and tasks
+            std::set<int> setAgent, setTask;
+            for (int ei = 0; ei < g.edgeCount(); ei++)
+            {
+                setAgent.insert(g.source(ei));
+                setTask.insert(g.dest(ei));
+            }
+
+            // add link from start to each agent
+            int start = g.add("start_alloc");
+            for (int agent : setAgent)
+                g.addEdge(start, agent);
+
+            // add link from each task to end
+            int end = g.add("end_alloc");
+            for (int task : setTask)
+                g.addEdge(task, end);
+
+            // set capacity of every link to 1
+            for (int ei = 0; ei < g.edgeCount(); ei++)
+                g.wEdgeAttr(ei, {"1"});
+
+            // assign agents to tasks by calculating the maximum flow
+            std::vector<int> vEdgeFlow;
+            flows(g, start, end, vEdgeFlow);
+
+            std::vector<std::string> ret;
+            for (int ei = 0; ei < g.edgeCount(); ei++)
+            {
+                if( vEdgeFlow[ei] <= 0 )
+                    continue;
+
+                int s = g.source(ei);
+                int d = g.dest(ei);
+                if (s == start)
+                    continue;
+                if (d == end)
+                    continue;
+                ret.push_back(g.userName(s));
+                ret.push_back(g.userName(d));
+
+            }
+            return ret;
         }
     }
 }

@@ -72,7 +72,7 @@ namespace raven
                 cVE::add(s);
                 cVE::add(d);
                 myAtt.resizeVertex( vertexCount() );
-                return cVE::add(s, d);
+                return cVE::findorAdd(s, d);
              }
 
 

@@ -240,7 +240,11 @@ graph_calc readfile(
         option = graph_calc::allpaths;
         readUncostedLinks(g, ifs);
     }
-
+    else if (calc.find("alloc") != -1)
+    {
+        option = graph_calc::alloc;
+        readUncostedLinks(g, ifs);
+    }
     else
         throw std::runtime_error(
             "bad calculation type ");

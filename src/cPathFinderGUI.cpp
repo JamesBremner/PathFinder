@@ -128,6 +128,9 @@ void cGUI::calculate()
             case graph_calc::probs:
                 calcProbs();
 
+            case graph_calc::alloc:
+                calcAlloc();
+
             case graph_calc::none:
                 break;
             }
@@ -281,10 +284,12 @@ void cGUI::calcCliques()
 
 void cGUI::calcFlows()
 {
+    std::vector<int> vEdgeFlow;
     double flow = flows(
         myGraph,
         myGraph.find(myStartName.back()),
-        myGraph.find(myEndName));
+        myGraph.find(myEndName),
+        vEdgeFlow);
     myResultText = "Total Flow = " + std::to_string(flow);
 }
 void cGUI::calcMultiFlows()
@@ -305,6 +310,18 @@ void cGUI::calcProbs()
         myGraph,
         myGraph.find( myEndName)    );
     myResultText = "Probability " + std::to_string( p );
+}
+
+void cGUI::calcAlloc()
+{
+    auto ret = alloc( myGraph );
+
+    std::stringstream ss;
+    ss << "Agent                Task\n\n";
+    for( int k = 0; k < ret.size(); k += 2 ) {
+        ss <<std::setw(20) << std::left << ret[k] << ret[k+1] << "\n";
+    }
+    myResultText = ss.str();
 }
 void cGUI::draw(PAINTSTRUCT &ps)
 {

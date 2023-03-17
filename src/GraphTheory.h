@@ -167,12 +167,14 @@ namespace raven
         /// @param g
         /// @param start
         /// @param end
-        /// @return
+        /// @param[out] vEdgeFlow flow through each edge
+        /// @return total flow
 
         double flows(
             const cGraph &g,
             int start,
-            int end);
+            int end,
+            std::vector<int>& vEdgeFlow );
 
         /// @brief Maximum flow through graph with multiple sources
         /// @param g
@@ -195,6 +197,8 @@ namespace raven
             const cGraph &g);
 
         double probs(cGraph &g, int end);
+
+        std::vector<std::string> alloc(cGraph& g );
 
         /// @brief Graph description in graphviz dot format
         /// @param g

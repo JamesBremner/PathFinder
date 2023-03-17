@@ -79,7 +79,7 @@ enum class graph_calc
     multiflows,
     allpaths,
     probs,
-
+    alloc,
 };
 
 class cGUI : public cStarterGUI
@@ -131,6 +131,7 @@ private:
     void calcMultiFlows();
     void calcAllPaths();
     void calcProbs();
+    void calcAlloc();
 
     void draw(PAINTSTRUCT &ps);
     void drawLayout(PAINTSTRUCT &ps);

@@ -1,0 +1,8 @@
+format alloc
+g
+l child1 chore1
+l child1 chore2
+l child1 chore3
+l child2 chore1
+l child2 chore2
+l child2 chore3

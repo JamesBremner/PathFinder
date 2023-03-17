@@ -28,24 +28,26 @@ public:
     /// @return edge index
     /*  
     The vertices need not exist ( if not they will be added )
-
+    Another edge will be added, even if edge exists between vertices
     */
-    int add(
+    int addEdge(
         int src,
         int dst);
 
+
+    /// @brief add edge if one does not exist
+    /// @param src 
+    /// @param dst 
+    /// @return edge index
 
     int findorAdd(
         int src,
         int dst);
 
 
-    // void remove(
-    //     int src,
-    //     int dst     );
-
     /// @brief remove edge
     /// @param ei edge index
+
     void remove(
         int ei );
 

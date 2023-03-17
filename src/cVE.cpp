@@ -46,7 +46,7 @@ namespace raven
             vInEdges.resize(i + 1);
         }
 
-        int cVE::add(int src, int dst)
+        int cVE::addEdge(int src, int dst)
         {
             if (0 > src || 0 > dst)
                 throw std::runtime_error("cVE::add edge bad vertex index");
@@ -76,7 +76,7 @@ namespace raven
         {
             int ei = find(src,dst);
             if( ei < 0 )
-                ei = add(src, dst);
+                ei = addEdge(src, dst);
             return ei;
         }
 
