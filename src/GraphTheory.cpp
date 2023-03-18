@@ -472,7 +472,7 @@ namespace raven
             const cGraph &g,
             int start,
             int end,
-            std::vector<int>& vEdgeFlow )
+            std::vector<int> &vEdgeFlow)
         {
             if (!g.isDirected())
                 throw std::runtime_error(
@@ -547,7 +547,7 @@ namespace raven
                     double wc = atof(work.rEdgeAttr(ei, 0).c_str());
                     f = oc - wc;
                 }
-                vEdgeFlow.push_back( f );
+                vEdgeFlow.push_back(f);
                 // if (f > 0)
                 //     std::cout << g.userName(g.source(ei))
                 //               << " " << g.userName(g.dest(ei))
@@ -741,7 +741,7 @@ namespace raven
             std::vector<std::string> ret;
             for (int ei = 0; ei < g.edgeCount(); ei++)
             {
-                if( vEdgeFlow[ei] <= 0 )
+                if (vEdgeFlow[ei] <= 0)
                     continue;
 
                 int s = g.source(ei);
@@ -752,9 +752,70 @@ namespace raven
                     continue;
                 ret.push_back(g.userName(s));
                 ret.push_back(g.userName(d));
-
             }
             return ret;
+        }
+
+        std::vector<int> euler(const cGraph &g)
+        {
+            // firewall
+            if (!g.isDirected())
+                throw std::runtime_error(
+                    "euler:  needs directed graph ( 2nd input line must be 'g')");
+            for (int vi = 0; vi < g.vertexCount(); vi++)
+                if (g.adjacentIn(vi).size() != g.adjacentOut(vi).size())
+                    throw std::runtime_error(
+                        "euler: every vertex in-degree must equal out-degree");
+
+            // working copy of graph
+            cGraph work = g;
+
+            // Maintain a stack to keep vertices
+            // We can start from any vertex, here we start with 0
+            std::vector<int> curr_path;
+            curr_path.push_back(0);
+
+            // list to store final circuit
+            std::vector<int> circuit;
+
+            // track visited vertices
+            std::vector<bool> visited(work.vertexCount(), false);
+
+            // while stack is not empty
+            while (curr_path.size() > 0)
+            {
+                int curr_v = curr_path[curr_path.size() - 1];
+
+                // If there's an adjacent unvisited vertex
+                bool found = false;
+                for (int next_v : work.adjacentOut(curr_v))
+                {
+                    // Find and remove the next vertex that is
+                    // adjacent to the current vertex
+                    if (visited[next_v])
+                        continue;
+
+                    visited[next_v] = true;
+                    work.remove(work.find(curr_v, next_v));
+
+                    // Push the new vertex to the stack
+                    curr_path.push_back(next_v);
+                    found = true;
+                }
+
+                // back-track to find remaining circuit
+                if (!found)
+                {
+                    // Remove the current vertex and
+                    // put it in the circuit
+                    circuit.push_back(curr_path.back());
+                    curr_path.pop_back();
+                }
+            }
+
+            std::reverse(circuit.begin(), circuit.end());
+
+            return circuit;
         }
     }
 }

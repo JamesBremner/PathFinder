@@ -4,24 +4,46 @@
 #include "GraphTheory.h"
 #include "cGrid2D.h"
 
-TEST(alloc)
+TEST(Euler)
 {
     raven::graph::cGraph g;
     g.directed();
-    g.findorAdd("child1", "chore1");
-    g.findorAdd("child1", "chore2");
-    g.findorAdd("child1", "chore3");
-    g.findorAdd("child2", "chore1");
-    g.findorAdd("child2", "chore2");
-    g.findorAdd("child2", "chore3");
+    g.findorAdd("a", "b");
+    g.findorAdd("b", "c");
+    g.findorAdd("c", "a");
 
-    auto act = alloc(g);
+    auto act = euler(g);
 
-    std::vector<std::string> exp{"child1", "chore2", "child2", "chore3"};
+    CHECK_EQUAL(4, act.size());
+
+    std::vector<std::string> exp1{"a", "b", "c", "a"};
+    
+    auto sact = g.userName( act );
+
     CHECK(std::equal(
-        exp.begin(),
-        exp.end(),
-        act.begin()));
+        exp1.begin(),
+        exp1.end(),
+        sact.begin()));
+}
+
+TEST(Euler2)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    g.findorAdd("0","1");
+    g.findorAdd("0","6");
+    g.findorAdd("1","2");
+    g.findorAdd("2","0");
+    g.findorAdd("2","3");
+    g.findorAdd("3","4");
+    g.findorAdd("4","2");
+    g.findorAdd("4","5");
+    g.findorAdd("5","0");
+    g.findorAdd("6","4");
+
+    auto act = euler(g);
+
+    CHECK_EQUAL(8, act.size());
 }
 
 TEST(findorAdd)
@@ -423,6 +445,26 @@ TEST(probs)
                     g,
                     g.find("v"));
     CHECK_EQUAL(3, act);
+}
+
+TEST(alloc)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    g.findorAdd("child1", "chore1");
+    g.findorAdd("child1", "chore2");
+    g.findorAdd("child1", "chore3");
+    g.findorAdd("child2", "chore1");
+    g.findorAdd("child2", "chore2");
+    g.findorAdd("child2", "chore3");
+
+    auto act = alloc(g);
+
+    std::vector<std::string> exp{"child1", "chore2", "child2", "chore3"};
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        act.begin()));
 }
 
 main()

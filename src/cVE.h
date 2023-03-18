@@ -55,15 +55,24 @@ public:
 
     //////////////////////// GETTERS
 
+    /// @brief directed or undirected edges
+    /// @return true if directed
     bool isDirected() const
     {
         return fDirected;
     }
+
+    /// @brief number of vertices
+    /// @return number
+
     int vertexCount() const
     {
         return myVertexCount;
     }
 
+    /// @brief number of edges
+    /// @return number
+    
     int edgeCount() const;
 
     /// @brief find vertex with name
@@ -85,20 +94,31 @@ public:
 
     std::vector<int> adjacentOut(int vi) const;
 
-    //std::vector<std::string> adjacentOut(const std::string& name ) const;
-
     /// @brief vertices that can reach specified vertex in one hop
     /// @param vi 
-    /// @return 
+    /// @return vector of vertex indices
+
     std::vector<int> adjacentIn(int vi) const;
 
+    /// @brief edge source vertex
+    /// @param ei edge index
+    /// @return vertex index
+
     int source( int ei ) const;
+
+    /// @brief edge destination vertec
+    /// @param ei edge index
+    /// @return vertex index
+
     int dest( int ei ) const;
 
     /// @brief human readable edge list
     /// @return text
 
     std::string text() const;
+
+    /// @brief edges in graph
+    /// @return vector of vertex index pairs for vertices that are connected
 
     std::vector<std::pair<int,int>>
     edgeList() const;

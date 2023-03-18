@@ -200,6 +200,8 @@ namespace raven
 
         std::vector<std::string> alloc(cGraph& g );
 
+        std::vector<int> euler( const cGraph& g);
+
         /// @brief Graph description in graphviz dot format
         /// @param g
         /// @param vpath
