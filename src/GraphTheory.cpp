@@ -773,44 +773,25 @@ namespace raven
             // list to store circuit
             std::vector<int> circuit;
 
-            // track visited vertices
-            std::vector<bool> visited(work.vertexCount(), false);
-
             // start at first vertex
             int curr_v = 0;
-            circuit.push_back(curr_v);
-            visited[curr_v] = true;
 
-            // while not all vertices visited or not back at start
-            while ((std::find(
-                        visited.begin(),
-                        visited.end(),
-                        false) != visited.end()) ||
-                   curr_v)
+            while (1)
             {
+                // add vertex to circuit
+                 circuit.push_back(curr_v);
+
+                // find next vertex along unused edge
                 auto vadj = work.adjacentOut(curr_v);
                 if (!vadj.size())
-                {
-                    // stuck - must be back at the start vertex
-                    circuit.push_back(0);
-                    curr_v = 0;
-                }
-                else
-                {
-                    int next_v = vadj[0];
+                    break;
+                int next_v = vadj[0];
 
-                    // mark vertex visited
-                    visited[next_v] = true;
+                // remove used edge
+                work.remove(work.find(curr_v, next_v));
 
-                    // add vertex to circuit
-                    circuit.push_back(next_v);
-
-                    // remove used edge
-                    work.remove(work.find(curr_v, next_v));
-
-                    // continue from new vertex
-                    curr_v = next_v;
-                }
+                // continue from new vertex
+                curr_v = next_v;
             }
 
             return circuit;
