@@ -200,6 +200,11 @@ namespace raven
 
         std::vector<std::string> alloc(cGraph& g );
 
+        /// @brief  Find euler path through graph
+        /// @param g graph
+        /// @return vector of vertex indices on path
+        /// If no euler path, exception thrown
+        
         std::vector<int> euler( const cGraph& g);
 
         /// @brief Graph description in graphviz dot format

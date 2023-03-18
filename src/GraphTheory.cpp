@@ -770,50 +770,48 @@ namespace raven
             // working copy of graph
             cGraph work = g;
 
-            // Maintain a stack to keep vertices
-            // We can start from any vertex, here we start with 0
-            std::vector<int> curr_path;
-            curr_path.push_back(0);
-
-            // list to store final circuit
+            // list to store circuit
             std::vector<int> circuit;
 
             // track visited vertices
             std::vector<bool> visited(work.vertexCount(), false);
 
-            // while stack is not empty
-            while (curr_path.size() > 0)
+            // start at first vertex
+            int curr_v = 0;
+            circuit.push_back(curr_v);
+            visited[curr_v] = true;
+
+            // while not all vertices visited or not back at start
+            while ((std::find(
+                        visited.begin(),
+                        visited.end(),
+                        false) != visited.end()) ||
+                   curr_v)
             {
-                int curr_v = curr_path[curr_path.size() - 1];
-
-                // If there's an adjacent unvisited vertex
-                bool found = false;
-                for (int next_v : work.adjacentOut(curr_v))
+                auto vadj = work.adjacentOut(curr_v);
+                if (!vadj.size())
                 {
-                    // Find and remove the next vertex that is
-                    // adjacent to the current vertex
-                    if (visited[next_v])
-                        continue;
+                    // stuck - must be back at the start vertex
+                    circuit.push_back(0);
+                    curr_v = 0;
+                }
+                else
+                {
+                    int next_v = vadj[0];
 
+                    // mark vertex visited
                     visited[next_v] = true;
+
+                    // add vertex to circuit
+                    circuit.push_back(next_v);
+
+                    // remove used edge
                     work.remove(work.find(curr_v, next_v));
 
-                    // Push the new vertex to the stack
-                    curr_path.push_back(next_v);
-                    found = true;
-                }
-
-                // back-track to find remaining circuit
-                if (!found)
-                {
-                    // Remove the current vertex and
-                    // put it in the circuit
-                    circuit.push_back(curr_path.back());
-                    curr_path.pop_back();
+                    // continue from new vertex
+                    curr_v = next_v;
                 }
             }
-
-            std::reverse(circuit.begin(), circuit.end());
 
             return circuit;
         }
