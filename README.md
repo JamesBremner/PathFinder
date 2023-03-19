@@ -1,6 +1,8 @@
 # PathFinder
 
-Find paths through graphs with vertices and edges.
+Find paths through graphs with vertices and edges using C++ implementations of some standard graph theory algorithms.
+
+The very first theorem of graph theory was presented in 1735 by Leonhard Euler. [Details](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Euler)
 
 ## Applications
 
