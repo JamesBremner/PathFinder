@@ -10,6 +10,7 @@ The very first theorem of graph theory was presented in 1735 by Leonhard Euler. 
 
 A GUI that reads text files specifying a graph and the path to be found
 
+ * __Euler__ Path that traverses every edge exactly once [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Euler)
  * __Costs__  Cheapest or shortest paths between two vertices. [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Costs)
  * __Tour__ Path that visits all vertices. [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Tour)
  * __Cycle__ Find cycles in directed graph.  [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Cycles)
