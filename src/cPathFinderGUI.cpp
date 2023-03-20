@@ -131,6 +131,9 @@ void cGUI::calculate()
             case graph_calc::alloc:
                 calcAlloc();
 
+            case graph_calc::euler:
+                calcEuler();
+
             case graph_calc::none:
                 break;
             }
@@ -323,6 +326,24 @@ void cGUI::calcAlloc()
     }
     myResultText = ss.str();
 }
+
+void cGUI::calcEuler()
+{
+    auto ret = euler( myGraph );
+
+     std::stringstream ss;
+     for( int vi : ret )
+        ss << myGraph.userName(vi ) << " -> ";
+    myResultText = ss.str();
+
+    auto viz = pathViz(
+        myGraph,
+        ret,
+        true);
+    RunDOT(
+        myGraph,
+        viz);
+}
 void cGUI::draw(PAINTSTRUCT &ps)
 {
     fm.text("PathFinder " + myfname);
@@ -391,6 +412,7 @@ void cGUI::drawLayout(PAINTSTRUCT &ps)
     case graph_calc::cost:
     case graph_calc::spans:
     case graph_calc::sales:
+    case graph_calc::euler:
     {
         // fill graph panel with image produced by graphviz
         myplLayout.show(true);

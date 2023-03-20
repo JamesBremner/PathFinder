@@ -54,6 +54,28 @@ void gen(const std::vector<std::string> &q)
     }
     displayStatus();
 }
+
+void genEuler(const std::vector<std::string> &q)
+{
+    int vmax = atoi(q[1].c_str());
+    theGraph.clear();
+    theGraph.directed();
+    for (int k = 0; k < vmax; k++)
+    {
+        theGraph.add("V" + std::to_string(k));
+    }    
+    int v1 = 0;
+    for( int k = 0; k < vmax; k++ )
+    {
+        int v2 = v1;
+        while( v2 == v1)
+            v2 = rand() % vmax;
+        theGraph.addEdge(v1,v2);
+        v1 = v2;
+    }
+    theGraph.addEdge(v1,0);
+}
+
 void add(const std::vector<std::string> &q)
 {
     if (q.size() < 3)
@@ -103,7 +125,7 @@ void display(const std::vector<std::string> &q)
     }
     std::cout << "\n";
 
-    // std::cout << theGraph.text();
+    std::cout << theGraph.text();
 }
 
 void read(const std::vector<std::string> &q)
@@ -219,7 +241,9 @@ void help()
                  "read filepath : input graph links from file\n"
                  "display :       display links\n"
                  "cycles :        find cycles in graph\n"
-                 "s2s :           find source to sink connections"
+                 "s2s :           find source to sink connections\n"
+                 "gen n :         generate random graph with n vertices\n"
+                 "euler n :       find euler path\n"
                  "help :          this help display\n\n";
 }
 
@@ -253,7 +277,9 @@ main()
             else if (q[0] == "s2s")
                 s2s();
             else if (q[0] == "gen")
-                gen(q);
+                genEuler(q);
+            else if (q[0] == "euler")
+                raven::graph::euler(theGraph);
 
             else
                 std::cout << "unreqonized query\n";

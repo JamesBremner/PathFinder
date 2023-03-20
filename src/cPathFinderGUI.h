@@ -80,6 +80,7 @@ enum class graph_calc
     allpaths,
     probs,
     alloc,
+    euler,
 };
 
 class cGUI : public cStarterGUI
@@ -132,6 +133,7 @@ private:
     void calcAllPaths();
     void calcProbs();
     void calcAlloc();
+    void calcEuler();
 
     void draw(PAINTSTRUCT &ps);
     void drawLayout(PAINTSTRUCT &ps);
