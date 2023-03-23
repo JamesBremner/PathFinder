@@ -29,8 +29,7 @@ OBJ_test = \
 OBJ_pathfinder = \
 	$(ODIR)/pathfinder.o \
 	$(ODIR)/cPathFinderGUI.o \
-	$(ODIR)/cVE.o \
-	$(ODIR)/cAttribute.o \
+	$(ODIR)/cGraph.o \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/tourNodes.o \
 	$(ODIR)/GraphViz.o \
@@ -40,8 +39,6 @@ OBJ_obstacle = \
 	$(ODIR)/obstacle.o \
 	$(ODIR)/cObstacleGUI.o \
 	$(ODIR)/cObstacle.o \
-	$(ODIR)/cVE.o \
-	$(ODIR)/cAttribute.o \
 	$(ODIR)/cGraph.o \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/tourNodes.o \
@@ -50,8 +47,6 @@ OBJ_obstacle = \
 
 OBJ_graphex = \
 	$(ODIR)/graphex.o \
-	$(ODIR)/cVE.o \
-	$(ODIR)/cAttribute.o \
 	$(ODIR)/cGraph.o \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/cRunWatch.o

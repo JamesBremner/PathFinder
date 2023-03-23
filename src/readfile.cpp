@@ -38,7 +38,7 @@ static void readSales(
                     "Cannot mix cities and links");
             inputType = eInput::link;
             ifs >> sn1 >> sn2 >> scost;
-            g.wEdgeAttr(g.findorAdd(sn1, sn2), {scost});
+            g.wEdgeAttr(g.add(sn1, sn2), {scost});
             break;
         }
 
@@ -67,7 +67,7 @@ static void readCostedLinks(
             break;
         case 'l':
             ifs >> sn1 >> sn2 >> scost;
-            g.wEdgeAttr(g.findorAdd(sn1, sn2), {scost});
+            g.wEdgeAttr(g.add(sn1, sn2), {scost});
             break;
         case 's':
             ifs >> sn1;
@@ -105,7 +105,7 @@ static void readUncostedLinks(
             break;
         case 'l':
             ifs >> sn1 >> sn2;
-            g.findorAdd(sn1, sn2);
+            g.add(sn1, sn2);
             break;
         case 's':
             ifs >> sn1;
@@ -143,7 +143,7 @@ static void readCycle(
         if (stype[0] == 'l')
         {
             ifs >> sn1 >> sn2;
-            g.findorAdd(sn1, sn2);
+            g.add(sn1, sn2);
         }
         ifs >> stype;
     }
@@ -186,7 +186,7 @@ graph_calc readfile(
 
         while (ifs.good())
         {
-            g.findorAdd(sn1, sn2);
+            g.add(sn1, sn2);
             ifs >> sn1 >> sn2;
         }
     }

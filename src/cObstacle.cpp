@@ -134,10 +134,10 @@ void cObstacle::connect()
             auto sn1 = std::to_string(n1->ID());
             auto sn2 = std::to_string(n2->ID());
             mygraphdata.wEdgeAttr(
-                mygraphdata.findorAdd(sn1, sn2),
+                mygraphdata.add(sn1, sn2),
                 {std::to_string(d2)});
             mygraphdata.wEdgeAttr(
-                mygraphdata.findorAdd(sn2, sn1),
+                mygraphdata.add(sn2, sn1),
                 {std::to_string(d2)});
             mygraphdata.wVertexAttr(
                 mygraphdata.find(sn1),

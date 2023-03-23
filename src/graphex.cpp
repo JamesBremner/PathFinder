@@ -49,7 +49,7 @@ void gen(const std::vector<std::string> &q)
     {
         for (int kl = 0; kl < 3; kl++)
         {
-            theGraph.findorAdd(rand() % vmax, rand() % vmax);
+            theGraph.add(rand() % vmax, rand() % vmax);
         }
     }
     displayStatus();
@@ -70,10 +70,10 @@ void genEuler(const std::vector<std::string> &q)
         int v2 = v1;
         while( v2 == v1)
             v2 = rand() % vmax;
-        theGraph.addEdge(v1,v2);
+        theGraph.add(v1,v2);
         v1 = v2;
     }
-    theGraph.addEdge(v1,0);
+    theGraph.add(v1,0);
 }
 
 void add(const std::vector<std::string> &q)
@@ -100,7 +100,7 @@ void add(const std::vector<std::string> &q)
             for (auto &p : vedge)
             {
                 raven::set::cRunWatch aWatcher("randomAdd");
-                theGraph.findorAdd(p.first, p.second);
+                theGraph.add(p.first, p.second);
             }
         }
     }
@@ -108,7 +108,7 @@ void add(const std::vector<std::string> &q)
     {
         // add one specified link
 
-        theGraph.findorAdd(q[1], q[2]);
+        theGraph.add(q[1], q[2]);
     }
 
     displayStatus();
@@ -125,7 +125,7 @@ void display(const std::vector<std::string> &q)
     }
     std::cout << "\n";
 
-    std::cout << theGraph.text();
+    //std::cout << theGraph.text();
 }
 
 void read(const std::vector<std::string> &q)
@@ -146,18 +146,18 @@ void read(const std::vector<std::string> &q)
         if (tokens[0].find("#") != -1)
             continue;
 
-        // int v1 = theGraph.findorAdd(tokens[1]);
+        // int v1 = theGraph.add(tokens[1]);
         // theGraph.wVertexAttr(v1, {std::to_string(rand() % 10), "0", "0"});
-        // int v2 = theGraph.findorAdd(tokens[2]);
+        // int v2 = theGraph.add(tokens[2]);
         // theGraph.wVertexAttr(v2, {std::to_string(rand() % 10), "0", "0"});
         // theGraph.add(v1, v2);
 
-        // int v1 = theGraph.findorAdd(tokens[1]);
-        // int v2 = theGraph.findorAdd(tokens[2]);
+        // int v1 = theGraph.add(tokens[1]);
+        // int v2 = theGraph.add(tokens[2]);
         int v1 = atoi(tokens[1].c_str());
         int v2 = atoi(tokens[2].c_str());
 
-        theGraph.findorAdd(v1, v2);
+        theGraph.add(v1, v2);
 
         count++;
         if (count % 10000 == 0)
