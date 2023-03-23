@@ -108,7 +108,7 @@ namespace raven
             it = std::find(vInEdges[d].begin(), vInEdges[d].end(), s);
             if (it != vInEdges[d].end())
                 vInEdges[d].erase(it);
-            vEdgeAttr[ find( s, d )] = {};
+            vEdgeAttr[find(s, d)] = {};
             if (fDirected)
                 return;
             it = std::find(vOutEdges[d].begin(), vOutEdges[d].end(), s);
@@ -117,7 +117,7 @@ namespace raven
             it = std::find(vInEdges[s].begin(), vInEdges[s].end(), d);
             if (it != vInEdges[s].end())
                 vInEdges[s].erase(it);
-            vEdgeAttr[ find( d, s )] = {};
+            vEdgeAttr[find(d, s)] = {};
         }
         void cGraph::remove(const std::string &src, const std::string &dst)
         {
@@ -206,6 +206,24 @@ namespace raven
             if (0 > ai || ai > (int)vEdgeAttr[ei].size() - 1)
                 return "";
             return vEdgeAttr[ei][ai];
+        }
+
+        std::vector<std::pair<int, int>>
+        cGraph::edgeList() const
+        {
+            std::vector<std::pair<int, int>> ret;
+            int src = -1;
+            for (auto &ve : vOutEdges)
+            {
+                src++;
+                for (int dst : ve)
+                {
+                    if (src >= dst)
+                        continue;
+                    ret.push_back(std::make_pair(src, dst));
+                }
+            }
+            return ret;
         }
     }
 }

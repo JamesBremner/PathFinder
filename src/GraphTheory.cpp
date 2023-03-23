@@ -182,7 +182,10 @@ namespace raven
             const cGraph &g,
             const std::string &startName)
         {
+            // copy vertices from input grqaph to spanning tree
             cSpanningTree ST;
+            for( int kv = 0; kv < g.vertexCount(); kv++ )
+                ST.mySpanningTree.add(g.userName(kv));
 
             int start = g.find(startName);
 
@@ -239,7 +242,7 @@ namespace raven
 
                 // add cheapest link between node in tree to node not yet in tree
                 ST.add(g, bestLink.first, bestLink.second);
-
+                
                 visited[bestLink.first] = true;
                 visited[bestLink.second] = true;
             }

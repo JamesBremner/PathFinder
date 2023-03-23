@@ -220,10 +220,9 @@ TEST(spanningTree)
 
     CHECK_EQUAL(3, res.size());
 
-    CHECK( false );
-    // CHECK(std::equal(
-    //     expected.begin(), expected.end(),
-    //     res.begin()));
+    CHECK(std::equal(
+        expected.begin(), expected.end(),
+        res.begin()));
 }
 
 TEST(dfs)

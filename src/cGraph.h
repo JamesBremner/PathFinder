@@ -24,7 +24,7 @@ namespace raven
 
             int add(const std::string &name);
 
-            /* @brief add a new edge
+            /* @brief add a new edge between named vertices
             /// @param scr name
             /// @param dst name
             /// @return edge index
@@ -32,6 +32,19 @@ namespace raven
             If edge exists no edge will be added and existing edge index returned
             */
             int add(const std::string &scr, const std::string &dst);
+
+            /* @brief add a new edge between vertex indices
+            /// @param s 
+            /// @param d 
+            /// @return edge index
+
+            If the vertices do not exist, then new vertices are added named V(vertex index)
+
+            This is faster than the named vertex version
+            because it does no sanity checking.
+            It should only be used for constructing large graphs
+            where sanity can be assumed and performance is important
+            */
             int add( int s, int d );
 
             void wVertexAttr(int vi, const std::vector<std::string> vAttr);
@@ -67,11 +80,7 @@ namespace raven
             /// @return vector of vertex index pairs for vertices that are connected
 
             std::vector<std::pair<int, int>>
-            edgeList() const
-            {
-                std::vector<std::pair<int, int>> ret;
-                return ret;
-            }
+            edgeList() const;
 
         private:
             bool fDirected;
