@@ -1,155 +1,103 @@
-#pragma once
-#include "cVE.h"
-#include "cAttribute.h"
+#include <vector>
+#include <map>
+#include <string>
 
 namespace raven
 {
     namespace graph
     {
-        /// @brief A graph of vertices connected by edges, with vertex and edge attribute
-
-        class cGraph : public cVE
+        class cGraph
         {
         public:
-            // writers
+            cGraph();
 
-            void clear()
+            void clear();
+
+            void directed(bool f = true)
             {
-                cVE::clear();
-                myAtt.clear();
+                fDirected = f;
             }
 
-            void wVertexName( int iv, const std::string& name )
-            {
-                myAtt.wVertexName(iv,name);
-            }
-            void wVertexAttr(
-                int vi,
-                const std::vector<std::string> &vsAttr)
-            {
-                myAtt.wVertexAttr(vi, vsAttr);
-            }
-            void wEdgeAttr(
-                int ei,
-                const std::vector<std::string> &vsAttr)
-            {
-                myAtt.wEdgeAttr(ei, vsAttr);
-            }
-            void wEdgeAttr(
-                int v1, int v2,
-                const std::vector<std::string> &vsAttr)
-            {
-                myAtt.wEdgeAttr(cVE::find(v1, v2), vsAttr);
-                if (!isDirected())
-                    myAtt.wEdgeAttr(cVE::find(v2, v1), vsAttr);
-            }
-
-            int add(const std::string &name)
-            {
-                myAtt.add(name);
-                return cVE::add();
-            }
-
-            /// @brief add edge, add required vertices
-            /// @param srcName
-            /// @param dstName
-            /// @return edge index
-            int findorAdd(
-                const std::string &srcName,
-                const std::string &dstName)
-            {
-                int s = find(srcName);
-                if (s < 0)
-                    s = add(srcName);
-                int d = find(dstName);
-                if (d < 0)
-                    d = add(dstName);
-                return cVE::findorAdd( s, d );
-            }
-
-            int findorAdd(int s, int d)
-            {
-                cVE::add(s);
-                cVE::add(d);
-                myAtt.resizeVertex( vertexCount() );
-                return cVE::findorAdd(s, d);
-             }
-
-
-            ////////// readers
-
-            /// @brief read vertex attribute
-            /// @param vi vertex index
-            /// @param ai attribute index
-            /// @return attribute in string format
-
-            std::string rVertexAttr(int vi, int ai) const
-            {
-                return myAtt.rVertexAttr(vi, ai);
-            }
-
-            /// @brief read edge attribute
-            /// @param ei edge index
-            /// @param ai attribute index
-            /// @return attribute in string format
-
-            std::string rEdgeAttr(int ei, int ai) const
-            {
-                return myAtt.rEdgeAttr(ei, ai);
-            }
-
-            /// @brief vertex index from name
-            /// @param name 
+            /// @brief add a new vertex
+            /// @param name
             /// @return vertex index
 
-            int find(const std::string &name) const
-            {
-                return myAtt.find(name);
-            }
+            int add(const std::string &name);
 
-            /// @brief vertex name from index
-            /// @param i vertex index
-            /// @return vertex name: "<index>" if unnamed, "" if bad index
-
-            std::string userName(int i) const
-            {
-                if( 0 > i || i >= vertexCount() )
-                    return "";
-                std::string s = myAtt.userName(i);
-                if( s.empty() )
-                    s = std::to_string( i );
-                return s;
-            }
-
-            /// @brief edge index from vertex indices
-            /// @param s source vertex index
-            /// @param d destination vertex index
+            /* @brief add a new edge
+            /// @param scr name
+            /// @param dst name
             /// @return edge index
+            If vertices do not exist they will be added
+            If edge exists no edge will be added and existing edge index returned
+            */
+            int add(const std::string &scr, const std::string &dst);
+            int add( int s, int d );
 
-            int find(int s, int d) const
+            void wVertexAttr(int vi, const std::vector<std::string> vAttr);
+            void wEdgeAttr(int ei, const std::vector<std::string> vAttr);
+            void wEdgeAttr(int s, int d, const std::vector<std::string> vAttr);
+
+            void remove(int s, int d);
+            void remove(const std::string &str, const std::string &dst);
+
+            /////////////////////// getters
+
+            bool isDirected() const { return fDirected; }
+            int vertexCount() const;
+            int edgeCount() const;
+
+            int find(const std::string &name) const;
+            int find( int s, int d ) const;
+            int find(const std::string &src, const std::string &dst) const;
+
+            std::string userName(int vi) const;
+            std::vector<std::string> userName(std::vector<int> vvi) const;
+
+            std::vector<int> adjacentOut(int vi) const;
+            std::vector<int> adjacentIn(int vi) const;
+
+            int dest( int ei ) const;
+            int src( int ei ) const;
+
+            std::string rVertexAttr(int vi, int ai) const;
+            std::string rEdgeAttr(int ei, int ai) const;
+
+            /// @brief edges in graph
+            /// @return vector of vertex index pairs for vertices that are connected
+
+            std::vector<std::pair<int, int>>
+            edgeList() const
             {
-                return cVE::find(s, d);
-            }
-
-            /// @brief vertex user names
-            /// @param vi vector of vertex indices
-            /// @return vector of user names
-
-            std::vector<std::string>
-            userName(const std::vector<int> &vi) const
-            {
-                std::vector<std::string> ret;
-                for (int i : vi)
-                    ret.push_back(userName(i));
+                std::vector<std::pair<int, int>> ret;
                 return ret;
             }
 
-            /// @brief human readable graph deecription
-            /// @return 
-            std::string text();
-
         private:
-            cAttribute myAtt;
+            bool fDirected;
+
+            // edges
+
+            std::vector<std::vector<int>> vOutEdges;
+
+            std::vector<std::vector<int>> vInEdges;
+
+            /** vertex attributes
+             *
+             *  vVertexAttr[vi][ai] is a string representing the aith attribute of the vith vertex
+             */
+
+            std::vector<std::string> vVertexName;
+            std::vector<std::vector<std::string>> vVertexAttr;
+
+            /* edge attributes
+
+                vEdgeAttr[mapEdgeAttr[src,dst]][ai] is a string representing the aith attribute of the edge src -> dst
+            */
+            typedef std::map<std::pair<int, int>, int> mapEdgeAttr_t;
+
+            mapEdgeAttr_t mapEdgeAttr;
+            std::vector<std::vector<std::string>> vEdgeAttr;
         };
     }
 }

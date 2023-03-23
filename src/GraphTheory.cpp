@@ -172,9 +172,7 @@ namespace raven
             const cGraph &g,
             int v, int w)
         {
-            mySpanningTree.findorAdd(v, w);
-            mySpanningTree.wVertexName(v, g.userName(v));
-            mySpanningTree.wVertexName(w, g.userName(w));
+            mySpanningTree.add(g.userName(v), g.userName(w));
             myVertexSet.insert(v);
             myVertexSet.insert(w);
         }
@@ -520,7 +518,7 @@ namespace raven
                         if (cap <= 0)
                         {
                             // link capacity filled, remove
-                            work.remove(work.find(u, v));
+                            work.remove(u, v);
                         }
                         else
                         {
@@ -547,11 +545,14 @@ namespace raven
                     double wc = atof(work.rEdgeAttr(ei, 0).c_str());
                     f = oc - wc;
                 }
+
+                            //         std::cout << g.userName(g.src(ei))
+                            //   << " " << g.userName(g.dest(ei))
+                            //   << " " << f << "\n";
+
                 vEdgeFlow.push_back(f);
-                // if (f > 0)
-                //     std::cout << g.userName(g.source(ei))
-                //               << " " << g.userName(g.dest(ei))
-                //               << " " << f << "\n";
+
+
             }
 
             return totalFlow;
@@ -716,19 +717,19 @@ namespace raven
             std::set<int> setAgent, setTask;
             for (int ei = 0; ei < g.edgeCount(); ei++)
             {
-                setAgent.insert(g.source(ei));
+                setAgent.insert(g.src(ei));
                 setTask.insert(g.dest(ei));
             }
 
             // add link from start to each agent
             int start = g.add("start_alloc");
             for (int agent : setAgent)
-                g.addEdge(start, agent);
+                g.add(start, agent);
 
             // add link from each task to end
             int end = g.add("end_alloc");
             for (int task : setTask)
-                g.addEdge(task, end);
+                g.add(task, end);
 
             // set capacity of every link to 1
             for (int ei = 0; ei < g.edgeCount(); ei++)
@@ -744,7 +745,7 @@ namespace raven
                 if (vEdgeFlow[ei] <= 0)
                     continue;
 
-                int s = g.source(ei);
+                int s = g.src(ei);
                 int d = g.dest(ei);
                 if (s == start)
                     continue;
@@ -788,7 +789,7 @@ namespace raven
                 int next_v = vadj[0];
 
                 // remove used edge
-                work.remove(work.find(curr_v, next_v));
+                work.remove(curr_v, next_v);
 
                 // continue from new vertex
                 curr_v = next_v;

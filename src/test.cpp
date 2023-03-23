@@ -6,74 +6,24 @@
 
 
 
-TEST(Euler2)
+TEST(add)
 {
     raven::graph::cGraph g;
-    g.directed();
-    g.findorAdd("0","1");
-    g.findorAdd("0","6");
-    g.findorAdd("1","2");
-    g.findorAdd("2","0");
-    g.findorAdd("2","3");
-    g.findorAdd("3","4");
-    g.findorAdd("4","2");
-    g.findorAdd("4","5");
-    g.findorAdd("5","0");
-    g.findorAdd("6","4");
-
-    auto act = euler(g);
-
-    std::vector<std::string> exp1 { "0", "1", "2", "0", "6", "4", "2", "3", "4", "5", "0" };
-
-    auto sact = g.userName( act );
-
-    CHECK(std::equal(
-        exp1.begin(),
-        exp1.end(),
-        sact.begin()));
-    
-}
-
-TEST(Euler)
-{
-    raven::graph::cGraph g;
-    g.directed();
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("c", "a");
-
-    auto act = euler(g);
-
-    CHECK_EQUAL(4, act.size());
-
-    std::vector<std::string> exp1{"a", "b", "c", "a"};
-    
-    auto sact = g.userName( act );
-
-    CHECK(std::equal(
-        exp1.begin(),
-        exp1.end(),
-        sact.begin()));
-}
-
-TEST(findorAdd)
-{
-    raven::graph::cGraph g;
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
+    g.add("a", "b");
+    g.add("b", "c");
     CHECK_EQUAL(2, g.edgeCount());
 
     g.clear();
     g.directed();
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
+    g.add("a", "b");
+    g.add("b", "c");
     CHECK_EQUAL(2, g.edgeCount());
 
     g.clear();
     g.directed();
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("a", "d");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
 
     int nb = g.find("b");
     int nc = g.find("c");
@@ -85,14 +35,14 @@ TEST(findorAdd)
 
     g.clear();
     g.directed();
-    int ab = g.findorAdd("a", "b");
-    int ba = g.findorAdd("b", "a");
+    int ab = g.add("a", "b");
+    int ba = g.add("b", "a");
     CHECK_EQUAL(0, ab);
     CHECK_EQUAL(1, ba);
 
     g.clear();
-    ab = g.findorAdd("a", "b");
-    ba = g.findorAdd("b", "a");
+    ab = g.add("a", "b");
+    ba = g.add("b", "a");
     CHECK_EQUAL(0, ab);
     CHECK_EQUAL(1, ba);
 }
@@ -102,7 +52,7 @@ TEST(flows)
     raven::graph::cGraph g;
     g.directed();
 
-    g.wEdgeAttr(g.findorAdd("a", "b"), {"7"});
+    g.wEdgeAttr(g.add("a", "b"), {"7"});
 
     std::vector<int> vEdgeFlow;
     double f = flows(
@@ -120,26 +70,20 @@ TEST(removeLink)
     // directed
 
     g.directed();
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("a", "d");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
 
-    int nb = g.find("b");
-    int nc = g.find("c");
-    int ei = g.find(nb, nc);
-
-    // g.remove(g.find(g.find("b"), g.find("c")));
-    g.remove(ei);
+    g.remove("b","c");
 
     CHECK_EQUAL(2, g.edgeCount());
     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
     CHECK(g.find(g.find("b"), g.find("b")) == -1);
     CHECK(g.find(g.find("a"), g.find("d")) >= 0);
 
-    ei = g.find(g.find("a"), g.find("d"));
-    CHECK(ei >= 0);
+    CHECK(g.find(g.find("a"), g.find("d")) >= 0);
 
-    g.remove(ei);
+    g.remove("a","d");
 
     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
     CHECK(g.find(g.find("b"), g.find("b")) == -1);
@@ -148,12 +92,12 @@ TEST(removeLink)
     // undirected
 
     g.clear();
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("a", "d");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
     CHECK_EQUAL(3, g.edgeCount());
 
-    g.remove(g.find(g.find("b"), g.find("c")));
+    g.remove("b","c");
 
     CHECK_EQUAL(2, g.edgeCount());
     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
@@ -173,10 +117,10 @@ TEST(removeLink)
 TEST(edgebyindex)
 {
     raven::graph::cGraph g;
-    g.findorAdd(1, 2);
-    g.findorAdd(2, 3);
+    g.add(1, 2);
+    g.add(2, 3);
     CHECK_EQUAL(2, g.edgeCount());
-    std::vector<std::string> exp{"1", "2", "3"};
+    std::vector<std::string> exp{"V1", "V2", "V3"};
     auto act = g.userName({1, 2, 3});
     CHECK(std::equal(
         exp.begin(),
@@ -186,25 +130,25 @@ TEST(edgebyindex)
 
 TEST(attributes)
 {
-    // raven::graph::cGraph g;
-    // int v1 = g.add("a");
-    // int v2 = g.add("b");
-    // int ei = g.add("a", "b");
-    // g.wVertexAttr(v1, {"10", "11", "12"});
-    // g.wVertexAttr(v2, {"20", "21", "22"});
-    // g.wEdgeAttr(ei, {"50", "51", "52"});
+    raven::graph::cGraph g;
+    int v1 = g.add("a");
+    int v2 = g.add("b");
+    int ei = g.add("a", "b");
+    g.wVertexAttr(v1, {"10", "11", "12"});
+    g.wVertexAttr(v2, {"20", "21", "22"});
+    g.wEdgeAttr(ei, {"50", "51", "52"});
 
-    // CHECK_EQUAL("11", g.rVertexAttr(v1, 1));
-    // CHECK_EQUAL("22", g.rVertexAttr(v2, 2));
-    // CHECK_EQUAL("50", g.rEdgeAttr(ei, 0));
+    CHECK_EQUAL("11", g.rVertexAttr(v1, 1));
+    CHECK_EQUAL("22", g.rVertexAttr(v2, 2));
+    CHECK_EQUAL("50", g.rEdgeAttr(ei, 0));
 }
 
 TEST(adjacent)
 {
     raven::graph::cGraph g;
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("a", "d");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
 
     auto res = g.userName(g.adjacentOut(g.find("a")));
     std::vector<std::string>
@@ -225,9 +169,9 @@ TEST(adjacent)
 TEST(dijsktra)
 {
     raven::graph::cGraph g;
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("a", "d");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
 
     std::vector<std::string> expected{"a", "b", "c"};
     CHECK(std::equal(
@@ -238,10 +182,10 @@ TEST(dijsktra)
 TEST(allpaths)
 {
     raven::graph::cGraph g;
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("a", "d");
-    g.findorAdd("d", "c");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
+    g.add("d", "c");
 
     auto act = allPaths(g, g.find("a"), g.find("c"));
 
@@ -263,9 +207,9 @@ TEST(allpaths)
 TEST(spanningTree)
 {
     raven::graph::cGraph g;
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("a", "d");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
 
     std::vector<std::pair<int, int>> expected{
         {0, 1},
@@ -276,17 +220,18 @@ TEST(spanningTree)
 
     CHECK_EQUAL(3, res.size());
 
-    CHECK(std::equal(
-        expected.begin(), expected.end(),
-        res.begin()));
+    CHECK( false );
+    // CHECK(std::equal(
+    //     expected.begin(), expected.end(),
+    //     res.begin()));
 }
 
 TEST(dfs)
 {
     raven::graph::cGraph g;
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("a", "d");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
 
     std::vector<int> visited;
     dfs(g, g.find("a"),
@@ -306,9 +251,9 @@ TEST(tourNodes)
 {
     raven::graph::cGraph g;
     g.directed(false);
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("a", "d");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
     raven::graph::cTourNodes tourer;
 
     tourer.calculate(g);
@@ -329,10 +274,10 @@ TEST(tourNodes2)
 {
     raven::graph::cGraph g;
     g.directed(false);
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("a", "d");
-    g.findorAdd("c", "d");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
+    g.add("c", "d");
     raven::graph::cTourNodes tourer;
 
     tourer.calculate(g);
@@ -350,10 +295,10 @@ TEST(cycle)
 {
     raven::graph::cGraph g;
     g.directed();
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("d", "a");
-    g.findorAdd("c", "d");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("d", "a");
+    g.add("c", "d");
 
     auto act = dfs_cycle_finder(g);
     CHECK_EQUAL(1, act.size());
@@ -363,14 +308,14 @@ TEST(cycle2)
 {
     raven::graph::cGraph g;
     g.directed();
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "c");
-    g.findorAdd("d", "a");
-    g.findorAdd("c", "d");
-    g.findorAdd("b", "e");
-    g.findorAdd("e", "f");
-    g.findorAdd("f", "g");
-    g.findorAdd("g", "e");
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("d", "a");
+    g.add("c", "d");
+    g.add("b", "e");
+    g.add("e", "f");
+    g.add("f", "g");
+    g.add("g", "e");
 
     auto act = dfs_cycle_finder(g);
     CHECK_EQUAL(2, act.size());
@@ -381,10 +326,10 @@ TEST(sourceToSink)
 {
     raven::graph::cGraph g;
     g.directed();
-    g.findorAdd("a", "b");
-    g.findorAdd("b", "e");
-    g.findorAdd("b", "d");
-    g.findorAdd("c", "d");
+    g.add("a", "b");
+    g.add("b", "e");
+    g.add("b", "d");
+    g.add("c", "d");
 
     auto res = sourceToSink(g);
 
@@ -415,9 +360,9 @@ TEST(probs)
 {
     raven::graph::cGraph g;
     g.directed();
-    int e = g.findorAdd("a", "c");
+    int e = g.add("a", "c");
     g.wEdgeAttr(e, {"0.5"});
-    e = g.findorAdd("b", "c");
+    e = g.add("b", "c");
     g.wEdgeAttr(e, {"0.5"});
     int act = 100 * probs(
                         g,
@@ -436,19 +381,19 @@ TEST(probs)
 
     g.clear();
     g.directed();
-    e = g.findorAdd("u", "c");
+    e = g.add("u", "c");
     g.wEdgeAttr(e, {"0.3"});
-    e = g.findorAdd("u", "d");
+    e = g.add("u", "d");
     g.wEdgeAttr(e, {"0.5"});
-    e = g.findorAdd("c", "a");
+    e = g.add("c", "a");
     g.wEdgeAttr(e, {"0.2"});
-    e = g.findorAdd("c", "b");
+    e = g.add("c", "b");
     g.wEdgeAttr(e, {"0.2"});
-    e = g.findorAdd("d", "b");
+    e = g.add("d", "b");
     g.wEdgeAttr(e, {"0.4"});
-    e = g.findorAdd("a", "v");
+    e = g.add("a", "v");
     g.wEdgeAttr(e, {"0.1"});
-    e = g.findorAdd("b", "v");
+    e = g.add("b", "v");
     g.wEdgeAttr(e, {"0.1"});
 
     act = 100 * probs(
@@ -461,12 +406,12 @@ TEST(alloc)
 {
     raven::graph::cGraph g;
     g.directed();
-    g.findorAdd("child1", "chore1");
-    g.findorAdd("child1", "chore2");
-    g.findorAdd("child1", "chore3");
-    g.findorAdd("child2", "chore1");
-    g.findorAdd("child2", "chore2");
-    g.findorAdd("child2", "chore3");
+    g.add("child1", "chore1");
+    g.add("child1", "chore2");
+    g.add("child1", "chore3");
+    g.add("child2", "chore1");
+    g.add("child2", "chore2");
+    g.add("child2", "chore3");
 
     auto act = alloc(g);
 
@@ -475,6 +420,56 @@ TEST(alloc)
         exp.begin(),
         exp.end(),
         act.begin()));
+}
+
+TEST(Euler2)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    g.add("0","1");
+    g.add("0","6");
+    g.add("1","2");
+    g.add("2","0");
+    g.add("2","3");
+    g.add("3","4");
+    g.add("4","2");
+    g.add("4","5");
+    g.add("5","0");
+    g.add("6","4");
+
+    auto act = euler(g);
+
+    std::vector<std::string> exp1 { "0", "1", "2", "0", "6", "4", "2", "3", "4", "5", "0" };
+
+    auto sact = g.userName( act );
+
+    CHECK(std::equal(
+        exp1.begin(),
+        exp1.end(),
+        sact.begin()));
+    
+}
+
+TEST(Euler)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("c", "a");
+
+    auto act = euler(g);
+
+    CHECK_EQUAL(4, act.size());
+
+    std::vector<std::string> exp1{"a", "b", "c", "a"};
+    
+    auto sact = g.userName( act );
+
+    CHECK(std::equal(
+        exp1.begin(),
+        exp1.end(),
+        sact.begin()));
 }
 
 main()

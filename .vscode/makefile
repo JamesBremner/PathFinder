@@ -20,8 +20,7 @@ CCflags = -std=c++17 $(OPT) -D_mingw_
 
 # sources
 OBJ_test = \
-	$(ODIR)/cVE.o \
-	$(ODIR)/cAttribute.o \
+	$(ODIR)/cGraph.o \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/tourNodes.o \
 	$(ODIR)/test.o \
@@ -58,7 +57,7 @@ OBJ_graphex = \
 	$(ODIR)/cRunWatch.o
 
 DEPS = \
-	cGraph.h cVE.h cAttribute.h GraphTheory.h
+	cGraph.h GraphTheory.h
 
 ### COMPILE
 
