@@ -59,7 +59,7 @@ void genEuler(const std::vector<std::string> &q)
 {
     int vmax = atoi(q[1].c_str());
     theGraph.clear();
-    theGraph.directed();
+    //theGraph.directed();
     for (int k = 0; k < vmax; k++)
     {
         theGraph.add("V" + std::to_string(k));
@@ -74,6 +74,8 @@ void genEuler(const std::vector<std::string> &q)
         v1 = v2;
     }
     theGraph.add(v1,0);
+
+    displayStatus();
 }
 
 void add(const std::vector<std::string> &q)
@@ -179,6 +181,11 @@ void s2s()
     std::cout << s2s.size() << " sources\n";
 }
 
+void span()
+{
+    raven::graph::spanningTree(theGraph,theGraph.userName( 0 ));
+}
+
 void ancestor_recurse(
     int v,
     int depth,
@@ -244,6 +251,7 @@ void help()
                  "s2s :           find source to sink connections\n"
                  "gen n :         generate random graph with n vertices\n"
                  "euler n :       find euler path\n"
+                 "span :          find spanning tree\n"
                  "help :          this help display\n\n";
 }
 
@@ -280,6 +288,8 @@ main()
                 genEuler(q);
             else if (q[0] == "euler")
                 raven::graph::euler(theGraph);
+            else if( q[0] == "span")
+                span();
 
             else
                 std::cout << "unreqonized query\n";

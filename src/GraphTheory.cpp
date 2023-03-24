@@ -182,9 +182,11 @@ namespace raven
             const cGraph &g,
             const std::string &startName)
         {
+            //std::cout << "spanning Tree " << startName << "\n";
+
             // copy vertices from input grqaph to spanning tree
             cSpanningTree ST;
-            for( int kv = 0; kv < g.vertexCount(); kv++ )
+            for (int kv = 0; kv < g.vertexCount(); kv++)
                 ST.mySpanningTree.add(g.userName(kv));
 
             int start = g.find(startName);
@@ -209,20 +211,19 @@ namespace raven
             {
                 double min_cost = INT_MAX;
                 std::pair<int, int> bestLink;
+                bestLink.first = -1;
 
                 // loop over nodes in span
-                for (int kv = 0; kv < g.vertexCount(); kv++)
+                for (int v = 0; v < g.vertexCount(); v++)
                 {
-                    if (!visited[kv])
+                    if (!visited[v])
                         continue;
-                    v = kv;
 
                     // loop over adjacent nodes not in span
                     for (auto w : g.adjacentOut(v))
                     {
+                        //std::cout << "try " << g.userName(v) <<" "<< g.userName(w) << "\n";
                         if (visited[w])
-                            continue;
-                        if (v > w)
                             continue;
 
                         // check edge exists
@@ -240,9 +241,22 @@ namespace raven
                     }
                 }
 
+                if (bestLink.first == -1)
+                {
+                    std::cout << "spanning tree starting from "<<startName<< " cannot reach ";
+                    for( int v = 0; v < visited.size(); v++ )
+                        if( ! visited[v] )
+                            std::cout << g.userName(v) << " ";
+                        std::cout << "\n";
+                    // std::cout << g.text() << "\nPartial ST\n";
+                    // std::cout << ST.mySpanningTree.text();
+                    ST.mySpanningTree.clear();
+                    return ST.mySpanningTree;
+                }
+
                 // add cheapest link between node in tree to node not yet in tree
                 ST.add(g, bestLink.first, bestLink.second);
-                
+
                 visited[bestLink.first] = true;
                 visited[bestLink.second] = true;
             }
@@ -549,13 +563,11 @@ namespace raven
                     f = oc - wc;
                 }
 
-                            //         std::cout << g.userName(g.src(ei))
-                            //   << " " << g.userName(g.dest(ei))
-                            //   << " " << f << "\n";
+                //         std::cout << g.userName(g.src(ei))
+                //   << " " << g.userName(g.dest(ei))
+                //   << " " << f << "\n";
 
                 vEdgeFlow.push_back(f);
-
-
             }
 
             return totalFlow;
@@ -783,7 +795,7 @@ namespace raven
             while (1)
             {
                 // add vertex to circuit
-                 circuit.push_back(curr_v);
+                circuit.push_back(curr_v);
 
                 // find next vertex along unused edge
                 auto vadj = work.adjacentOut(curr_v);

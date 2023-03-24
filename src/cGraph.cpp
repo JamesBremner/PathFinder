@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <sstream>
 #include <algorithm>
 #include "cGraph.h"
 
@@ -224,6 +225,13 @@ namespace raven
                 }
             }
             return ret;
+        }
+        std::string cGraph::text() const
+        {
+            std::stringstream ss;
+            for( auto& p : edgeList() )
+                ss << vVertexName[p.first] << " - " << vVertexName[p.second] << "\n";
+            return ss.str();
         }
     }
 }

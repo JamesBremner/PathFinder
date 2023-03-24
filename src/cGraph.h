@@ -83,6 +83,9 @@ namespace raven
             std::vector<std::pair<int, int>>
             edgeList() const;
 
+            std::string text() const;
+
+
         private:
             bool fDirected;
 
