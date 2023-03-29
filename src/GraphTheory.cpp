@@ -316,7 +316,7 @@ namespace raven
             std::vector<std::vector<int>> ret;
 
             // store found cycle signatures
-            std::vector<std::vector<int>> foundCycleSignature;
+            std::vector<std::vector<int>> vfoundCycleSignature;
 
             // track visited vertices
             std::vector<bool> visited(g.vertexCount(), false);
@@ -388,16 +388,16 @@ namespace raven
                         // check this is a new cycle
                         // loop over previously found cycles
                         bool fnew = true;
-                        for (int kcycle = 0; kcycle < ret.size(); kcycle++)
+                        for ( auto& foundSignature : vfoundCycleSignature )
                         {
                             // check cycle length
-                            if (foundCycleSignature[kcycle].size() != signature.size())
+                            if (foundSignature.size() != signature.size())
                                 continue;
 
                             // check cycle signature
                             if (std::equal(
-                                    foundCycleSignature[kcycle].begin(),
-                                    foundCycleSignature[kcycle].end(),
+                                    foundSignature.begin(),
+                                    foundSignature.end(),
                                     signature.begin()))
                             {
                                 // this cycle was found previously
@@ -417,7 +417,7 @@ namespace raven
                         ret.push_back(cycle);
 
                         // store the signature to prevent duplicates being stored
-                        foundCycleSignature.push_back(signature);
+                        vfoundCycleSignature.push_back(signature);
                     }
                 }
             }
