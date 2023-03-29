@@ -59,7 +59,7 @@ void genEuler(const std::vector<std::string> &q)
 {
     int vmax = atoi(q[1].c_str());
     theGraph.clear();
-    //theGraph.directed();
+    theGraph.directed();
     for (int k = 0; k < vmax; k++)
     {
         theGraph.add("V" + std::to_string(k));

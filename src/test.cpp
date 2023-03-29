@@ -5,30 +5,6 @@
 #include "cGrid2D.h"
 
 
-TEST(tourNodes)
-{
-    raven::graph::cGraph g;
-    g.directed(false);
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("a", "d");
-    raven::graph::cTourNodes tourer;
-
-    tourer.calculate(g);
-
-    CHECK_EQUAL(0, tourer.unvisitedCount());
-    CHECK_EQUAL(0, tourer.revisitedCount());
-
-    auto tour = tourer.getTour();
-    CHECK_EQUAL(4,tour.size());
-    // std::vector<std::string> expected{"c", "b", "d", "a"};
-    // auto actual = g.userName(tour);
-    // CHECK(std::equal(
-    //     expected.begin(),
-    //     expected.end(),
-    //     actual.begin()));
-}
-
 TEST(add)
 {
     raven::graph::cGraph g;
@@ -69,6 +45,94 @@ TEST(add)
     CHECK_EQUAL(0, ab);
     CHECK_EQUAL(1, ba);
 }
+
+TEST(cycle0)
+{
+    raven::graph::cGraph g;
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("c", "d");
+    g.add("d", "a");
+
+    auto act = dfs_cycle_finder(g);
+    CHECK_EQUAL(1, act.size());
+    CHECK_EQUAL(5, act[0].size());
+}
+TEST(cycle)
+{
+     raven::graph::cGraph g;
+    g.directed();
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("d", "a");
+    g.add("c", "d");
+
+    auto act = dfs_cycle_finder(g);
+    CHECK_EQUAL(1, act.size());
+    CHECK_EQUAL(5, act[0].size());
+}
+
+TEST(cycle2)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("d", "a");
+    g.add("c", "d");
+    g.add("b", "e");
+    g.add("e", "f");
+    g.add("f", "g");
+    g.add("g", "e");
+
+    auto act = dfs_cycle_finder(g);
+    CHECK_EQUAL(2, act.size());
+    CHECK_EQUAL(4, act[0].size());
+    CHECK_EQUAL(5, act[1].size());
+}
+TEST(cycle2undirected)
+{
+    raven::graph::cGraph g;
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("d", "a");
+    g.add("c", "d");
+    g.add("b", "e");
+    g.add("e", "f");
+    g.add("f", "g");
+    g.add("g", "e");
+
+    auto act = dfs_cycle_finder(g);
+    CHECK_EQUAL(2, act.size());
+    CHECK_EQUAL(5, act[0].size());
+    CHECK_EQUAL(4, act[1].size());
+}
+
+TEST(tourNodes)
+{
+    raven::graph::cGraph g;
+    g.directed(false);
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
+    raven::graph::cTourNodes tourer;
+
+    tourer.calculate(g);
+
+    CHECK_EQUAL(0, tourer.unvisitedCount());
+    CHECK_EQUAL(0, tourer.revisitedCount());
+
+    auto tour = tourer.getTour();
+    CHECK_EQUAL(4,tour.size());
+    // std::vector<std::string> expected{"c", "b", "d", "a"};
+    // auto actual = g.userName(tour);
+    // CHECK(std::equal(
+    //     expected.begin(),
+    //     expected.end(),
+    //     actual.begin()));
+}
+
+
 
 TEST(flows)
 {
@@ -292,36 +356,8 @@ TEST(tourNodes2)
         actual.begin()));
 }
 
-TEST(cycle)
-{
-    raven::graph::cGraph g;
-    g.directed();
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("d", "a");
-    g.add("c", "d");
 
-    auto act = dfs_cycle_finder(g);
-    CHECK_EQUAL(1, act.size());
-    CHECK_EQUAL(5, act[0].size());
-}
-TEST(cycle2)
-{
-    raven::graph::cGraph g;
-    g.directed();
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("d", "a");
-    g.add("c", "d");
-    g.add("b", "e");
-    g.add("e", "f");
-    g.add("f", "g");
-    g.add("g", "e");
 
-    auto act = dfs_cycle_finder(g);
-    CHECK_EQUAL(2, act.size());
-    CHECK_EQUAL(4, act[0].size());
-}
 
 TEST(sourceToSink)
 {

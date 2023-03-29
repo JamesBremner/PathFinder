@@ -149,13 +149,12 @@ static void readCycle(
     }
 }
 
-graph_calc readfile(
-    raven::graph::cGraph &g,
-    const std::string &fname)
+void cGUI::readfile(
+    raven::graph::cGraph &g)
 {
-    graph_calc option = graph_calc::none;
+    myCalcOption = graph_calc::none;
     g.clear();
-    std::ifstream ifs(fname);
+    std::ifstream ifs(myfname);
     if (!ifs.is_open())
         throw std::runtime_error(
             "Cannot open input file");
@@ -168,19 +167,19 @@ graph_calc readfile(
 
     if (calc.find("cost") != -1)
     {
-        option = graph_calc::cost;
+        myCalcOption = graph_calc::cost;
         readCostedLinks(g, ifs);
     }
 
     else if (calc.find("cycle") != -1)
     {
-        option = graph_calc::cycle;
+        myCalcOption = graph_calc::cycle;
         readCycle(g, ifs);
     }
 
     else if (calc.find("astar") != -1)
     {
-        option = graph_calc::astar;
+        myCalcOption = graph_calc::astar;
         std::string sn1, sn2;
         ifs >> sn1 >> sn2;
 
@@ -192,67 +191,66 @@ graph_calc readfile(
     }
     else if (calc.find("probs") != -1)
     {
-        option = graph_calc::probs;
+        myCalcOption = graph_calc::probs;
         readCostedLinks(g, ifs);
     }
     else if (calc.find("tour") != -1)
     {
-        option = graph_calc::tour;
+        myCalcOption = graph_calc::tour;
         readCostedLinks(g, ifs);
     }
     else if (calc.find("obs") != -1)
     {
-        option = graph_calc::obs;
+        myCalcOption = graph_calc::obs;
         readObstacles(g, ifs);
     }
     else if (calc.find("farm") != -1)
     {
-        option = graph_calc::obs;
+        myCalcOption = graph_calc::obs;
         readObstacles(g, ifs);
     }
     else if (calc.find("spans") != -1)
     {
-        option = graph_calc::spans;
+        myCalcOption = graph_calc::spans;
         readCostedLinks(g, ifs);
     }
     else if (calc.find("sales") != -1)
     {
-        option = graph_calc::sales;
+        myCalcOption = graph_calc::sales;
         readSales(g, ifs);
     }
     else if (calc.find("cliques") != -1)
     {
-        option = graph_calc::cliques;
+        myCalcOption = graph_calc::cliques;
         readUncostedLinks(g, ifs);
     }
     else if (calc.find("multiflows") != -1)
     {
-        option = graph_calc::multiflows;
+        myCalcOption = graph_calc::multiflows;
         readCostedLinks(g, ifs);
     }
     else if (calc.find("flows") != -1)
     {
-        option = graph_calc::flows;
+        myCalcOption = graph_calc::flows;
         readCostedLinks(g, ifs);
     }
     else if (calc.find("allpaths") != -1)
     {
-        option = graph_calc::allpaths;
+        myCalcOption = graph_calc::allpaths;
         readUncostedLinks(g, ifs);
     }
     else if (calc.find("alloc") != -1)
     {
-        option = graph_calc::alloc;
+        myCalcOption = graph_calc::alloc;
         readUncostedLinks(g, ifs);
     }
     else if (calc.find("euler") != -1)
     {
-        option = graph_calc::euler;
+        myCalcOption = graph_calc::euler;
         readUncostedLinks(g, ifs);
     }
     else
         throw std::runtime_error(
             "bad calculation type ");
 
-    return option;
 }

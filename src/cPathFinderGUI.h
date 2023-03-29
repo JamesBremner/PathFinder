@@ -90,7 +90,7 @@ public:
 
     void start(const std::string &name)
     {
-        myStartName.push_back( name );
+        myStartName.push_back(name);
     }
     void end(const std::string &name)
     {
@@ -100,11 +100,11 @@ public:
 private:
     wex::panel &myplText;
     wex::panel &myplLayout;
-    
-    raven::graph::cGraph myGraph;              // the input graph
-    raven::graph::cGraph myResultGraph;              // the result graph
 
-    raven::graph::cTourNodes * mypTourNodes;
+    raven::graph::cGraph myGraph;       // the input graph
+    raven::graph::cGraph myResultGraph; // the result graph
+
+    raven::graph::cTourNodes *mypTourNodes;
     std::string myfname;
     graph_calc myCalcOption;
     std::vector<std::string> myStartName;
@@ -120,6 +120,12 @@ private:
     eView myViewType;
 
     void ConstructMenu();
+
+    /// @brief read input file
+    /// @param g graph to store input
+
+    void readfile(
+        raven::graph::cGraph &g);
 
     void calculate();
     void calcCost();
@@ -146,12 +152,3 @@ private:
 };
 
 extern cGUI theGUI;
-
-/// @brief read input file
-/// @param g graph to store input
-/// @param fname path to input file
-/// @return calculation option
-
-graph_calc readfile(
-    raven::graph::cGraph &g,
-    const std::string &fname);

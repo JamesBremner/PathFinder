@@ -52,6 +52,12 @@ namespace raven
             void wEdgeAttr(int ei, const std::vector<std::string> vAttr);
             void wEdgeAttr(int s, int d, const std::vector<std::string> vAttr);
 
+            /* @brief remove an edge
+            /// @param s 
+            /// @param d 
+
+            The edge is removed from the source out edges and the destination in edges ( directed graph )
+            */
             void remove(int s, int d);
             void remove(const std::string &str, const std::string &dst);
 

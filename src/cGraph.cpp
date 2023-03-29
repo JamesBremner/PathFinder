@@ -103,15 +103,31 @@ namespace raven
 
         void cGraph::remove(int s, int d)
         {
+            // clear edge attributes
+            int ei = find(s, d);
+            if( ei < 0 ) {
+                // edge attributes do not exist
+                // assume this means the edge does not exist
+                // and no work is needed
+                return;                 
+            }    
+            vEdgeAttr[find(s, d)] = {};
+
+            // remove from src out edges
             auto it = std::find(vOutEdges[s].begin(), vOutEdges[s].end(), d);
             if (it != vOutEdges[s].end())
                 vOutEdges[s].erase(it);
+
+            // remove from dst in edges
             it = std::find(vInEdges[d].begin(), vInEdges[d].end(), s);
             if (it != vInEdges[d].end())
                 vInEdges[d].erase(it);
-            vEdgeAttr[find(s, d)] = {};
+
+
+
             if (fDirected)
                 return;
+
             it = std::find(vOutEdges[d].begin(), vOutEdges[d].end(), s);
             if (it != vOutEdges[d].end())
                 vOutEdges[d].erase(it);

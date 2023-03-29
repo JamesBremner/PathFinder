@@ -182,7 +182,7 @@ namespace raven
             const cGraph &g,
             const std::string &startName)
         {
-            //std::cout << "spanning Tree " << startName << "\n";
+            // std::cout << "spanning Tree " << startName << "\n";
 
             // copy vertices from input grqaph to spanning tree
             cSpanningTree ST;
@@ -222,7 +222,7 @@ namespace raven
                     // loop over adjacent nodes not in span
                     for (auto w : g.adjacentOut(v))
                     {
-                        //std::cout << "try " << g.userName(v) <<" "<< g.userName(w) << "\n";
+                        // std::cout << "try " << g.userName(v) <<" "<< g.userName(w) << "\n";
                         if (visited[w])
                             continue;
 
@@ -243,11 +243,11 @@ namespace raven
 
                 if (bestLink.first == -1)
                 {
-                    std::cout << "spanning tree starting from "<<startName<< " cannot reach ";
-                    for( int v = 0; v < visited.size(); v++ )
-                        if( ! visited[v] )
+                    std::cout << "spanning tree starting from " << startName << " cannot reach ";
+                    for (int v = 0; v < visited.size(); v++)
+                        if (!visited[v])
                             std::cout << g.userName(v) << " ";
-                        std::cout << "\n";
+                    std::cout << "\n";
                     // std::cout << g.text() << "\nPartial ST\n";
                     // std::cout << ST.mySpanningTree.text();
                     ST.mySpanningTree.clear();
@@ -311,11 +311,12 @@ namespace raven
         dfs_cycle_finder(
             const cGraph &g)
         {
-            if (!g.isDirected())
-                throw std::runtime_error(
-                    "cGraph::dfs_cycle_finder invoked on undirected graph");
 
+            // store for found cycles, vertex indices in order reached.
             std::vector<std::vector<int>> ret;
+
+            // store found cycle signatures
+            std::vector<std::vector<int>> foundCycleSignature;
 
             // track visited vertices
             std::vector<bool> visited(g.vertexCount(), false);
@@ -323,6 +324,7 @@ namespace raven
             while (true)
             {
                 // check for unvisited vertices
+                // handles graphs with more than one component
                 int startIndex = -1;
                 for (int k = 0; k < visited.size(); k++)
                 {
@@ -341,57 +343,81 @@ namespace raven
                 // start from an unvisited vertex
                 wait.push(startIndex);
 
-                // continue until no more vertices need processing
+                // continue until no more vertices need processing in this component
                 while (!wait.empty())
                 {
                     int v = wait.top();
                     wait.pop();
-                    if (!visited[v])
+
+                    visited[v] = true;
+
+                    for (int w : g.adjacentOut(v))
                     {
-                        visited[v] = true;
-
-                        for (int w : g.adjacentOut(v))
+                        if (!visited[w])
                         {
-                            if (!visited[w])
-                            {
-                                wait.push(w);
-                            }
-                            else
-                            {
-                                // previously visited node, check for ancestor
-                                auto cycle = path(g, w, v);
-                                if (cycle.first.size() > 0)
-                                {
-                                    cycle.first.push_back(w);
+                            wait.push(w);
+                            continue;
+                        }
 
-                                    // check this is a new cycle
-                                    bool fnew = true;
-                                    for (int kcycle = 0; kcycle < ret.size(); kcycle++)
-                                    {
-                                        if (ret[kcycle].size() != cycle.first.size())
-                                            continue;
-                                        bool fsame = true;
-                                        for (int i = 0; i < cycle.first.size(); i++)
-                                        {
-                                            if (ret[kcycle][i] != cycle.first[i])
-                                            {
-                                                fsame = false;
-                                                break;
-                                            }
-                                        }
-                                        if (fsame)
-                                        {
-                                            fnew = false;
-                                            break;
-                                        }
-                                    }
-                                    if (fnew)
-                                    {
-                                        ret.push_back(cycle.first);
-                                    }
-                                }
+                        // previously visited node, check for ancestor
+                        std::vector<int> cycle;
+                        if (!g.isDirected())
+                        {
+                            // for undirected  graphs
+                            // remove reverse edge
+                            // so the path is forced to go the long way around back to start
+                            raven::graph::cGraph temp = g;
+                            temp.remove(w, v);
+                            cycle = path(temp, w, v).first;
+                        }
+                        else
+                        {
+                            cycle = path(g, w, v).first;
+                        }
+
+                        // ignore "cycles" that just go back and forth over one edge
+                        if (cycle.size() < 2)
+                            continue;
+
+                        // create cycle signature
+                        // this is a list of the vertex indices in the cycle sorted in numerical order
+                        // i.e. the signature is the same no matter where the start begins
+                        std::vector<int> signature = cycle;
+                        std::sort(signature.begin(), signature.end());
+
+                        // check this is a new cycle
+                        // loop over previously found cycles
+                        bool fnew = true;
+                        for (int kcycle = 0; kcycle < ret.size(); kcycle++)
+                        {
+                            // check cycle length
+                            if (foundCycleSignature[kcycle].size() != signature.size())
+                                continue;
+
+                            // check cycle signature
+                            if (std::equal(
+                                    foundCycleSignature[kcycle].begin(),
+                                    foundCycleSignature[kcycle].end(),
+                                    signature.begin()))
+                            {
+                                // this cycle was found previously
+                                fnew = false;
+                                break;
                             }
                         }
+                        if (!fnew)
+                            continue;
+
+                        // this is a novel cycle
+
+                        // close the cycle
+                        cycle.push_back(w);
+
+                        // store in list of cycles found
+                        ret.push_back(cycle);
+
+                        // store the signature to prevent duplicates being stored
+                        foundCycleSignature.push_back(signature);
                     }
                 }
             }

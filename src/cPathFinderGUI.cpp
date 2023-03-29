@@ -82,7 +82,8 @@ void cGUI::calculate()
 
         {
             // raven::set::cRunWatch::Start();
-            myCalcOption = readfile(myGraph, myfname);
+
+            readfile(myGraph);
 
             myplText.text("Calculating...");
             myplText.update();
