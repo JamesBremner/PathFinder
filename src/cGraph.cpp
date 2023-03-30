@@ -216,6 +216,8 @@ namespace raven
         }
         std::string cGraph::rVertexAttr(int vi, int ai) const
         {
+            if( ai >= vVertexAttr[vi].size())
+                return "";
             return vVertexAttr[vi][ai];
         }
         std::string cGraph::rEdgeAttr(int ei, int ai) const

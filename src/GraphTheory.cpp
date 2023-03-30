@@ -350,20 +350,28 @@ namespace raven
                 // continue until no more vertices can be reached from the starting vertex
                 while (!wait.empty())
                 {
+                    // visit vertex at top of stack
                     int v = wait.top();
                     wait.pop();
-
                     visited[v] = true;
 
+                    // loop over vertices reachable with one hop
                     for (int w : g.adjacentOut(v))
                     {
                         if (!visited[w])
                         {
+                            // push unvisited vertex onto stack to be visited later
                             wait.push(w);
                             continue;
                         }
 
-                        // previously visited node, check for ancestor
+                        /* previously visited node
+
+                        before carrying on we need to if this is a novel cycle
+                        apply Dijsktra algorithm to find shortest path
+                        from w back to the common ancestor and then around to v again
+
+                        */
                         std::vector<int> cycle;
                         if (!g.isDirected())
                         {
