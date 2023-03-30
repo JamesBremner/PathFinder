@@ -321,21 +321,25 @@ namespace raven
             // track visited vertices
             std::vector<bool> visited(g.vertexCount(), false);
 
+            /* loop until all vertices have been visited
+
+            This is required for graphs that are not fully connected
+            i.e. not every vertex can be reached from every other
+
+            */
             while (true)
             {
-                // check for unvisited vertices
-                // handles graphs with more than one component
-                int startIndex = -1;
-                for (int k = 0; k < visited.size(); k++)
+                // find unvisited vertex to start the DFS from
+                auto it = std::find(
+                        visited.begin(),
+                        visited.end(),
+                        false);
+                if (it == visited.end())
                 {
-                    if (!visited[k])
-                    {
-                        startIndex = k;
-                        break;
-                    }
-                }
-                if (startIndex == -1)
+                    // all vertices have been visited - done
                     break;
+                }
+                int startIndex = it - visited.begin();
 
                 // vertices waiting to be processed
                 std::stack<int> wait;
@@ -343,7 +347,7 @@ namespace raven
                 // start from an unvisited vertex
                 wait.push(startIndex);
 
-                // continue until no more vertices need processing in this component
+                // continue until no more vertices can be reached from the starting vertex
                 while (!wait.empty())
                 {
                     int v = wait.top();
@@ -388,7 +392,7 @@ namespace raven
                         // check this is a new cycle
                         // loop over previously found cycles
                         bool fnew = true;
-                        for ( auto& foundSignature : vfoundCycleSignature )
+                        for (auto &foundSignature : vfoundCycleSignature)
                         {
                             // check cycle length
                             if (foundSignature.size() != signature.size())

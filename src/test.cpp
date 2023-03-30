@@ -4,7 +4,6 @@
 #include "GraphTheory.h"
 #include "cGrid2D.h"
 
-
 TEST(add)
 {
     raven::graph::cGraph g;
@@ -60,7 +59,7 @@ TEST(cycle0)
 }
 TEST(cycle)
 {
-     raven::graph::cGraph g;
+    raven::graph::cGraph g;
     g.directed();
     g.add("a", "b");
     g.add("b", "c");
@@ -108,6 +107,25 @@ TEST(cycle2undirected)
     CHECK_EQUAL(4, act[1].size());
 }
 
+TEST(cycle2notfullyconnected)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("d", "a");
+    g.add("c", "d");
+    g.add("e", "b");    // directed link makes a,b,c,d reachable from e,f,g but not vice versa
+    g.add("e", "f");
+    g.add("f", "g");
+    g.add("g", "e");
+
+    auto act = dfs_cycle_finder(g);
+    CHECK_EQUAL(2, act.size());
+    CHECK_EQUAL(5, act[0].size());
+    CHECK_EQUAL(4, act[1].size());
+}
+
 TEST(tourNodes)
 {
     raven::graph::cGraph g;
@@ -123,7 +141,7 @@ TEST(tourNodes)
     CHECK_EQUAL(0, tourer.revisitedCount());
 
     auto tour = tourer.getTour();
-    CHECK_EQUAL(4,tour.size());
+    CHECK_EQUAL(4, tour.size());
     // std::vector<std::string> expected{"c", "b", "d", "a"};
     // auto actual = g.userName(tour);
     // CHECK(std::equal(
@@ -131,8 +149,6 @@ TEST(tourNodes)
     //     expected.end(),
     //     actual.begin()));
 }
-
-
 
 TEST(flows)
 {
@@ -161,7 +177,7 @@ TEST(removeLink)
     g.add("b", "c");
     g.add("a", "d");
 
-    g.remove("b","c");
+    g.remove("b", "c");
 
     CHECK_EQUAL(2, g.edgeCount());
     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
@@ -170,7 +186,7 @@ TEST(removeLink)
 
     CHECK(g.find(g.find("a"), g.find("d")) >= 0);
 
-    g.remove("a","d");
+    g.remove("a", "d");
 
     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
     CHECK(g.find(g.find("b"), g.find("b")) == -1);
@@ -184,7 +200,7 @@ TEST(removeLink)
     g.add("a", "d");
     CHECK_EQUAL(3, g.edgeCount());
 
-    g.remove("b","c");
+    g.remove("b", "c");
 
     CHECK_EQUAL(2, g.edgeCount());
     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
@@ -333,8 +349,6 @@ TEST(dfs)
         g.userName(visited).begin()));
 }
 
-
-
 TEST(tourNodes2)
 {
     raven::graph::cGraph g;
@@ -355,9 +369,6 @@ TEST(tourNodes2)
         expected.end(),
         actual.begin()));
 }
-
-
-
 
 TEST(sourceToSink)
 {
@@ -463,28 +474,27 @@ TEST(Euler2)
 {
     raven::graph::cGraph g;
     g.directed();
-    g.add("0","1");
-    g.add("0","6");
-    g.add("1","2");
-    g.add("2","0");
-    g.add("2","3");
-    g.add("3","4");
-    g.add("4","2");
-    g.add("4","5");
-    g.add("5","0");
-    g.add("6","4");
+    g.add("0", "1");
+    g.add("0", "6");
+    g.add("1", "2");
+    g.add("2", "0");
+    g.add("2", "3");
+    g.add("3", "4");
+    g.add("4", "2");
+    g.add("4", "5");
+    g.add("5", "0");
+    g.add("6", "4");
 
     auto act = euler(g);
 
-    std::vector<std::string> exp1 { "0", "1", "2", "0", "6", "4", "2", "3", "4", "5", "0" };
+    std::vector<std::string> exp1{"0", "1", "2", "0", "6", "4", "2", "3", "4", "5", "0"};
 
-    auto sact = g.userName( act );
+    auto sact = g.userName(act);
 
     CHECK(std::equal(
         exp1.begin(),
         exp1.end(),
         sact.begin()));
-    
 }
 
 TEST(Euler)
@@ -500,8 +510,8 @@ TEST(Euler)
     CHECK_EQUAL(4, act.size());
 
     std::vector<std::string> exp1{"a", "b", "c", "a"};
-    
-    auto sact = g.userName( act );
+
+    auto sact = g.userName(act);
 
     CHECK(std::equal(
         exp1.begin(),
