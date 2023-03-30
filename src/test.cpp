@@ -519,6 +519,8 @@ TEST(Euler)
         sact.begin()));
 }
 
+#include "chemTest.cpp"
+
 main()
 {
     return raven::set::UnitTest::RunAllTests();

@@ -15,7 +15,7 @@ static_link_flags = -static-libstdc++ -static-libgcc -static
 # folders
 ODIR = ./.vscode/obj
 
-OPT = -O2
+OPT = -g
 CCflags = -std=c++17 $(OPT) -D_mingw_
 
 # sources
@@ -23,6 +23,7 @@ OBJ_test = \
 	$(ODIR)/cGraph.o \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/tourNodes.o \
+	$(ODIR)/chemistry.o \
 	$(ODIR)/test.o \
 	$(ODIR)/cutest.o
 
