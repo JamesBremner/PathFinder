@@ -63,17 +63,17 @@ void genEuler(const std::vector<std::string> &q)
     for (int k = 0; k < vmax; k++)
     {
         theGraph.add("V" + std::to_string(k));
-    }    
+    }
     int v1 = 0;
-    for( int k = 0; k < vmax; k++ )
+    for (int k = 0; k < vmax; k++)
     {
         int v2 = v1;
-        while( v2 == v1)
+        while (v2 == v1)
             v2 = rand() % vmax;
-        theGraph.add(v1,v2);
+        theGraph.add(v1, v2);
         v1 = v2;
     }
-    theGraph.add(v1,0);
+    theGraph.add(v1, 0);
 
     displayStatus();
 }
@@ -127,7 +127,7 @@ void display(const std::vector<std::string> &q)
     }
     std::cout << "\n";
 
-    //std::cout << theGraph.text();
+    // std::cout << theGraph.text();
 }
 
 void read(const std::vector<std::string> &q)
@@ -136,8 +136,10 @@ void read(const std::vector<std::string> &q)
         return;
     theGraph.directed();
     std::ifstream ifs(q[1]);
-    if (!ifs.is_open())
+    if (!ifs.is_open()) {
+        std::cout << "Cannot open " + q[1] << "\n";
         return;
+    }
     std::string line;
     int count = 0;
     while (getline(ifs, line))
@@ -183,7 +185,19 @@ void s2s()
 
 void span()
 {
-    raven::graph::spanningTree(theGraph,theGraph.userName( 0 ));
+    raven::graph::spanningTree(theGraph, theGraph.userName(0));
+}
+
+void paths()
+{
+    std::vector<double> dist;
+    std::vector<int> pred;
+
+    raven::graph::dijsktra(
+        theGraph,
+        rand() % theGraph.vertexCount(), // random start vertex
+        dist,
+        pred);
 }
 
 void ancestor_recurse(
@@ -247,6 +261,7 @@ void help()
                  "add random n :  add n random links to graph\n"
                  "read filepath : input graph links from file\n"
                  "display :       display links\n"
+                 "paths :         find all paths from random vertex to all others ( Dijkstra )\n"
                  "cycles :        find cycles in graph\n"
                  "s2s :           find source to sink connections\n"
                  "gen n :         generate random graph with n vertices\n"
@@ -288,9 +303,10 @@ main()
                 genEuler(q);
             else if (q[0] == "euler")
                 raven::graph::euler(theGraph);
-            else if( q[0] == "span")
+            else if (q[0] == "span")
                 span();
-
+            else if (q[0] == "paths")
+                paths();
             else
                 std::cout << "unreqonized query\n";
         }
