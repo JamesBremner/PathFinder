@@ -249,6 +249,11 @@ void cGUI::readfile(
         myCalcOption = graph_calc::euler;
         readUncostedLinks(g, ifs);
     }
+    else if (calc.find("cover") != -1)
+    {
+        myCalcOption = graph_calc::cover;
+        readUncostedLinks(g, ifs);
+    }
     else
         throw std::runtime_error(
             "bad calculation type ");

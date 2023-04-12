@@ -331,9 +331,9 @@ namespace raven
             {
                 // find unvisited vertex to start the DFS from
                 auto it = std::find(
-                        visited.begin(),
-                        visited.end(),
-                        false);
+                    visited.begin(),
+                    visited.end(),
+                    false);
                 if (it == visited.end())
                 {
                     // all vertices have been visited - done
@@ -850,5 +850,55 @@ namespace raven
 
             return circuit;
         }
+
+        std::vector< int> vertexCover(const cGraph &g)
+        {
+            if (g.isDirected())
+                throw std::runtime_error(
+                    "vertexCover works only on undirected graphs");
+
+            // output store
+            std::vector<int> ret;
+            std::set<int> vset;
+
+            // working copy of input graph
+            auto work = g;
+
+            // The nodes that connect leaf nodes to the rest of the graph must be in cover set
+            for (int leaf = 0; leaf < g.vertexCount(); leaf++)
+            {
+                // check for leaf vertex
+                auto ns = g.adjacentOut(leaf);
+                if (ns.size() != 1)
+                    continue;
+
+                // add to cover set   
+                vset.insert(ns[0]);
+                //std::cout << "added " << work.userName(ns[0]) << "\n";
+
+            }
+
+            // loop over links
+            for( auto l : work.edgeList() )
+            {
+                if( vset.find( l.first) != vset.end() || 
+                vset.find( l.second) != vset.end())
+                    continue;
+
+                // add node with greatest degree to cover set
+                auto sun = work.adjacentOut(l.first);
+                auto svn = work.adjacentOut(l.second);
+                int v = l.first;
+                if (svn.size() > sun.size())
+                    v = l.second;
+                //std::cout << "added " << work.userName(v) << "\n";
+                vset.insert(v);
+            }
+
+            for( int v : vset )
+                ret.push_back( v );
+            return ret;
+        }
+
     }
 }

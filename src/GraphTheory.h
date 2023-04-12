@@ -207,6 +207,12 @@ namespace raven
         
         std::vector<int> euler( const cGraph& g);
 
+        /// @brief find set of vertices that cover every link
+        /// @param g 
+        /// @return vector of vertex indices
+        std::vector<int>
+        vertexCover(const cGraph &g);
+
         /// @brief Graph description in graphviz dot format
         /// @param g
         /// @param vpath

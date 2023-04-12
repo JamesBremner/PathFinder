@@ -45,6 +45,58 @@ TEST(add)
     CHECK_EQUAL(1, ba);
 }
 
+TEST(vertexCover1)
+{
+    raven::graph::cGraph g;
+    g.add("0", "2");
+    g.add("2", "4");
+    g.add("1", "4");
+    g.add("3", "4");
+
+    auto act = g.userName(vertexCover(g));
+    std::vector<std::string> exp{"2", "4"};
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        act.begin()));
+
+}
+TEST(vertexCover2)
+{
+    raven::graph::cGraph g;
+    g.add("1", "2");
+    g.add("2", "3");
+    g.add("4", "5");
+    g.add("5", "6");
+    g.add("6", "7");
+
+    auto act = g.userName(vertexCover(g));
+    std::vector<std::string> exp{"2", "5", "6"};
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        act.begin()));
+
+}
+TEST(vertexCover3)
+{
+    raven::graph::cGraph g;
+    g.add("0", "1");
+    g.add("0", "2");
+    g.add("1", "2");
+    g.add("1", "3");
+    g.add("2", "4");
+    g.add("3", "4");
+    g.add("3", "5");
+
+    auto act = g.userName(vertexCover(g));
+    std::vector<std::string> exp{"1", "2", "3"};
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        act.begin()));
+
+}
 TEST(cycle0)
 {
     raven::graph::cGraph g;
@@ -115,7 +167,7 @@ TEST(cycle2notfullyconnected)
     g.add("b", "c");
     g.add("d", "a");
     g.add("c", "d");
-    g.add("e", "b");    // directed link makes a,b,c,d reachable from e,f,g but not vice versa
+    g.add("e", "b"); // directed link makes a,b,c,d reachable from e,f,g but not vice versa
     g.add("e", "f");
     g.add("f", "g");
     g.add("g", "e");

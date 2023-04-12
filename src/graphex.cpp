@@ -300,13 +300,15 @@ main()
             else if (q[0] == "s2s")
                 s2s();
             else if (q[0] == "gen")
-                genEuler(q);
+                gen(q);
             else if (q[0] == "euler")
                 raven::graph::euler(theGraph);
             else if (q[0] == "span")
                 span();
             else if (q[0] == "paths")
                 paths();
+            else if (q[0] == "cover")
+                vertexCover(theGraph);
             else
                 std::cout << "unreqonized query\n";
         }

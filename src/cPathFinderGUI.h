@@ -81,6 +81,7 @@ enum class graph_calc
     probs,
     alloc,
     euler,
+    cover,
 };
 
 class cGUI : public cStarterGUI
@@ -140,6 +141,7 @@ private:
     void calcProbs();
     void calcAlloc();
     void calcEuler();
+    void calcCover();
 
     void draw(PAINTSTRUCT &ps);
     void drawLayout(PAINTSTRUCT &ps);

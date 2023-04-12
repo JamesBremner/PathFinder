@@ -21,12 +21,12 @@ TEST(readSMILES)
     readSMILES(g,"CCO");
 
     std::map<std::string, int> mpCount;
-    for (int vi = 0; vi < vertexCount(); vi++)
+    for (int vi = 0; vi < g.vertexCount(); vi++)
     {
-        mpCount[rVertexAttr(vi, 0)]++;
+        mpCount[g.rVertexAttr(vi, 0)]++;
     }
-    CHECK_EQUAL(2, mp["C"]);
-    CHECK_EQUAL(1, mp["O"]);
+    CHECK_EQUAL(2, mpCount["C"]);
+    CHECK_EQUAL(1, mpCount["O"]);
 
 //     readSMILES(g,"C=CN");
 //     chemViz(g);

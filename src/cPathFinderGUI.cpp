@@ -134,6 +134,9 @@ void cGUI::calculate()
 
             case graph_calc::euler:
                 calcEuler();
+            
+            case graph_calc::cover:
+                calcCover();
 
             case graph_calc::none:
                 break;
@@ -344,6 +347,17 @@ void cGUI::calcEuler()
     RunDOT(
         myGraph,
         viz);
+}
+
+void cGUI::calcCover()
+{
+    auto ret = vertexCover( myGraph );
+
+     std::stringstream ss;
+     for( int vi : ret )
+        ss << myGraph.userName( vi ) << ", ";
+    myResultText = ss.str();
+    myViewType = eView::route;
 }
 void cGUI::draw(PAINTSTRUCT &ps)
 {
