@@ -20,5 +20,4 @@ l d a
 l d a
 l d a
 l d b
-s a
 

@@ -53,6 +53,8 @@ void cGUI::ConstructMenu()
         "Input",
         [&](const std::string &title)
         {
+            myplText.show();
+            myplLayout.show(false);
             myViewType = eView::input;
             fm.update();
         });
@@ -67,8 +69,18 @@ void cGUI::ConstructMenu()
         "Route",
         [&](const std::string &title)
         {
+            myplText.show();
+            myplLayout.show(false);
             myViewType = eView::route;
             fm.update();
+        });
+    vfile.append(
+        "Layout",
+        [&](const std::string &title)
+        {
+            myplText.show(false);
+            myplLayout.update();
+            myplLayout.show();
         });
     mbar.append("View", vfile);
 }
@@ -135,7 +147,7 @@ void cGUI::calculate()
 
             case graph_calc::euler:
                 calcEuler();
-            
+
             case graph_calc::cover:
                 calcCover();
 
@@ -144,7 +156,8 @@ void cGUI::calculate()
             }
         }
         myplText.text("");
-        myplLayout.show(true);
+        myplText.show();
+        myplLayout.show(false);
         fm.update();
     }
     catch (std::runtime_error &e)
@@ -157,7 +170,7 @@ void cGUI::calcCost()
 {
     if (myStartName.empty() || myEndName.empty())
         throw std::runtime_error("No path endpoints");
-    if( ! myStartName.size())
+    if (!myStartName.size())
         throw std::runtime_error("No start");
 
     auto result = path(
@@ -187,7 +200,7 @@ void cGUI::calcCost()
 void cGUI::calcSpan()
 {
     if (myStartName.empty())
-        myStartName.push_back( myGraph.userName(0) );
+        myStartName.push_back(myGraph.userName(0));
     myResultGraph = spanningTree(myGraph, myStartName.back());
     myViewType = eView::span;
     auto viz = pathViz(
@@ -212,6 +225,13 @@ void cGUI::calcCycle()
         myResultText += "\n";
     }
     myViewType = eView::route;
+
+    RunDOT(
+        myGraph,
+        pathViz(
+            myGraph,
+            {},
+            true));
 }
 
 void cGUI::calcAllPaths()
@@ -230,7 +250,6 @@ void cGUI::calcAllPaths()
     }
     myViewType = eView::route;
 }
-
 
 void cGUI::calcTour()
 {
@@ -303,12 +322,12 @@ void cGUI::calcFlows()
 void cGUI::calcMultiFlows()
 {
     std::vector<int> vstart;
-    for( auto& n : myStartName )
-        vstart.push_back( myGraph.find(n) );
+    for (auto &n : myStartName)
+        vstart.push_back(myGraph.find(n));
     double flow = multiflows(
         myGraph,
         vstart,
-        myGraph.find( myEndName)    );
+        myGraph.find(myEndName));
     myResultText = "Total Flow = " + std::to_string(flow);
 }
 
@@ -316,29 +335,30 @@ void cGUI::calcProbs()
 {
     double p = probs(
         myGraph,
-        myGraph.find( myEndName)    );
-    myResultText = "Probability " + std::to_string( p );
+        myGraph.find(myEndName));
+    myResultText = "Probability " + std::to_string(p);
 }
 
 void cGUI::calcAlloc()
 {
-    auto ret = alloc( myGraph );
+    auto ret = alloc(myGraph);
 
     std::stringstream ss;
     ss << "Agent                Task\n\n";
-    for( int k = 0; k < ret.size(); k += 2 ) {
-        ss <<std::setw(20) << std::left << ret[k] << ret[k+1] << "\n";
+    for (int k = 0; k < ret.size(); k += 2)
+    {
+        ss << std::setw(20) << std::left << ret[k] << ret[k + 1] << "\n";
     }
     myResultText = ss.str();
 }
 
 void cGUI::calcEuler()
 {
-    auto ret = euler( myGraph );
+    auto ret = euler(myGraph);
 
-     std::stringstream ss;
-     for( int vi : ret )
-        ss << myGraph.userName(vi ) << " -> ";
+    std::stringstream ss;
+    for (int vi : ret)
+        ss << myGraph.userName(vi) << " -> ";
     myResultText = ss.str();
 
     auto viz = pathViz(
@@ -352,11 +372,11 @@ void cGUI::calcEuler()
 
 void cGUI::calcCover()
 {
-    auto ret = vertexCover( myGraph );
+    auto ret = vertexCover(myGraph);
 
-     std::stringstream ss;
-     for( int vi : ret )
-        ss << myGraph.userName( vi ) << ", ";
+    std::stringstream ss;
+    for (int vi : ret)
+        ss << myGraph.userName(vi) << ", ";
     myResultText = ss.str();
     myViewType = eView::route;
 }
@@ -429,6 +449,7 @@ void cGUI::drawLayout(PAINTSTRUCT &ps)
     case graph_calc::spans:
     case graph_calc::sales:
     case graph_calc::euler:
+    case graph_calc::cycle:
     {
         // fill graph panel with image produced by graphviz
         myplLayout.show(true);
