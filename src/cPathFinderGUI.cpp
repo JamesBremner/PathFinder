@@ -67,6 +67,7 @@ void cGUI::ConstructMenu()
         "Route",
         [&](const std::string &title)
         {
+            myViewType = eView::route;
             fm.update();
         });
     mbar.append("View", vfile);

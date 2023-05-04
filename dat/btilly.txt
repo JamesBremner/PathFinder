@@ -1,0 +1,24 @@
+format cycle
+l a b
+l a b
+l a b
+l a c
+l a c
+l a d
+l a d
+l a d
+l b a
+l b a
+l b a
+l b c
+l b d
+l c a
+l c a
+l c b
+l c b
+l d a
+l d a
+l d a
+l d b
+s a
+
