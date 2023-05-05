@@ -309,7 +309,8 @@ namespace raven
 
         std::vector<std::vector<int>>
         dfs_cycle_finder(
-            const cGraph &g)
+            const cGraph &g,
+            int inputStartIndex)
         {
 
             // store for found cycles, vertex indices in order reached.
@@ -329,17 +330,23 @@ namespace raven
             */
             while (true)
             {
-                // find unvisited vertex to start the DFS from
-                auto it = std::find(
-                    visited.begin(),
-                    visited.end(),
-                    false);
-                if (it == visited.end())
+                int startIndex;
+                if (inputStartIndex < 0)
                 {
-                    // all vertices have been visited - done
-                    break;
+                    // find unvisited vertex to start the DFS from
+                    auto it = std::find(
+                        visited.begin(),
+                        visited.end(),
+                        false);
+                    if (it == visited.end())
+                    {
+                        // all vertices have been visited - done
+                        break;
+                    }
+                    startIndex = it - visited.begin();
+                } else {
+                    startIndex = inputStartIndex;
                 }
-                int startIndex = it - visited.begin();
 
                 // vertices waiting to be processed
                 std::stack<int> wait;
@@ -431,6 +438,15 @@ namespace raven
                         // store the signature to prevent duplicates being stored
                         vfoundCycleSignature.push_back(signature);
                     }
+                }
+                if( inputStartIndex >= 0 ) {
+                    std::vector<std::vector<int>> cycles_with_start;
+                    for( auto& c : ret ) {
+                        if( std::find( c.begin(),c.end(),inputStartIndex) != c.end() )
+                            cycles_with_start.push_back(c );
+                    }
+                    ret = cycles_with_start;
+                    break;
                 }
             }
             return ret;
@@ -851,7 +867,7 @@ namespace raven
             return circuit;
         }
 
-        std::vector< int> vertexCover(const cGraph &g)
+        std::vector<int> vertexCover(const cGraph &g)
         {
             if (g.isDirected())
                 throw std::runtime_error(
@@ -872,17 +888,16 @@ namespace raven
                 if (ns.size() != 1)
                     continue;
 
-                // add to cover set   
+                // add to cover set
                 vset.insert(ns[0]);
-                //std::cout << "added " << work.userName(ns[0]) << "\n";
-
+                // std::cout << "added " << work.userName(ns[0]) << "\n";
             }
 
             // loop over links
-            for( auto l : work.edgeList() )
+            for (auto l : work.edgeList())
             {
-                if( vset.find( l.first) != vset.end() || 
-                vset.find( l.second) != vset.end())
+                if (vset.find(l.first) != vset.end() ||
+                    vset.find(l.second) != vset.end())
                     continue;
 
                 // add node with greatest degree to cover set
@@ -891,12 +906,12 @@ namespace raven
                 int v = l.first;
                 if (svn.size() > sun.size())
                     v = l.second;
-                //std::cout << "added " << work.userName(v) << "\n";
+                // std::cout << "added " << work.userName(v) << "\n";
                 vset.insert(v);
             }
 
-            for( int v : vset )
-                ret.push_back( v );
+            for (int v : vset)
+                ret.push_back(v);
             return ret;
         }
 

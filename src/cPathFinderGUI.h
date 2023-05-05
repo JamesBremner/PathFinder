@@ -99,18 +99,18 @@ public:
     }
 
 private:
-    wex::panel &myplText;
-    wex::panel &myplLayout;
+    wex::panel &myplText;               // display text
+    wex::panel &myplLayout;             // display layout ( graphViz )
 
     raven::graph::cGraph myGraph;       // the input graph
     raven::graph::cGraph myResultGraph; // the result graph
 
     raven::graph::cTourNodes *mypTourNodes;
-    std::string myfname;
-    graph_calc myCalcOption;
-    std::vector<std::string> myStartName;
-    std::string myEndName;
-    std::string myResultText;
+    std::string myfname;                // input filename
+    graph_calc myCalcOption;            // calculation requested by input file
+    std::vector<std::string> myStartName;   // starting node
+    std::string myEndName;              // ending node
+    std::string myResultText;           // calculation result text
 
     enum class eView
     {

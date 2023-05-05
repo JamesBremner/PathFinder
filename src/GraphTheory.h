@@ -147,11 +147,13 @@ namespace raven
 
         /// @brief cycle finder
         /// @param g
+        /// @param startIndex index of vertex to be included in cycles, -1 if all cycles required
         /// @return vector of cycles
 
         std::vector<std::vector<int>>
         dfs_cycle_finder(
-            const cGraph &g);
+            const cGraph &g,
+            int startIndex);
 
         /// @brief path visiting every node
 

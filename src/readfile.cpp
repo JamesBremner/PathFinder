@@ -130,6 +130,7 @@ static void readObstacles(
         "Input file must be processed using the obstacle application");
 }
 static void readCycle(
+    cGUI& gui,
     raven::graph::cGraph &g,
     std::ifstream &ifs)
 {
@@ -144,6 +145,10 @@ static void readCycle(
         {
             ifs >> sn1 >> sn2;
             g.add(sn1, sn2);
+        } else if (stype[0] == 's')
+        {
+            ifs >> sn1;
+            gui.start( sn1 );
         }
         ifs >> stype;
     }
@@ -174,7 +179,7 @@ void cGUI::readfile(
     else if (calc.find("cycle") != -1)
     {
         myCalcOption = graph_calc::cycle;
-        readCycle(g, ifs);
+        readCycle(*this, g, ifs);
     }
 
     else if (calc.find("astar") != -1)

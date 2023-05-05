@@ -1,0 +1,9 @@
+format cycle
+l 0 1
+l 0 2
+l 1 0
+l 1 2
+l 2 1
+s 0
+
+
