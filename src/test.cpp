@@ -45,6 +45,65 @@ TEST(add)
     CHECK_EQUAL(1, ba);
 }
 
+TEST( dfs_allpaths )
+{
+    raven::graph::cGraph g;
+    g.directed();
+    g.add("0", "1");
+    g.add("0", "2");
+    g.add("0", "3");
+    g.add("2", "0");
+    g.add("2", "1");
+    g.add("1", "3");
+
+    auto vpaths = dfs_allpaths( 
+        g,
+        g.find("2"),
+        g.find("3"));
+
+    CHECK_EQUAL( 3, vpaths.size() );
+    std::vector<int> expected1 {2,1,3};
+        CHECK(std::equal(
+        expected1.begin(),
+        expected1.end(),
+        vpaths[0].begin()));
+    std::vector<int> expected2 {2,0,3};
+        CHECK(std::equal(
+        expected2.begin(),
+        expected2.end(),
+        vpaths[1].begin()));
+    std::vector<int> expected3 {2,0,1,3};
+        CHECK(std::equal(
+        expected3.begin(),
+        expected3.end(),
+        vpaths[2].begin()));
+}
+
+TEST(dfs_allpaths2)
+{
+    raven::graph::cGraph g;
+    g.add("a", "b");
+    g.add("b", "c");
+    g.add("a", "d");
+    g.add("d", "c");
+
+    auto act = dfs_allpaths(g, g.find("a"), g.find("c"));
+
+    CHECK_EQUAL(2, act.size());
+
+    std::vector<std::string> expected1{"a", "d", "c"};
+    CHECK(std::equal(
+        expected1.begin(),
+        expected1.end(),
+        g.userName(act[0]).begin()));
+
+    std::vector<std::string> expected2{"a", "b", "c"};
+    CHECK(std::equal(
+        expected2.begin(),
+        expected2.end(),
+        g.userName(act[1]).begin()));
+}
+
 TEST(vertexCover1)
 {
     raven::graph::cGraph g;
@@ -386,6 +445,7 @@ TEST(dfs)
     g.add("a", "b");
     g.add("b", "c");
     g.add("a", "d");
+    g.add("d", "e");
 
     std::vector<int> visited;
     dfs(g, g.find("a"),
@@ -394,7 +454,7 @@ TEST(dfs)
             visited.push_back(v);
             return true;
         });
-    std::vector<std::string> expected{"a", "d", "b", "c"};
+    std::vector<std::string> expected{"a", "d", "e", "b", "c"};
     CHECK(std::equal(
         expected.begin(),
         expected.end(),

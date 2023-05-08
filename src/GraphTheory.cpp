@@ -308,6 +308,82 @@ namespace raven
         }
 
         std::vector<std::vector<int>>
+        dfs_allpaths(
+            const cGraph &g,
+            int startIndex,
+            int destIndex)
+        {
+            std::vector<std::vector<int>> apaths;
+            std::vector<int> path;
+
+            // track visited vertices
+            std::vector<bool> visited(g.vertexCount(), false);
+
+            // vertices waiting to be visited
+            std::stack<int> wait;
+
+            /*  1 Start by putting one of the graph's vertices on top of a stack.
+                2 Take the top vertex of the stack and add it to the visited list.
+                3 Add adjacent vertices which aren't in the visited list to the top of the stack.
+                4 Keep repeating steps 2 and 3 until the stack is empty.
+            */
+
+            wait.push(startIndex);
+
+            while (!wait.empty())
+            {
+                int v = wait.top();
+                if (v < 0)
+                    throw std::runtime_error(
+                        "dfs bad index 1");
+                wait.pop();
+                if (visited[v])
+                    continue;
+
+                visited[v] = true;
+
+                // add new vertex to current path
+                path.push_back(v);
+
+                // check for destination reached
+                if (v == destIndex)
+                {
+                    // store new path
+                    apaths.push_back(path);
+
+                    // check for finished
+                    if( wait.empty())
+                        break;
+
+                    // backtrack along path until last vertex in path
+                    // has a connection to the vertex at top of the stack
+                    std::vector<int> vadj;
+                    do {
+                        // mark vertex unvisited
+                        visited[path.back()] = false;
+
+                        // remove from path
+                        path.erase(path.end() - 1);   
+                        
+                        vadj = g.adjacentOut(path.back() );
+                    } while ( std::find(vadj.begin(),vadj.end(), wait.top()) == vadj.end() ) ;
+                }
+                else
+                {
+                        for (int w : g.adjacentOut(v))
+                        {
+                            if (w < 0)
+                                throw std::runtime_error(
+                                    "dfs bad index 2");
+                            if (!visited[w])
+                                wait.push(w);
+                        }
+                }
+            }
+            return apaths;
+        }
+
+        std::vector<std::vector<int>>
         dfs_cycle_finder(
             const cGraph &g,
             int inputStartIndex)
@@ -344,7 +420,9 @@ namespace raven
                         break;
                     }
                     startIndex = it - visited.begin();
-                } else {
+                }
+                else
+                {
                     startIndex = inputStartIndex;
                 }
 
@@ -439,11 +517,13 @@ namespace raven
                         vfoundCycleSignature.push_back(signature);
                     }
                 }
-                if( inputStartIndex >= 0 ) {
+                if (inputStartIndex >= 0)
+                {
                     std::vector<std::vector<int>> cycles_with_start;
-                    for( auto& c : ret ) {
-                        if( std::find( c.begin(),c.end(),inputStartIndex) != c.end() )
-                            cycles_with_start.push_back(c );
+                    for (auto &c : ret)
+                    {
+                        if (std::find(c.begin(), c.end(), inputStartIndex) != c.end())
+                            cycles_with_start.push_back(c);
                     }
                     ret = cycles_with_start;
                     break;

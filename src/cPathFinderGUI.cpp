@@ -241,7 +241,7 @@ void cGUI::calcCycle()
 
 void cGUI::calcAllPaths()
 {
-    auto vc = allPaths(
+    auto vc = dfs_allpaths(
         myGraph,
         myGraph.find(myStartName.back()),
         myGraph.find(myEndName));

@@ -147,13 +147,25 @@ namespace raven
 
         /// @brief cycle finder
         /// @param g
-        /// @param startIndex index of vertex to be included in cycles, -1 if all cycles required
+        /// @param startIndex index of vertex to be included in cycles, default to -1 if all cycles required
         /// @return vector of cycles
 
         std::vector<std::vector<int>>
         dfs_cycle_finder(
             const cGraph &g,
-            int startIndex);
+            int startIndex = -1);
+
+        /// @brief find all paths between 2 vertices
+        /// @param g 
+        /// @param startIndex 
+        /// @param destIndex 
+        /// @return vector of path vectors
+        
+        std::vector<std::vector<int>>
+        dfs_allpaths(
+            const cGraph &g,
+            int startIndex,
+            int destIndex);
 
         /// @brief path visiting every node
 
