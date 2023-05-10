@@ -52,7 +52,7 @@ static void readCostedLinks(
 {
     g.clear();
 
-    std::string stype, sn1, sn2, scost;
+    std::string stype, sn1, sn2, scost, directed, same;
     ifs >> stype;
 
     while (ifs.good())
@@ -63,11 +63,15 @@ static void readCostedLinks(
             if (g.vertexCount())
                 throw std::runtime_error(
                     "g ( graph mode ) must be second line");
-            g.directed();
+            ifs >> directed >> same;
+            if( directed == "1")
+                g.directed();
             break;
         case 'l':
             ifs >> sn1 >> sn2 >> scost;
             g.wEdgeAttr(g.add(sn1, sn2), {scost});
+            if( same == "1")
+                g.wEdgeAttr(g.find(sn2, sn1), {scost});
             break;
         case 's':
             ifs >> sn1;
