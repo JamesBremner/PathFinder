@@ -13,7 +13,7 @@ cGUI::cGUI()
           {50, 50, 1000, 700}),
       myplText(wex::maker::make<wex::panel>(fm)),
       myplLayout(wex::maker::make<wex::panel>(fm)),
-      myCalcOption(graph_calc::none)
+      myCalcOption( raven::graph::graph_calc::none)
 {
     myplText.move(0, 0, 800, 750);
     myplLayout.move(0, 100, 800, 750);
@@ -96,7 +96,7 @@ void cGUI::calculate()
         {
             // raven::set::cRunWatch::Start();
 
-            readfile(myGraph);
+            myCalcOption = readfile(myGraph,myfname);
 
             myplText.text("Calculating...");
             myplText.update();
@@ -104,54 +104,54 @@ void cGUI::calculate()
             switch (myCalcOption)
             {
 
-            case graph_calc::cost:
+            case  raven::graph::graph_calc::cost:
                 calcCost();
                 break;
 
-            case graph_calc::cycle:
+            case  raven::graph::graph_calc::cycle:
                 calcCycle();
                 break;
 
-            case graph_calc::tour:
+            case  raven::graph::graph_calc::tour:
                 calcTour();
                 break;
 
-            case graph_calc::spans:
+            case  raven::graph::graph_calc::spans:
                 calcSpan();
                 break;
 
-            case graph_calc::sales:
+            case  raven::graph::graph_calc::sales:
                 calcSales();
                 break;
 
-            case graph_calc::cliques:
+            case  raven::graph::graph_calc::cliques:
                 calcCliques();
                 break;
 
-            case graph_calc::flows:
+            case  raven::graph::graph_calc::flows:
                 calcFlows();
                 break;
 
-            case graph_calc::multiflows:
+            case  raven::graph::graph_calc::multiflows:
                 calcMultiFlows();
                 break;
 
-            case graph_calc::allpaths:
+            case  raven::graph::graph_calc::allpaths:
                 calcAllPaths();
 
-            case graph_calc::probs:
+            case  raven::graph::graph_calc::probs:
                 calcProbs();
 
-            case graph_calc::alloc:
+            case  raven::graph::graph_calc::alloc:
                 calcAlloc();
 
-            case graph_calc::euler:
+            case  raven::graph::graph_calc::euler:
                 calcEuler();
 
-            case graph_calc::cover:
+            case  raven::graph::graph_calc::cover:
                 calcCover();
 
-            case graph_calc::none:
+            case  raven::graph::graph_calc::none:
                 break;
             }
         }
@@ -450,11 +450,11 @@ void cGUI::drawLayout(PAINTSTRUCT &ps)
     switch (myCalcOption)
     {
 
-    case graph_calc::cost:
-    case graph_calc::spans:
-    case graph_calc::sales:
-    case graph_calc::euler:
-    case graph_calc::cycle:
+    case  raven::graph::graph_calc::cost:
+    case  raven::graph::graph_calc::spans:
+    case  raven::graph::graph_calc::sales:
+    case  raven::graph::graph_calc::euler:
+    case  raven::graph::graph_calc::cycle:
     {
         // fill graph panel with image produced by graphviz
         myplLayout.show(true);

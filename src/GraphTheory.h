@@ -7,6 +7,25 @@ namespace raven
 {
     namespace graph
     {
+        enum class graph_calc
+        {
+            none,
+            cost,
+            cycle,
+            astar,
+            tour,
+            obs,
+            spans,
+            sales,
+            cliques,
+            flows,
+            multiflows,
+            allpaths,
+            probs,
+            alloc,
+            euler,
+            cover,
+        };
 
         class cTourNodes
         {
@@ -80,6 +99,14 @@ namespace raven
                 return myVertexSet.size();
             }
         };
+        /// @brief read input file
+        /// @param g graph to store input
+        /// @param fname path to file
+        /// @return calculation option requested
+
+        graph_calc readfile(
+            cGraph &g,
+            const std::string &fname);
 
         /// @brief find shortest path from start node to every other
         /// @param g
@@ -156,11 +183,11 @@ namespace raven
             int startIndex = -1);
 
         /// @brief find all paths between 2 vertices
-        /// @param g 
-        /// @param startIndex 
-        /// @param destIndex 
+        /// @param g
+        /// @param startIndex
+        /// @param destIndex
         /// @return vector of path vectors
-        
+
         std::vector<std::vector<int>>
         dfs_allpaths(
             const cGraph &g,
@@ -188,7 +215,7 @@ namespace raven
             const cGraph &g,
             int start,
             int end,
-            std::vector<int>& vEdgeFlow );
+            std::vector<int> &vEdgeFlow);
 
         /// @brief Maximum flow through graph with multiple sources
         /// @param g
@@ -212,17 +239,17 @@ namespace raven
 
         double probs(cGraph &g, int end);
 
-        std::vector<std::string> alloc(cGraph& g );
+        std::vector<std::string> alloc(cGraph &g);
 
         /// @brief  Find euler path through graph
         /// @param g graph
         /// @return vector of vertex indices on path
         /// If no euler path, exception thrown
-        
-        std::vector<int> euler( const cGraph& g);
+
+        std::vector<int> euler(const cGraph &g);
 
         /// @brief find set of vertices that cover every link
-        /// @param g 
+        /// @param g
         /// @return vector of vertex indices
         std::vector<int>
         vertexCover(const cGraph &g);
@@ -247,3 +274,4 @@ namespace raven
             const std::string &pathViz);
     }
 }
+

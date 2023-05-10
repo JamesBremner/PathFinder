@@ -45,6 +45,16 @@ TEST(add)
     CHECK_EQUAL(1, ba);
 }
 
+TEST( cliques )
+{
+    raven::graph::cGraph g;
+    readfile( g, "../dat/cliques.txt");
+    std::string results;
+    cliques( g, results );
+    std::string expected("clique: 1 5 3 7 \nclique: 2 8 6 4 \n");
+    CHECK_EQUAL( expected, results);
+}
+
 TEST( dfs_allpaths )
 {
     raven::graph::cGraph g;

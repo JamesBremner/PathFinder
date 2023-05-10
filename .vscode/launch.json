@@ -9,7 +9,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/test.exe",
+            "program": "${workspaceFolder}/bin/pathfinder.exe",
             //  "args": ["127.0.0.1","27654"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/bin",

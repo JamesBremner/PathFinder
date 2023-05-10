@@ -25,7 +25,8 @@ OBJ_test = \
 	$(ODIR)/tourNodes.o \
 	$(ODIR)/chemistry.o \
 	$(ODIR)/test.o \
-	$(ODIR)/cutest.o
+	$(ODIR)/cutest.o \
+	$(ODIR)/readfile.o
 
 OBJ_pathfinder = \
 	$(ODIR)/pathfinder.o \

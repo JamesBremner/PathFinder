@@ -64,25 +64,7 @@ protected:
     wex::gui &fm;
 };
 
-enum class graph_calc
-{
-    none,
-    cost,
-    cycle,
-    astar,
-    tour,
-    obs,
-    spans,
-    sales,
-    cliques,
-    flows,
-    multiflows,
-    allpaths,
-    probs,
-    alloc,
-    euler,
-    cover,
-};
+
 
 class cGUI : public cStarterGUI
 {
@@ -107,7 +89,7 @@ private:
 
     raven::graph::cTourNodes *mypTourNodes;
     std::string myfname;                // input filename
-    graph_calc myCalcOption;            // calculation requested by input file
+    raven::graph::graph_calc myCalcOption;            // calculation requested by input file
     std::vector<std::string> myStartName;   // starting node
     std::string myEndName;              // ending node
     std::string myResultText;           // calculation result text
@@ -121,12 +103,6 @@ private:
     eView myViewType;
 
     void ConstructMenu();
-
-    /// @brief read input file
-    /// @param g graph to store input
-
-    void readfile(
-        raven::graph::cGraph &g);
 
     void calculate();
     void calcCost();

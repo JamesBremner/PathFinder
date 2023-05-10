@@ -19,6 +19,16 @@ namespace raven
                 fDirected = f;
             }
 
+            void startName( const std::string& name )
+            {
+                myStartName = name;
+            }
+
+            void endName( const std::string& name )
+            {
+                myEndName = name;
+            }
+
             /// @brief add a new vertex
             /// @param name
             /// @return vertex index
@@ -66,6 +76,14 @@ namespace raven
             bool isDirected() const { return fDirected; }
             int vertexCount() const;
             int edgeCount() const;
+            std::string startName() const
+            {
+                return myStartName;
+            }
+            std::string endName() const
+            {
+                return myEndName;
+            }
 
             int find(const std::string &name) const;
             int find( int s, int d ) const;
@@ -94,6 +112,8 @@ namespace raven
 
         private:
             bool fDirected;
+            std::string myStartName;
+            std::string myEndName;
 
             // edges
 
@@ -118,5 +138,6 @@ namespace raven
             mapEdgeAttr_t mapEdgeAttr;
             std::vector<std::vector<std::string>> vEdgeAttr;
         };
+    
     }
 }
