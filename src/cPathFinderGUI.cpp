@@ -207,8 +207,11 @@ void cGUI::calcCost()
 
 void cGUI::calcSpan()
 {
-    if (myStartName.empty())
+    myStartName.clear();
+    if (myGraph.startName().empty())
         myStartName.push_back(myGraph.userName(0));
+    else
+        myStartName.push_back(myGraph.startName());
     myResultGraph = spanningTree(myGraph, myStartName.back());
     myViewType = eView::span;
     auto viz = pathViz(
@@ -325,6 +328,9 @@ void cGUI::calcCliques()
 void cGUI::calcFlows()
 {
     std::vector<int> vEdgeFlow;
+    myStartName.clear();
+    myStartName.push_back( myGraph.startName());
+    myEndName = myGraph.endName();
     double flow = flows(
         myGraph,
         myGraph.find(myStartName.back()),
@@ -348,7 +354,7 @@ void cGUI::calcProbs()
 {
     double p = probs(
         myGraph,
-        myGraph.find(myEndName));
+        myGraph.find(myGraph.endName()));
     myResultText = "Probability " + std::to_string(p);
 }
 

@@ -1,4 +1,5 @@
 format probs
+g 1 0
 l u c 0.3
 l u d 0.5
 l c a 0.2
