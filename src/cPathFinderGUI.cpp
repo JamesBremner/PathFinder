@@ -138,18 +138,23 @@ void cGUI::calculate()
 
             case  raven::graph::graph_calc::allpaths:
                 calcAllPaths();
+                break;
 
             case  raven::graph::graph_calc::probs:
                 calcProbs();
+                break;
 
             case  raven::graph::graph_calc::alloc:
                 calcAlloc();
+                break;
 
             case  raven::graph::graph_calc::euler:
                 calcEuler();
+                break;
 
             case  raven::graph::graph_calc::cover:
                 calcCover();
+                break;
 
             case  raven::graph::graph_calc::none:
                 break;
@@ -168,6 +173,9 @@ void cGUI::calculate()
 }
 void cGUI::calcCost()
 {
+    myStartName.clear();
+    myStartName.push_back( myGraph.startName());
+    myEndName = myGraph.endName();
     if (myStartName.empty() || myEndName.empty())
         throw std::runtime_error("No path endpoints");
     if (!myStartName.size())
@@ -243,8 +251,8 @@ void cGUI::calcAllPaths()
 {
     auto vc = dfs_allpaths(
         myGraph,
-        myGraph.find(myStartName.back()),
-        myGraph.find(myEndName));
+        myGraph.find(myGraph.startName()),
+        myGraph.find(myGraph.endName()));
     myResultText = std::to_string(vc.size()) + " paths found\n\n";
     for (int k = 0; k < vc.size(); k++)
     {
