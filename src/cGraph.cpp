@@ -141,6 +141,16 @@ namespace raven
             remove(find(src), find(dst));
         }
 
+        void cGraph::remove( int removed )
+        {
+            for( int a : adjacentOut(removed) )
+                remove( removed, a );
+            vOutEdges.erase(vOutEdges.begin()+removed);
+            vInEdges.erase(vInEdges.begin()+removed);
+            vVertexName.erase(vVertexName.begin()+removed);
+            vVertexAttr.erase(vVertexAttr.begin()+removed);
+        }
+
         int cGraph::vertexCount() const
         {
             return vOutEdges.size();

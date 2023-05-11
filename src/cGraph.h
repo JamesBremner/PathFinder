@@ -71,6 +71,11 @@ namespace raven
             void remove(int s, int d);
             void remove(const std::string &str, const std::string &dst);
 
+            /// remove vertex
+            void remove( int removed );
+
+
+
             /////////////////////// getters
 
             bool isDirected() const { return fDirected; }
