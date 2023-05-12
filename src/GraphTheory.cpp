@@ -10,6 +10,10 @@ namespace raven
 {
     namespace graph
     {
+        int rEdgeAttrInt(const cGraph &g, int i, int j, int ai)
+        {
+            return atoi(g.rEdgeAttr(g.find(i, j), ai).c_str());
+        }
 
         void dijsktra(
             const cGraph &g,
@@ -352,32 +356,33 @@ namespace raven
                     apaths.push_back(path);
 
                     // check for finished
-                    if( wait.empty())
+                    if (wait.empty())
                         break;
 
                     // backtrack along path until last vertex in path
                     // has a connection to the vertex at top of the stack
                     std::vector<int> vadj;
-                    do {
+                    do
+                    {
                         // mark vertex unvisited
                         visited[path.back()] = false;
 
                         // remove from path
-                        path.erase(path.end() - 1);   
-                        
-                        vadj = g.adjacentOut(path.back() );
-                    } while ( std::find(vadj.begin(),vadj.end(), wait.top()) == vadj.end() ) ;
+                        path.erase(path.end() - 1);
+
+                        vadj = g.adjacentOut(path.back());
+                    } while (std::find(vadj.begin(), vadj.end(), wait.top()) == vadj.end());
                 }
                 else
                 {
-                        for (int w : g.adjacentOut(v))
-                        {
-                            if (w < 0)
-                                throw std::runtime_error(
-                                    "dfs bad index 2");
-                            if (!visited[w])
-                                wait.push(w);
-                        }
+                    for (int w : g.adjacentOut(v))
+                    {
+                        if (w < 0)
+                            throw std::runtime_error(
+                                "dfs bad index 2");
+                        if (!visited[w])
+                            wait.push(w);
+                    }
                 }
             }
             return apaths;
@@ -583,7 +588,7 @@ namespace raven
                             {
                                 // found node in work that is connected to clique nodes.
                                 // move it to clique
-                                std::cout << "add " << work.userName(u) << "\n";
+                                //std::cout << "add " << work.userName(u) << "\n";
                                 clique.push_back(u);
                                 work.wVertexAttr(u, {"deleted"});
                                 found = true;
@@ -993,6 +998,182 @@ namespace raven
             for (int v : vset)
                 ret.push_back(v);
             return ret;
+        }
+
+        cTSP::cTSP(raven::graph::cGraph &inputGraph)
+            : g(inputGraph),
+              final_res(INT_MAX)
+        {
+        }
+
+        // This function sets up final_path[]
+        std::vector<int> cTSP::calculate()
+        {
+
+            // Calculate initial lower bound for the root node
+            // using the formula 1/2 * (sum of first min +
+            // second min) for all edges.
+            // Also initialize the curr_path and visited array
+            int curr_bound = 0;
+
+            curr_path.clear();
+            curr_path.resize(g.vertexCount() + 1, -1);
+            visited.clear();
+            visited.resize(g.vertexCount(), false);
+
+            // Compute initial bound
+            // auto g = makeGraph( adj );
+            for (int i = 0; i < g.vertexCount(); i++)
+                curr_bound += (firstMin(i) +
+                               secondMin(i));
+
+            // Rounding off the lower bound to an integer
+            curr_bound = (curr_bound & 1) ? curr_bound / 2 + 1 : curr_bound / 2;
+
+            // We start at vertex 1 so the first vertex
+            // in curr_path[] is 0
+            visited[0] = true;
+            curr_path[0] = 0;
+
+            // Call to TSPRec for curr_weight equal to
+            // 0 and level 1
+            TSPRec(curr_bound, 0, 1);
+
+            return final_path;
+        }
+        // Function to find the minimum edge cost
+        // having an end at the vertex i
+        int cTSP::firstMin(int i)
+        {
+            int min = INT_MAX;
+            for (int k : g.adjacentOut(i))
+            {
+                if (k != i)
+                {
+                    int c = edgeWeight(i, k);
+                    if (c < min)
+                        min = c;
+                }
+            }
+            return min;
+        }
+
+        // function to find the second minimum edge cost
+        // having an end at the vertex i
+        int cTSP::secondMin(int i)
+        {
+            int first = INT_MAX, second = INT_MAX;
+            for (int j = 0; j < g.vertexCount(); j++)
+            {
+                if (i == j)
+                    continue;
+
+                int c = edgeWeight(i, j);
+                if (c <= first)
+                {
+                    second = first;
+                    first = c;
+                }
+                else if (c <= second &&
+                         c != first)
+                    second = c;
+            }
+            return second;
+        }
+
+        // recursive function that takes as arguments:
+        // curr_bound -> lower bound of the root node
+        // curr_weight-> stores the weight of the path so far
+        // level-> current level while moving in the search
+        //		 space tree
+
+        void cTSP::TSPRec(int curr_bound, int curr_weight,
+                          int level)
+        {
+            // base case is when we have reached level N which
+            // means we have covered all the nodes once
+            if (level == g.vertexCount())
+            {
+                // check if there is an edge from last vertex in
+                // path back to the first vertex
+                if (g.find(curr_path[level - 1], curr_path[0]) >= 0)
+                {
+                    // curr_res has the total weight of the
+                    // solution we got
+                    int curr_res = curr_weight +
+                                   edgeWeight(curr_path[level - 1], curr_path[0]);
+
+                    // Update final result and final path if
+                    // current result is better.
+                    if (curr_res < final_res)
+                    {
+                        final_path.clear();
+                        for (int v : curr_path)
+                            if (v >= 0)
+                                final_path.push_back(v);
+                        final_path.push_back(curr_path[0]);
+                        final_res = curr_res;
+                    }
+                }
+                return;
+            }
+
+            // for any other level iterate for all vertices to
+            // build the search space tree recursively
+            for (int i = 0; i < g.vertexCount(); i++)
+            {
+                // Consider next vertex if it is not same (diagonal
+                // entry in adjacency matrix and not visited
+                // already)
+                if (g.find(curr_path[level - 1], i) >= 0 &&
+                    visited[i] == false)
+                {
+                    int temp = curr_bound;
+                    curr_weight += edgeWeight(curr_path[level - 1], i);
+
+                    // different computation of curr_bound for
+                    // level 2 from the other levels
+                    if (level == 1)
+                        curr_bound -= ((firstMin(curr_path[level - 1]) +
+                                        firstMin(i)) /
+                                       2);
+                    else
+                        curr_bound -= ((secondMin(curr_path[level - 1]) +
+                                        firstMin(i)) /
+                                       2);
+
+                    // curr_bound + curr_weight is the actual lower bound
+                    // for the node that we have arrived on
+                    // If current lower bound < final_res, we need to explore
+                    // the node further
+                    if (curr_bound + curr_weight < final_res)
+                    {
+                        curr_path[level] = i;
+                        visited[i] = true;
+
+                        // call TSPRec for the next level
+                        TSPRec(curr_bound, curr_weight, level + 1);
+                    }
+
+                    // Else we have to prune the node by resetting
+                    // all changes to curr_weight and curr_bound
+                    curr_weight -= edgeWeight(curr_path[level - 1], i);
+                    curr_bound = temp;
+
+                    // Also reset the visited array
+                    visited.clear();
+                    visited.resize(g.vertexCount(), false);
+
+                    for (int j = 0; j <= level - 1; j++)
+                        visited[curr_path[j]] = true;
+                }
+            }
+        }
+
+        int cTSP::edgeWeight(int i, int j) const
+        {
+            return rEdgeAttrInt(g, i, j, 0);
+            return 0;
         }
 
     }

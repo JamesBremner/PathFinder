@@ -45,17 +45,43 @@ TEST(add)
     CHECK_EQUAL(1, ba);
 }
 
-TEST( cliques )
+TEST(salesBBmetric)
 {
     raven::graph::cGraph g;
-    readfile( g, "../dat/cliques.txt");
+    readfile(g, "../dat/tspmetric.txt");
+    raven::graph::cTSP tpsbb(g);
+    auto path = g.userName(tpsbb.calculate());
+    std::vector<std::string> exp{"0", "1", "3", "2", "0"};
+    CHECK_EQUAL(80,tpsbb.TotalPathEdgeWeight());
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        path.begin()));
+}
+TEST(salesBBnotmetric)
+{
+    raven::graph::cGraph g;
+    readfile(g, "../dat/tspnotmetric.txt");
+    raven::graph::cTSP tpsbb(g);
+    auto path = g.userName(tpsbb.calculate());
+    std::vector<std::string> exp{"0", "1", "3", "2", "0"};
+    CHECK_EQUAL(27,tpsbb.TotalPathEdgeWeight());
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        path.begin()));
+}
+TEST(cliques)
+{
+    raven::graph::cGraph g;
+    readfile(g, "../dat/cliques.txt");
     std::string results;
-    cliques( g, results );
+    cliques(g, results);
     std::string expected("clique: 1 5 3 7 \nclique: 2 8 6 4 \n");
-    CHECK_EQUAL( expected, results);
+    CHECK_EQUAL(expected, results);
 }
 
-TEST( dfs_allpaths )
+TEST(dfs_allpaths)
 {
     raven::graph::cGraph g;
     g.directed();
@@ -66,24 +92,24 @@ TEST( dfs_allpaths )
     g.add("2", "1");
     g.add("1", "3");
 
-    auto vpaths = dfs_allpaths( 
+    auto vpaths = dfs_allpaths(
         g,
         g.find("2"),
         g.find("3"));
 
-    CHECK_EQUAL( 3, vpaths.size() );
-    std::vector<int> expected1 {2,1,3};
-        CHECK(std::equal(
+    CHECK_EQUAL(3, vpaths.size());
+    std::vector<int> expected1{2, 1, 3};
+    CHECK(std::equal(
         expected1.begin(),
         expected1.end(),
         vpaths[0].begin()));
-    std::vector<int> expected2 {2,0,3};
-        CHECK(std::equal(
+    std::vector<int> expected2{2, 0, 3};
+    CHECK(std::equal(
         expected2.begin(),
         expected2.end(),
         vpaths[1].begin()));
-    std::vector<int> expected3 {2,0,1,3};
-        CHECK(std::equal(
+    std::vector<int> expected3{2, 0, 1, 3};
+    CHECK(std::equal(
         expected3.begin(),
         expected3.end(),
         vpaths[2].begin()));
@@ -128,7 +154,6 @@ TEST(vertexCover1)
         exp.begin(),
         exp.end(),
         act.begin()));
-
 }
 TEST(vertexCover2)
 {
@@ -145,7 +170,6 @@ TEST(vertexCover2)
         exp.begin(),
         exp.end(),
         act.begin()));
-
 }
 TEST(vertexCover3)
 {
@@ -164,7 +188,6 @@ TEST(vertexCover3)
         exp.begin(),
         exp.end(),
         act.begin()));
-
 }
 TEST(cycle0)
 {

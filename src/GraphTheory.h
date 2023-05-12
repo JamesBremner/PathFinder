@@ -99,6 +99,46 @@ namespace raven
                 return myVertexSet.size();
             }
         };
+
+        /// @brief Travelling Salesman Problem
+        class cTSP
+        {
+        public:
+            cTSP(raven::graph::cGraph &inputGraph);
+
+            std::vector<int> calculate();
+
+            int TotalPathEdgeWeight() const
+            {
+                return final_res;
+            }
+
+        private:
+            // final_path[] stores the final solution ie, the
+            // path of the salesman.
+            std::vector<int> final_path;
+
+            std::vector<int> curr_path;
+
+            // visited[] keeps track of the already visited nodes
+            // in a particular path
+            std::vector<bool> visited;
+
+            // Stores the final minimum weight of shortest tour.
+            int final_res;
+
+            raven::graph::cGraph& g;
+
+            void TSPRec(int curr_bound,
+                        int curr_weight,
+                        int level);
+
+            int firstMin(int i);
+            int secondMin(int i);
+
+            int edgeWeight(int i, int j) const;
+        };
+
         /// @brief read input file
         /// @param g graph to store input
         /// @param fname path to file
@@ -107,6 +147,14 @@ namespace raven
         graph_calc readfile(
             cGraph &g,
             const std::string &fname);
+
+        /// @brief read edge attribute as integer
+        /// @param g graph
+        /// @param i source vertex index
+        /// @param j destination verted index
+        /// @param ai attribute index
+        /// @return integer value
+        int rEdgeAttrInt(const cGraph &g, int i, int j, int ai);
 
         /// @brief find shortest path from start node to every other
         /// @param g
@@ -274,4 +322,3 @@ namespace raven
             const std::string &pathViz);
     }
 }
-
