@@ -26,6 +26,10 @@ A GUI that reads text files specifying a graph and the path to be found
 ### Obstacles
 
 A GUI that reads obstacle locations ( e.g. furniture in a room or crops in a field ) and calculates a route around them. [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Obstacles)
+
+### Maze
+
+Find path through a 2D grid maze.  [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/maze)
  
 ### Test
 
