@@ -232,6 +232,8 @@ namespace raven
         }
         std::string cGraph::rEdgeAttr(int ei, int ai) const
         {
+            if( ei < 0 )
+                return "";
             if (0 > ai || ai > (int)vEdgeAttr[ei].size() - 1)
                 return "";
             return vEdgeAttr[ei][ai];
