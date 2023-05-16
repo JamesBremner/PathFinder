@@ -53,6 +53,12 @@ OBJ_graphex = \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/cRunWatch.o
 
+OBJ_maze = \
+	$(ODIR)/maze.o \
+	$(ODIR)/cMaze.o \
+	$(ODIR)/cGraph.o \
+	$(ODIR)/GraphTheory.o \
+
 DEPS = \
 	cGraph.h GraphTheory.h
 
@@ -91,6 +97,11 @@ obstacle: $(OBJ_obstacle)
 
 graphex: $(OBJ_graphex)
 	g++ -o bin/graphex.exe \
+	$^ $(OPT) \
+	$(static_link_flags) $(LIBS)
+
+maze: $(OBJ_maze)
+	g++ -o bin/maze.exe \
 	$^ $(OPT) \
 	$(static_link_flags) $(LIBS)
 

@@ -37,6 +37,14 @@
             "group": { "kind": "build", "isDefault": true }
         },
         {
+            "label": "maze",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe",
+            "args": ["-f", ".vscode/makefile", "maze" ],
+            "problemMatcher": [ "$gcc" ],
+            "group": { "kind": "build", "isDefault": true }
+        },
+        {
             "label": "clean",
             "options": {
                 "cwd": "${workspaceFolder}"
