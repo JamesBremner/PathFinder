@@ -2,9 +2,14 @@
 #include "cMaze.h"
 #include "GraphTheory.h"
 
-int main()
+int main(int argc, char *argv[])
 {
-    std::ifstream ifs("../dat/maze1.txt");
+    if (argc != 2)
+    {
+        std::cout << "Usage: maze <maze filename>\n";
+        return 2;
+    }
+    std::ifstream ifs(argv[1]);
     if (!ifs.is_open())
     {
         std::cout << "cannot open input file\n";

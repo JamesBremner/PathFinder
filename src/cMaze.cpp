@@ -30,15 +30,15 @@ namespace raven
                 std::vector<cCell> vCell;
 
                 cell = 1;
-                std::cout << "line " << line << std::endl;
+                //std::cout << "line " << line << std::endl;
                 int i = 0;
                 bool top, down, right, left, start, end;
                 top = down = right = left = false;
                 int j = 0, k = 1;
 
-                std::cout << "1 " << str1 << "\n";
-                std::cout << "2 " << str2 << "\n";
-                std::cout << "3 " << str3 << "\n";
+                //std::cout << "1 " << str1 << "\n";
+                //std::cout << "2 " << str2 << "\n";
+                //std::cout << "3 " << str3 << "\n";
 
                 while (i < (int)std::strlen(str1) - 1)
                 {
@@ -293,9 +293,9 @@ namespace raven
         {
             std::cout << myMaze.size() << " rows " << myMaze[0].size() << " cols\n";
 
-            for (int i : myPath)
-                std::cout << i << " ";
-            std::cout << "\n";
+            // for (int i : myPath)
+            //     std::cout << i << " ";
+            // std::cout << "\n";
             std::vector<std::string> vss;
             std::stringstream s1, s2, s3;
             int kr = 0;
