@@ -29,7 +29,7 @@ A GUI that reads obstacle locations ( e.g. furniture in a room or crops in a fie
 
 ### Maze
 
-Find path through a 2D grid maze.  [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/maze)
+Generate random, solveable mazes and solve them. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/maze)
  
 ### Test
 
