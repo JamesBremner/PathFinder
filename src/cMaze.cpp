@@ -289,7 +289,7 @@ namespace raven
             bool ret = (std::find(myPath.begin(), myPath.end(), i) != myPath.end());
             return ret;
         }
-        std::vector<std::string> cMaze::displayText()
+        std::string cMaze::displayText()
         {
             std::cout << myMaze.size() << " rows " << myMaze[0].size() << " cols\n";
 
@@ -352,7 +352,13 @@ namespace raven
                 kr++;
             }
 
-            return vss;
+            std::string ret;
+            for( auto& s : vss )
+            {
+                ret += s + "\n";
+            }
+
+            return ret;
         }
 
     }

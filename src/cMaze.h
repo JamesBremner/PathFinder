@@ -18,9 +18,9 @@ namespace raven
             /** convert maze to a graph with nodes and links
              * @param[out] g  the graph
              */
-            void graph(cGraph& g);
+            void graph(cGraph &g);
 
-            void path( const std::vector<int>& p )
+            void path(const std::vector<int> &p)
             {
                 myPath = p;
             }
@@ -39,7 +39,17 @@ namespace raven
                 return (int)myMaze[0].size();
             }
 
-            std::vector< std::string >  displayText();
+            std::string displayText();
+
+            /** Generate maze using binary tree algorithm
+                https://en.wikipedia.org/wiki/Maze_generation_algorithm#Simple_algorithms
+            */
+            void generate_binary_tree(int rows, int cols);
+
+            /** Start maze generation using recursive division algorithm
+                https://en.wikipedia.org/wiki/Maze_generation_algorithm#Recursive_division_method
+            */
+            void generate_recursive_init(int rows, int cols);
 
         private:
             /// represents a single cell in a maze
@@ -77,21 +87,10 @@ namespace raven
             /// Parse generate command line and run requested generator
             void generate(const std::string &cmd);
 
-            /** Generate maze using binary tree algorithm
-        https://en.wikipedia.org/wiki/Maze_generation_algorithm#Simple_algorithms
-            */
-            void generate_binary_tree(int rows, int cols);
-
-            /** Start maze generation using recursive division algorithm
-        https://en.wikipedia.org/wiki/Maze_generation_algorithm#Recursive_division_method
-            */
-            void generate_recursive_init(int rows, int cols);
-
             /// Recursive division generator
-            void generate_recursive( int x, int y, int w, int h );
+            void generate_recursive(int x, int y, int w, int h);
 
-            bool onPath( int r, int c );
-
+            bool onPath(int r, int c);
         };
     }
 }
