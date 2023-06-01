@@ -251,8 +251,9 @@ namespace raven
                 src++;
                 for (int dst : ve)
                 {
-                    if (src >= dst)
-                        continue;
+                    if (!isDirected())
+                        if (src >= dst)
+                            continue;
                     ret.push_back(std::make_pair(src, dst));
                 }
             }
