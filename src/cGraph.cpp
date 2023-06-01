@@ -87,13 +87,16 @@ namespace raven
 
         void cGraph::wVertexAttr(int vi, const std::vector<std::string> vAttr)
         {
-            if (0 > vi || vi > vVertexAttr.size() - 1)
+            if (0 > vi || vi >= vVertexAttr.size())
                 throw std::runtime_error(
                     "cGraph::wVertexAttr bad vertex index");
             vVertexAttr[vi] = vAttr;
         }
         void cGraph::wEdgeAttr(int ei, const std::vector<std::string> vAttr)
         {
+            if (0 > ei || ei >= vEdgeAttr.size())
+                throw std::runtime_error(
+                    "cGraph::wEdgeAttr bad edge index");
             vEdgeAttr[ei] = vAttr;
         }
         void cGraph::wEdgeAttr(int s, int d, const std::vector<std::string> vAttr)
@@ -105,12 +108,13 @@ namespace raven
         {
             // clear edge attributes
             int ei = find(s, d);
-            if( ei < 0 ) {
+            if (ei < 0)
+            {
                 // edge attributes do not exist
                 // assume this means the edge does not exist
                 // and no work is needed
-                return;                 
-            }    
+                return;
+            }
             vEdgeAttr[find(s, d)] = {};
 
             // remove from src out edges
@@ -122,8 +126,6 @@ namespace raven
             it = std::find(vInEdges[d].begin(), vInEdges[d].end(), s);
             if (it != vInEdges[d].end())
                 vInEdges[d].erase(it);
-
-
 
             if (fDirected)
                 return;
@@ -141,14 +143,14 @@ namespace raven
             remove(find(src), find(dst));
         }
 
-        void cGraph::remove( int removed )
+        void cGraph::remove(int removed)
         {
-            for( int a : adjacentOut(removed) )
-                remove( removed, a );
-            vOutEdges.erase(vOutEdges.begin()+removed);
-            vInEdges.erase(vInEdges.begin()+removed);
-            vVertexName.erase(vVertexName.begin()+removed);
-            vVertexAttr.erase(vVertexAttr.begin()+removed);
+            for (int a : adjacentOut(removed))
+                remove(removed, a);
+            vOutEdges.erase(vOutEdges.begin() + removed);
+            vInEdges.erase(vInEdges.begin() + removed);
+            vVertexName.erase(vVertexName.begin() + removed);
+            vVertexAttr.erase(vVertexAttr.begin() + removed);
         }
 
         int cGraph::vertexCount() const
@@ -226,13 +228,13 @@ namespace raven
         }
         std::string cGraph::rVertexAttr(int vi, int ai) const
         {
-            if( ai >= vVertexAttr[vi].size())
+            if (ai >= vVertexAttr[vi].size())
                 return "";
             return vVertexAttr[vi][ai];
         }
         std::string cGraph::rEdgeAttr(int ei, int ai) const
         {
-            if( ei < 0 )
+            if (ei < 0)
                 return "";
             if (0 > ai || ai > (int)vEdgeAttr[ei].size() - 1)
                 return "";
@@ -259,7 +261,7 @@ namespace raven
         std::string cGraph::text() const
         {
             std::stringstream ss;
-            for( auto& p : edgeList() )
+            for (auto &p : edgeList())
                 ss << vVertexName[p.first] << " - " << vVertexName[p.second] << "\n";
             return ss.str();
         }
