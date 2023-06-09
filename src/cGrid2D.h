@@ -100,6 +100,28 @@ public:
         return ret;
     }
 
+    std::vector<int>
+    getOrthoNeighboursRightBelow( int cell )
+    {
+        std::vector<int> ret;
+        int col,row;
+        coords( col,row,cell);
+        int ncol,nrow;
+        ncol = col+1;
+        nrow = row;
+        if( ncol < myColCount && nrow < myRowCount )
+            ret.push_back( index(ncol,nrow));
+        ncol = col;
+        nrow = row+1;
+        if( ncol < myColCount && nrow < myRowCount )
+            ret.push_back( index(ncol,nrow));
+        ncol = col+1;
+        nrow = row+1;
+        if( ncol < myColCount && nrow < myRowCount )
+            ret.push_back( index(ncol,nrow));
+        return ret;
+    }
+
     /// @brief get edge locations
     /// @return vector of edge locations (src col,src row), (dst col, dst row )
 
