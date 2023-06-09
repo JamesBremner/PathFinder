@@ -119,6 +119,14 @@ public:
         return ret;
     }
 
+    /// @brief get edge indices
+    /// @return vector of index pairs (v1 index, v2 index )
+    std::vector<std::pair<int, int>>
+    getEdgesVertexIndex() const
+    {
+        return vEdge;
+    }
+
     /// @brief Manhatten path, horizontal part
     /// @param s starting point
     /// @param d destination point
