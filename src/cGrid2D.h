@@ -101,24 +101,38 @@ public:
     }
 
     std::vector<int>
-    getOrthoNeighboursRightBelow( int cell )
+    getOrthoNeighboursRightBelow(int cell)
     {
         std::vector<int> ret;
-        int col,row;
-        coords( col,row,cell);
-        int ncol,nrow;
-        ncol = col+1;
+        int col, row;
+        coords(col, row, cell);
+        int ncol, nrow;
+        ncol = col + 1;
         nrow = row;
-        if( ncol < myColCount && nrow < myRowCount )
-            ret.push_back( index(ncol,nrow));
+        if (ncol < myColCount && nrow < myRowCount)
+            ret.push_back(index(ncol, nrow));
         ncol = col;
-        nrow = row+1;
-        if( ncol < myColCount && nrow < myRowCount )
-            ret.push_back( index(ncol,nrow));
-        ncol = col+1;
-        nrow = row+1;
-        if( ncol < myColCount && nrow < myRowCount )
-            ret.push_back( index(ncol,nrow));
+        nrow = row + 1;
+        if (ncol < myColCount && nrow < myRowCount)
+            ret.push_back(index(ncol, nrow));
+        ncol = col + 1;
+        nrow = row + 1;
+        if (ncol < myColCount && nrow < myRowCount)
+            ret.push_back(index(ncol, nrow));
+        return ret;
+    }
+
+    std::vector<int>
+    getOrthoDiagNeighboursRightBelow(int cell)
+    {
+        std::vector<int> ret;
+        int col, row;
+        coords(col, row, cell);
+        ret = getOrthoNeighboursRightBelow(cell);
+        int ncol = col + 1;
+        int nrow = row + 1;
+        if (ncol < myColCount && nrow < myRowCount)
+            ret.push_back(index(ncol, nrow));
         return ret;
     }
 
