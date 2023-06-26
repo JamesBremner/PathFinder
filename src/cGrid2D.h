@@ -62,14 +62,13 @@ public:
     /// @brief get vertex index from location
     /// @param col
     /// @param row
-    /// @return vertex index
+    /// @return vertex index, or -1
 
     int index(int col, int row) const
     {
-        if (0 > row || row > myRowCount - 1 ||
-            0 > col || col > myColCount)
-            throw std::runtime_error(
-                "cGrid2d::index bad col,row");
+        if (0 > row || row >= myRowCount ||
+            0 > col || col >= myColCount)
+            return -1;
         return row * myColCount + col;
     }
 
@@ -153,6 +152,16 @@ public:
                     std::make_pair(x1, y1), std::make_pair(x2, y2)));
         }
         return ret;
+    }
+
+    std::string name( int cell ) const
+    {
+        int c,r;
+        coords(c,r,cell);
+        if (0 > c || c >= myColCount &&
+            0 > r && r >= myRowCount )
+            return "";
+        return "c" + std::to_string(c) + "r" + std::to_string(r);
     }
 
     /// @brief get edge indices
