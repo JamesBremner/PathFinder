@@ -98,6 +98,11 @@ namespace raven
             if (0 > start || start > g.vertexCount() ||
                 0 > end || end > g.vertexCount())
                 return std::make_pair(vpath, -1);
+            if ( start == end )
+            {
+                vpath.push_back(start);
+                return std::make_pair( vpath, 0);
+            }
 
             // run the Dijsktra algorithm
             std::vector<double> dist;
