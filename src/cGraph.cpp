@@ -197,19 +197,19 @@ namespace raven
 
         int cGraph::dest(int ei) const
         {
-            // auto it = mapEdgeAttr.begin();
-            // for (; it != mapEdgeAttr.end(); it++)
-            //     if (it->second == ei)
-            //         return it->first.second;
+            auto it = mapEdge.begin();
+            for (; it != mapEdge.end(); it++)
+                if (it->second == ei)
+                    return it->first.second;
 
             return -1;
         }
         int cGraph::src(int ei) const
         {
-            // auto it = mapEdgeAttr.begin();
-            // for (; it != mapEdgeAttr.end(); it++)
-            //     if (it->second == ei)
-            //         return it->first.first;
+            auto it = mapEdge.begin();
+            for (; it != mapEdge.end(); it++)
+                if (it->second == ei)
+                    return it->first.first;
 
             return -1;
         }
