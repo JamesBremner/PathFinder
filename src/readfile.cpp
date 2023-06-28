@@ -4,6 +4,7 @@
 
 static void readSales(
     raven::graph::cGraph &g,
+    std::vector<double>& edgeWeight,
     std::ifstream &ifs)
 {
     g.clear();
@@ -38,7 +39,8 @@ static void readSales(
                     "Cannot mix cities and links");
             inputType = eInput::link;
             ifs >> sn1 >> sn2 >> scost;
-            g.wEdgeAttr(g.add(sn1, sn2), {scost});
+            g.add(sn1, sn2);
+            edgeWeight.push_back(atof(scost.c_str()));
             break;
         }
 
@@ -48,6 +50,7 @@ static void readSales(
 
 static void readCostedLinks(
     raven::graph::cGraph &g,
+    std::vector<double>& edgeWeight,
     std::ifstream &ifs)
 {
     g.clear();
@@ -69,9 +72,11 @@ static void readCostedLinks(
             break;
         case 'l':
             ifs >> sn1 >> sn2 >> scost;
-            g.wEdgeAttr(g.add(sn1, sn2), {scost});
-            if( same == "1")
-                g.wEdgeAttr(g.find(sn2, sn1), {scost});
+            g.add(sn1, sn2);
+            edgeWeight.push_back(atof(scost.c_str()));
+            if( same == "1") {
+                edgeWeight.push_back(atof(scost.c_str()));
+            }
             break;
         case 's':
             ifs >> sn1;
@@ -163,6 +168,7 @@ namespace raven
     {
         graph_calc readfile(
             raven::graph::cGraph &g,
+            std::vector<double>& edgeWeight,
             const std::string &fname)
         {
             raven::graph::graph_calc myCalcOption = raven::graph::graph_calc::none;
@@ -181,7 +187,7 @@ namespace raven
             if (calc.find("cost") != -1)
             {
                 myCalcOption = graph_calc::cost;
-                readCostedLinks(g, ifs);
+                readCostedLinks(g, edgeWeight, ifs);
             }
 
             else if (calc.find("cycle") != -1)
@@ -205,12 +211,12 @@ namespace raven
             else if (calc.find("probs") != -1)
             {
                 myCalcOption = graph_calc::probs;
-                readCostedLinks(g, ifs);
+                readCostedLinks(g, edgeWeight, ifs);
             }
             else if (calc.find("tour") != -1)
             {
                 myCalcOption = graph_calc::tour;
-                readCostedLinks(g, ifs);
+                readCostedLinks(g, edgeWeight, ifs);
             }
             else if (calc.find("obs") != -1)
             {
@@ -225,12 +231,12 @@ namespace raven
             else if (calc.find("spans") != -1)
             {
                 myCalcOption = graph_calc::spans;
-                readCostedLinks(g, ifs);
+                readCostedLinks(g, edgeWeight, ifs);
             }
             else if (calc.find("sales") != -1)
             {
                 myCalcOption = graph_calc::sales;
-                readSales(g, ifs);
+                readSales(g, edgeWeight, ifs);
             }
             else if (calc.find("cliques") != -1)
             {
@@ -240,12 +246,12 @@ namespace raven
             else if (calc.find("multiflows") != -1)
             {
                 myCalcOption = graph_calc::multiflows;
-                readCostedLinks(g, ifs);
+                readCostedLinks(g, edgeWeight, ifs);
             }
             else if (calc.find("flows") != -1)
             {
                 myCalcOption = graph_calc::flows;
-                readCostedLinks(g, ifs);
+                readCostedLinks(g, edgeWeight, ifs);
             }
             else if (calc.find("allpaths") != -1)
             {

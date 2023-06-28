@@ -5,7 +5,9 @@ namespace raven
 {
     namespace graph
     {
-        std::string SMILES(const cGraph &ingraph)
+        std::string SMILES(
+            const cGraph &ingraph,
+            const std::vector<int> &bondtype)
         {
             std::string SMILES;              // the SMILES representation of the chemical graph
             std::vector<std::string> vLabel; // the label locations
@@ -36,7 +38,7 @@ namespace raven
                     // check for double bond
                     if (prev != -1)
                     {
-                        if (g.rEdgeAttr(g.find(prev, v), 0) == "2")
+                        if (bondtype[g.find(prev, v)] == 2)
                         {
                             SMILES += "=";
                             vLabel.push_back("-");
@@ -80,96 +82,103 @@ namespace raven
             return SMILES;
         }
 
-        
-void readSMILES(cGraph &g, const std::string &sin)
-{
-    g.clear();
-    char token;
-    int branch;   // index of atom where branch occurs
-    int src = -1; // index of atom waiting for bond
-    std::vector<int> ring(10, -1);
-    int ringID;
-    int bond = 1;
-    bool closebracket = false;
-    bool square = false;
-    int idx = 0;
-    for (int p = 0; p < sin.length(); p++)
-    {
-        token = sin[p];
-        //std::cout << token << " " << branch << " " << src << "\n";
-        switch (token)
+        void readSMILES(
+            cGraph &g,
+            std::vector<int> &bondtype,
+            const std::string &sin)
         {
-        case 'C':
-        case 'N':
-        case 'O':
-            g.wVertexAttr(
-                g.add(std::to_string(idx)),
-                {std::string(1, token)});
-            idx++;
-            if (src == -1)
+            g.clear();
+            char token;
+            int branch;   // index of atom where branch occurs
+            int src = -1; // index of atom waiting for bond
+            std::vector<int> ring(10, -1);
+            int ringID;
+            int bond = 1;
+            bool closebracket = false;
+            bool square = false;
+            int idx = 0;
+            for (int p = 0; p < sin.length(); p++)
             {
-                // root atom
-                src = idx - 1;
-                break;
-            }
-            if (closebracket)
-            {
-                int ie = g.add(
-                    std::to_string(branch),
-                    std::to_string(idx - 1));
-                g.wEdgeAttr(ie, {std::to_string(bond)});
-                closebracket = false;
-            }
-            else
-            {
-                int ie = g.add(
-                    std::to_string(src),
-                    std::to_string(idx - 1));
-                g.wEdgeAttr(ie, {std::to_string(bond)});
-            }
-            bond = 1;
-            src = idx - 1;
-            break;
+                token = sin[p];
+                // std::cout << token << " " << branch << " " << src << "\n";
+                switch (token)
+                {
+                case 'C':
+                case 'N':
+                case 'O':
+                    g.wVertexAttr(
+                        g.add(std::to_string(idx)),
+                        {std::string(1, token)});
+                    idx++;
+                    if (src == -1)
+                    {
+                        // root atom
+                        src = idx - 1;
+                        break;
+                    }
+                    if (closebracket)
+                    {
+                        int ie = g.add(
+                            std::to_string(branch),
+                            std::to_string(idx - 1));
+                        if (ie > (int)bondtype.size() - 1)
+                            bondtype.resize(ie + 1, -1);
+                        bondtype[ie] = bond;
+                        closebracket = false;
+                    }
+                    else
+                    {
+                        int ie = g.add(
+                            std::to_string(src),
+                            std::to_string(idx - 1));
+                        if (ie > (int)bondtype.size() - 1)
+                            bondtype.resize(ie + 1, -1);
+                        bondtype[ie] = bond;
+                    }
+                    bond = 1;
+                    src = idx - 1;
+                    break;
 
-        case '=':
-            bond = 2;
-            break;
-        case 'H':
-            // Hydrogen is ignored
-            break;
-        case '[':
-            square = true;
-            break;
-        case ']':
-            square = false;
-            break;
-        case '(':
-            branch = idx - 1;
-            break;
-        case ')':
-            closebracket = true;
-            break;
-        case '1':
-        case '2':
-            if (square)
-                break;
-            ringID = (int)token - 48;
-            if (ring[ringID] == -1)
-            {
-                ring[ringID] = idx - 1;
+                case '=':
+                    bond = 2;
+                    break;
+                case 'H':
+                    // Hydrogen is ignored
+                    break;
+                case '[':
+                    square = true;
+                    break;
+                case ']':
+                    square = false;
+                    break;
+                case '(':
+                    branch = idx - 1;
+                    break;
+                case ')':
+                    closebracket = true;
+                    break;
+                case '1':
+                case '2':
+                    if (square)
+                        break;
+                    ringID = (int)token - 48;
+                    if (ring[ringID] == -1)
+                    {
+                        ring[ringID] = idx - 1;
+                    }
+                    else
+                    {
+                        g.add(std::to_string(ring[ringID]), std::to_string(src));
+                        ring[ringID] = -1;
+                    }
+                    break;
+                }
             }
-            else
-            {
-                g.add(std::to_string(ring[ringID]), std::to_string(src));
-                ring[ringID] = -1;
-            }
-            break;
         }
-    }
-}
 
-
-        std::string chemViz(const cGraph &g)
+        std::string chemViz(
+            const cGraph &g,
+            const std::vector<int>& bondtype)
         {
             std::map<std::string, std::string> mpColor;
             mpColor.insert({"C", "grey"});
@@ -189,7 +198,7 @@ void readSMILES(cGraph &g, const std::string &sin)
             for (auto &e : g.edgeList())
             {
                 std::string color = "";
-                if (g.rEdgeAttr(g.find(e.first, e.second), 0) == "2")
+                if (bondtype[g.find(e.first, e.second)] == 2)
                     color = " [penwidth = 3.0]";
                 sviz << e.first << "--"
                      << e.second

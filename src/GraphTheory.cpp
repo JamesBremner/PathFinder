@@ -10,17 +10,26 @@ namespace raven
 {
     namespace graph
     {
-        int rEdgeAttrInt(const cGraph &g, int i, int j, int ai)
-        {
-            return atoi(g.rEdgeAttr(g.find(i, j), ai).c_str());
-        }
+        // int rEdgeAttrInt(
+        //     const cGraph &g,
+        //     std::vector<std::vector<
+        //      int i, int j,
+        //       int ai)
+        // {
+        //     return atoi(g.rEdgeAttr(g.find(i, j), ai).c_str());
+        // }
 
         void dijsktra(
             const cGraph &g,
+            const std::vector<double> &edgeWeight,
             int start,
             std::vector<double> &dist,
             std::vector<int> &pred)
         {
+            if (edgeWeight.size() < g.edgeCount())
+                throw std::runtime_error(
+                    "dijsktra bad edge weights");
+
             // shortest distance from start to each node
             dist.clear();
             dist.resize(g.vertexCount(), INT_MAX);
@@ -65,7 +74,7 @@ namespace raven
 
                     // Update dist[v] only if total weight of path from src to  v through u is
                     // smaller than current value of dist[v]
-                    double cost = atof(g.rEdgeAttr(g.find(uidx, vp), 0).c_str());
+                    double cost = edgeWeight[g.find(uidx, vp)];
                     if (dist[uidx] + cost < dist[vp])
                     {
                         dist[vp] = dist[uidx] + cost;
@@ -78,11 +87,13 @@ namespace raven
         std::pair<std::vector<int>, double>
         path(
             const cGraph &g,
+            const std::vector<double> &edgeWeight,
             const std::string &startName,
             const std::string &endName)
         {
             return path(
                 g,
+                edgeWeight,
                 g.find(startName),
                 g.find(endName));
         }
@@ -90,6 +101,7 @@ namespace raven
         std::pair<std::vector<int>, double>
         path(
             const cGraph &g,
+            const std::vector<double> &edgeWeight,
             int start,
             int end)
         {
@@ -98,16 +110,16 @@ namespace raven
             if (0 > start || start > g.vertexCount() ||
                 0 > end || end > g.vertexCount())
                 return std::make_pair(vpath, -1);
-            if ( start == end )
+            if (start == end)
             {
                 vpath.push_back(start);
-                return std::make_pair( vpath, 0);
+                return std::make_pair(vpath, 0);
             }
 
             // run the Dijsktra algorithm
             std::vector<double> dist;
             std::vector<int> pred;
-            dijsktra(g, start, dist, pred);
+            dijsktra(g, edgeWeight, start, dist, pred);
 
             // check that end is reachable from start
             if (pred[end] == -1)
@@ -130,10 +142,13 @@ namespace raven
         std::vector<std::vector<int>>
         allPaths(
             const cGraph &g,
+            const std::vector<double> &edgeWeight,
             int start,
             int end)
         {
             std::vector<std::vector<int>> ret;
+
+            auto edgeCost = std::move(edgeWeight);
 
             // copy input graph to working graph
             cGraph work = g;
@@ -142,7 +157,7 @@ namespace raven
             while (fnew)
             {
                 // find new path
-                auto p = path(work, start, end).first;
+                auto p = path(work, edgeCost, start, end).first;
                 if (!p.size())
                     break;
 
@@ -168,10 +183,7 @@ namespace raven
                 for (int k = 1; k < p.size(); k++)
                 {
                     int ei = work.find(p[k - 1], p[k]);
-                    int cost = atoi(work.rEdgeAttr(ei, 0).c_str()) + 1;
-                    work.wEdgeAttr(
-                        ei,
-                        {std::to_string(cost)});
+                    edgeCost[ei]++;
                 }
             }
             return ret;
@@ -189,9 +201,14 @@ namespace raven
         cGraph
         spanningTree(
             const cGraph &g,
+            const std::vector<double> &edgeWeight,
             const std::string &startName)
         {
             // std::cout << "spanning Tree " << startName << "\n";
+
+            if (edgeWeight.size() < g.edgeCount())
+                throw std::runtime_error(
+                    "spanningTree bad edge weights");
 
             // copy vertices from input grqaph to spanning tree
             cSpanningTree ST;
@@ -241,7 +258,7 @@ namespace raven
                             continue;
 
                         // track cheapest edge
-                        double cost = atof(g.rEdgeAttr(ei, 0).c_str());
+                        double cost = edgeWeight[ei];
                         if (cost < min_cost)
                         {
                             min_cost = cost;
@@ -475,11 +492,11 @@ namespace raven
                             // so the path is forced to go the long way around back to start
                             raven::graph::cGraph temp = g;
                             temp.remove(w, v);
-                            cycle = path(temp, w, v).first;
+                            cycle = path(temp, {}, w, v).first;
                         }
                         else
                         {
-                            cycle = path(g, w, v).first;
+                            cycle = path(g, {}, w, v).first;
                         }
 
                         // ignore "cycles" that just go back and forth over one edge
@@ -593,7 +610,7 @@ namespace raven
                             {
                                 // found node in work that is connected to clique nodes.
                                 // move it to clique
-                                //std::cout << "add " << work.userName(u) << "\n";
+                                // std::cout << "add " << work.userName(u) << "\n";
                                 clique.push_back(u);
                                 work.wVertexAttr(u, {"deleted"});
                                 found = true;
@@ -629,6 +646,7 @@ namespace raven
         double
         flows(
             const cGraph &g,
+            const std::vector<double> &edgeWeight,
             int start,
             int end,
             std::vector<int> &vEdgeFlow)
@@ -636,6 +654,8 @@ namespace raven
             if (!g.isDirected())
                 throw std::runtime_error(
                     "Flow calculation needs directed graph ( 2nd input line must be 'g')");
+
+            auto edgeCapacity = edgeWeight;
 
             int totalFlow = 0;
 
@@ -646,7 +666,7 @@ namespace raven
             {
                 // find path
                 // std::cout << "links:\n" << linksText() << "\n";
-                auto p = path(work, start, end);
+                auto p = path(work, edgeCapacity, start, end);
                 // std::cout << "pathsize " << myPath.size() << " ";
                 if (!p.first.size())
                     break;
@@ -660,7 +680,7 @@ namespace raven
                 {
                     if (u >= 0)
                     {
-                        double cap = atof(work.rEdgeAttr(work.find(u, v), 0).c_str());
+                        double cap = edgeCapacity[work.find(u, v)];
                         if (cap < maxflow)
                         {
                             maxflow = cap;
@@ -675,7 +695,8 @@ namespace raven
                 {
                     if (u >= 0)
                     {
-                        double cap = atof(work.rEdgeAttr(work.find(u, v), 0).c_str()) - maxflow;
+                        int ei = work.find(u, v);
+                        double cap = edgeCapacity[ei] - maxflow;
                         if (cap <= 0)
                         {
                             // link capacity filled, remove
@@ -683,9 +704,7 @@ namespace raven
                         }
                         else
                         {
-                            work.wEdgeAttr(
-                                u, v,
-                                {std::to_string(cap)});
+                            edgeCapacity[ei] = cap;
                         }
                     }
                     u = v;
@@ -699,11 +718,11 @@ namespace raven
             {
                 double f;
                 if (work.dest(ei) == -1)
-                    f = atof(g.rEdgeAttr(ei, 0).c_str());
+                    f = edgeWeight[ei];
                 else
                 {
-                    double oc = atof(g.rEdgeAttr(ei, 0).c_str());
-                    double wc = atof(work.rEdgeAttr(ei, 0).c_str());
+                    double oc = edgeWeight[ei];
+                    double wc = edgeCapacity[ei];
                     f = oc - wc;
                 }
 
@@ -719,6 +738,7 @@ namespace raven
 
         double multiflows(
             const cGraph &g,
+            const std::vector<double> &edgeCapacity,
             const std::vector<int> &vsource,
             int end)
         {
@@ -728,6 +748,7 @@ namespace raven
             {
                 totalmultiflow += flows(
                     g,
+                    edgeCapacity,
                     s,
                     end,
                     vEdgeFlow);
@@ -736,7 +757,8 @@ namespace raven
         }
 
         std::vector<std::vector<int>> sourceToSink(
-            const cGraph &g)
+            const cGraph &g,
+            const std::vector<double> &edgeWeight)
         {
             std::vector<std::vector<int>> ret;
 
@@ -758,7 +780,7 @@ namespace raven
                 // find path to every other vertex
                 std::vector<double> dist;
                 std::vector<int> pred;
-                dijsktra(g, vi, dist, pred);
+                dijsktra(g, edgeWeight, vi, dist, pred);
 
                 // find connected sinks
                 std::vector<int> vConnected;
@@ -773,7 +795,10 @@ namespace raven
             return ret;
         }
 
-        double probs(cGraph &g, int end)
+        double probs(
+            cGraph &g,
+            const std::vector<double> &edgeWeight,
+            int end)
         {
             if (!g.isDirected())
                 throw std::runtime_error(
@@ -798,6 +823,7 @@ namespace raven
                 // iterate over all paths from starting node to target node
                 for (auto &path : allPaths(
                          g,
+                         edgeWeight,
                          vi,
                          end))
                 {
@@ -824,7 +850,7 @@ namespace raven
                             // it is the product of the source node proabability and the link probability
                             vprob.push_back(
                                 atof(prevNodeProb.c_str()) *
-                                atof(g.rEdgeAttr(g.find(m, n), 0).c_str()));
+                                edgeWeight[g.find(m, n)]);
                         }
                         // check if there is enough information
                         // to calculate the probability for this node
@@ -870,7 +896,8 @@ namespace raven
 
             return atof(g.rVertexAttr(end, 0).c_str());
         }
-        std::vector<std::string> alloc(cGraph &g)
+        std::vector<std::string> alloc(
+            cGraph &g)
         {
             // identify unique agents and tasks
             std::set<int> setAgent, setTask;
@@ -891,12 +918,11 @@ namespace raven
                 g.add(task, end);
 
             // set capacity of every link to 1
-            for (int ei = 0; ei < g.edgeCount(); ei++)
-                g.wEdgeAttr(ei, {"1"});
+            std::vector<double> edgeWeight(g.edgeCount(), 1);
 
             // assign agents to tasks by calculating the maximum flow
             std::vector<int> vEdgeFlow;
-            flows(g, start, end, vEdgeFlow);
+            flows(g, edgeWeight, start, end, vEdgeFlow);
 
             std::vector<std::string> ret;
             for (int ei = 0; ei < g.edgeCount(); ei++)
@@ -1177,7 +1203,7 @@ namespace raven
 
         int cTSP::edgeWeight(int i, int j) const
         {
-            return rEdgeAttrInt(g, i, j, 0);
+            // TODO            return rEdgeAttrInt(g, i, j, 0);
             return 0;
         }
 

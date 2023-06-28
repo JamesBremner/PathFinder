@@ -104,6 +104,7 @@ namespace raven
 
                 spanTree = spanningTree(
                     *g,
+                    {},                             // TODO
                     g->userName(spanTreeRoot));
                 if (!spanTree.vertexCount())
                     continue;
@@ -203,10 +204,11 @@ namespace raven
                 if (spanVisited[spanTree.find(g->userName(target))])
                     continue;
 
-                // find bets path  from last node in tour
+                // find best path from last node in tour
                 // allowing node revisits
                 auto pathret = path(
                     spanTree,
+                    {},
                     spanTree.find(g->userName(tour.back())),
                     spanTree.find(g->userName(target)));
 

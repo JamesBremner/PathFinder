@@ -146,6 +146,7 @@ namespace raven
 
         graph_calc readfile(
             cGraph &g,
+            std::vector<double>& edgeWeight,
             const std::string &fname);
 
         /// @brief read edge attribute as integer
@@ -164,6 +165,7 @@ namespace raven
 
         void dijsktra(
             const cGraph &g,
+            const std::vector<double>& edgeWeight,
             int start,
             std::vector<double> &dist,
             std::vector<int> &pred);
@@ -178,6 +180,7 @@ namespace raven
         std::pair<std::vector<int>, double>
         path(
             const cGraph &g,
+            const std::vector<double>& edgeWeight,
             const std::string &startName,
             const std::string &endName);
 
@@ -190,12 +193,14 @@ namespace raven
         std::vector<std::vector<int>>
         allPaths(
             const cGraph &g,
+            const std::vector<double>& edgeWeight,
             int start,
             int end);
 
         std::pair<std::vector<int>, double>
         path(
             const cGraph &g,
+            const std::vector<double>& edgeWeight,
             int start,
             int end);
 
@@ -207,6 +212,7 @@ namespace raven
         cGraph
         spanningTree(
             const cGraph &g,
+            const std::vector<double>& edgeWeight,
             const std::string &startName);
 
         /// @brief depth first search
@@ -261,6 +267,7 @@ namespace raven
 
         double flows(
             const cGraph &g,
+            const std::vector<double>& edgeCapacity,
             int start,
             int end,
             std::vector<int> &vEdgeFlow);
@@ -273,6 +280,7 @@ namespace raven
 
         double multiflows(
             const cGraph &g,
+            const std::vector<double>& edgeCapacity,
             const std::vector<int> &vsource,
             int end);
 
@@ -283,9 +291,13 @@ namespace raven
         /// A source has a zero in-degree, a sink has a zero out-degree
 
         std::vector<std::vector<int>> sourceToSink(
-            const cGraph &g);
+            const cGraph &g,
+            const std::vector<double>& edgeWeight);
 
-        double probs(cGraph &g, int end);
+        double probs(
+            cGraph &g,
+            const std::vector<double>& edgeWeight,
+             int end);
 
         std::vector<std::string> alloc(cGraph &g);
 

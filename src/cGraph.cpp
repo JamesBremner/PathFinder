@@ -19,8 +19,8 @@ namespace raven
             vInEdges.clear();
             vVertexAttr.clear();
             vVertexName.clear();
-            mapEdgeAttr.clear();
-            vEdgeAttr.clear();
+            mapEdge.clear();
+            lastEdgeIndex = -1;
         }
         int cGraph::add(const std::string &name)
         {
@@ -70,19 +70,19 @@ namespace raven
             // add edge
             vOutEdges[s].push_back(d);
             vInEdges[d].push_back(s);
-            mapEdgeAttr.insert(mapEdgeAttr_t::value_type(std::make_pair(s, d), vEdgeAttr.size()));
-            vEdgeAttr.push_back({});
+            lastEdgeIndex++;
+            mapEdge.insert(mapEdge_t::value_type(std::make_pair(s, d), lastEdgeIndex));
 
             if (fDirected)
-                return vEdgeAttr.size() - 1;
+                return lastEdgeIndex;
 
             // add reverse edge
             vOutEdges[d].push_back(s);
             vInEdges[s].push_back(d);
-            mapEdgeAttr.insert(mapEdgeAttr_t::value_type(std::make_pair(d, s), vEdgeAttr.size()));
-            vEdgeAttr.push_back({});
+            lastEdgeIndex++;
+            mapEdge.insert(mapEdge_t::value_type(std::make_pair(s, d), lastEdgeIndex));
 
-            return vEdgeAttr.size() - 2;
+            return lastEdgeIndex - 1;
         }
 
         void cGraph::wVertexAttr(int vi, const std::vector<std::string> vAttr)
@@ -91,17 +91,6 @@ namespace raven
                 throw std::runtime_error(
                     "cGraph::wVertexAttr bad vertex index");
             vVertexAttr[vi] = vAttr;
-        }
-        void cGraph::wEdgeAttr(int ei, const std::vector<std::string> vAttr)
-        {
-            if (0 > ei || ei >= vEdgeAttr.size())
-                throw std::runtime_error(
-                    "cGraph::wEdgeAttr bad edge index");
-            vEdgeAttr[ei] = vAttr;
-        }
-        void cGraph::wEdgeAttr(int s, int d, const std::vector<std::string> vAttr)
-        {
-            wEdgeAttr(find(s, d), vAttr);
         }
 
         void cGraph::remove(int s, int d)
@@ -115,7 +104,6 @@ namespace raven
                 // and no work is needed
                 return;
             }
-            vEdgeAttr[find(s, d)] = {};
 
             // remove from src out edges
             auto it = std::find(vOutEdges[s].begin(), vOutEdges[s].end(), d);
@@ -127,16 +115,19 @@ namespace raven
             if (it != vInEdges[d].end())
                 vInEdges[d].erase(it);
 
+            mapEdge.erase( mapEdge.find(std::make_pair(s,d)));
+
             if (fDirected)
                 return;
-
+ 
             it = std::find(vOutEdges[d].begin(), vOutEdges[d].end(), s);
             if (it != vOutEdges[d].end())
                 vOutEdges[d].erase(it);
             it = std::find(vInEdges[s].begin(), vInEdges[s].end(), d);
             if (it != vInEdges[s].end())
                 vInEdges[s].erase(it);
-            vEdgeAttr[find(d, s)] = {};
+            mapEdge.erase( mapEdge.find(std::make_pair(d,s)));
+
         }
         void cGraph::remove(const std::string &src, const std::string &dst)
         {
@@ -175,14 +166,10 @@ namespace raven
         }
         int cGraph::find(int s, int d) const
         {
-            try
-            {
-                return mapEdgeAttr.at(std::make_pair(s, d));
-            }
-            catch (...)
-            {
+            auto it = mapEdge.find( std::make_pair(s,d));
+            if( it == mapEdge.end() )
                 return -1;
-            }
+            return it->second;
         }
         int cGraph::find(const std::string &src, const std::string &dst) const
         {
@@ -210,19 +197,19 @@ namespace raven
 
         int cGraph::dest(int ei) const
         {
-            auto it = mapEdgeAttr.begin();
-            for (; it != mapEdgeAttr.end(); it++)
-                if (it->second == ei)
-                    return it->first.second;
+            // auto it = mapEdgeAttr.begin();
+            // for (; it != mapEdgeAttr.end(); it++)
+            //     if (it->second == ei)
+            //         return it->first.second;
 
             return -1;
         }
         int cGraph::src(int ei) const
         {
-            auto it = mapEdgeAttr.begin();
-            for (; it != mapEdgeAttr.end(); it++)
-                if (it->second == ei)
-                    return it->first.first;
+            // auto it = mapEdgeAttr.begin();
+            // for (; it != mapEdgeAttr.end(); it++)
+            //     if (it->second == ei)
+            //         return it->first.first;
 
             return -1;
         }
@@ -231,14 +218,6 @@ namespace raven
             if (ai >= vVertexAttr[vi].size())
                 return "";
             return vVertexAttr[vi][ai];
-        }
-        std::string cGraph::rEdgeAttr(int ei, int ai) const
-        {
-            if (ei < 0)
-                return "";
-            if (0 > ai || ai > (int)vEdgeAttr[ei].size() - 1)
-                return "";
-            return vEdgeAttr[ei][ai];
         }
 
         std::vector<std::pair<int, int>>

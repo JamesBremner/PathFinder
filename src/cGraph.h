@@ -19,12 +19,12 @@ namespace raven
                 fDirected = f;
             }
 
-            void startName( const std::string& name )
+            void startName(const std::string &name)
             {
                 myStartName = name;
             }
 
-            void endName( const std::string& name )
+            void endName(const std::string &name)
             {
                 myEndName = name;
             }
@@ -45,8 +45,8 @@ namespace raven
             int add(const std::string &scr, const std::string &dst);
 
             /* @brief add a new edge between vertex indices
-            /// @param s 
-            /// @param d 
+            /// @param s
+            /// @param d
             /// @return edge index
 
             If the vertices do not exist, then new vertices are added named V(vertex index)
@@ -56,15 +56,13 @@ namespace raven
             It should only be used for constructing large graphs
             where sanity can be assumed and performance is important
             */
-            int add( int s, int d );
+            int add(int s, int d);
 
             void wVertexAttr(int vi, const std::vector<std::string> vAttr);
-            void wEdgeAttr(int ei, const std::vector<std::string> vAttr);
-            void wEdgeAttr(int s, int d, const std::vector<std::string> vAttr);
 
             /* @brief remove an edge
-            /// @param s 
-            /// @param d 
+            /// @param s
+            /// @param d
 
             The edge is removed from the source out edges and the destination in edges ( directed graph )
             */
@@ -72,9 +70,7 @@ namespace raven
             void remove(const std::string &str, const std::string &dst);
 
             /// remove vertex
-            void remove( int removed );
-
-
+            void remove(int removed);
 
             /////////////////////// getters
 
@@ -91,7 +87,7 @@ namespace raven
             }
 
             int find(const std::string &name) const;
-            int find( int s, int d ) const;
+            int find(int s, int d) const;
             int find(const std::string &src, const std::string &dst) const;
 
             std::string userName(int vi) const;
@@ -100,11 +96,10 @@ namespace raven
             std::vector<int> adjacentOut(int vi) const;
             std::vector<int> adjacentIn(int vi) const;
 
-            int dest( int ei ) const;
-            int src( int ei ) const;
+            int dest(int ei) const;
+            int src(int ei) const;
 
             std::string rVertexAttr(int vi, int ai) const;
-            std::string rEdgeAttr(int ei, int ai) const;
 
             /// @brief edges in graph
             /// @return vector of vertex index pairs for vertices that are connected
@@ -113,7 +108,6 @@ namespace raven
             edgeList() const;
 
             std::string text() const;
-
 
         private:
             bool fDirected;
@@ -134,15 +128,14 @@ namespace raven
             std::vector<std::string> vVertexName;
             std::vector<std::vector<std::string>> vVertexAttr;
 
-            /* edge attributes
+            /* edge map
 
-                vEdgeAttr[mapEdgeAttr[src,dst]][ai] is a string representing the aith attribute of the edge src -> dst
+                mapEdgeAttr[src,dst]] is the index of the edge src -> dst
             */
-            typedef std::map<std::pair<int, int>, int> mapEdgeAttr_t;
-
-            mapEdgeAttr_t mapEdgeAttr;
-            std::vector<std::vector<std::string>> vEdgeAttr;
+            int lastEdgeIndex;
+            typedef std::map<std::pair<int, int>, int> mapEdge_t;
+            mapEdge_t mapEdge;
         };
-    
+
     }
 }
