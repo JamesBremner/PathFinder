@@ -65,7 +65,7 @@ namespace raven
                 }
             };
 
-            /// the maze represented as a 2D vector of calls
+            /// the maze represented as a 2D vector of cells
             std::vector<std::vector<cCell>> myMaze;
 
             std::vector<int> myPath;

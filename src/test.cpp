@@ -53,12 +53,11 @@ TEST(salesBBmetric)
     raven::graph::cTSP tpsbb(g);
     auto path = g.userName(tpsbb.calculate());
     std::vector<std::string> exp{"0", "1", "3", "2", "0"};
-    // TODO
-    // CHECK_EQUAL(80,tpsbb.TotalPathEdgeWeight());
-    // CHECK(std::equal(
-    //     exp.begin(),
-    //     exp.end(),
-    //     path.begin()));
+    CHECK_EQUAL(80,tpsbb.TotalPathEdgeWeight());
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        path.begin()));
 }
 TEST(salesBBnotmetric)
 {
@@ -68,12 +67,11 @@ TEST(salesBBnotmetric)
     raven::graph::cTSP tpsbb(g);
     auto path = g.userName(tpsbb.calculate());
     std::vector<std::string> exp{"0", "1", "3", "2", "0"};
-    // TODO
-    // CHECK_EQUAL(27,tpsbb.TotalPathEdgeWeight());
-    // CHECK(std::equal(
-    //     exp.begin(),
-    //     exp.end(),
-    //     path.begin()));
+    CHECK_EQUAL(27,tpsbb.TotalPathEdgeWeight());
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        path.begin()));
 }
 TEST(cliques)
 {
@@ -351,8 +349,7 @@ TEST(removeLink)
     g.add("a", "d");
     CHECK_EQUAL(3, g.edgeCount());
 
-    // TODO
-    //g.remove("b", "c");
+    g.remove("b", "c");
 
     CHECK_EQUAL(2, g.edgeCount());
     CHECK(g.find(g.find("a"), g.find("b")) >= 0);

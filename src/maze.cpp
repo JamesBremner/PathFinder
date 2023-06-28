@@ -11,7 +11,11 @@ int main(int argc, char *argv[])
     P.add("gen", "bin|rec\tgenerate maze with binary or recursive algorithm");
     P.add("rows", "count\trows in generated maze");
     P.add("cols", "count\tcolumns in generated maze");
+    P.add("test1", "\ttest1","bool" );
+    P.add("test2", "\ttest2","bool" );
     P.parse(argc, argv);
+
+    std::cout << P.value("test1") << " " << P.value("test2") << "\n";
 
     auto fname = P.value("solve");
     if (fname.size())

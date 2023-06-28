@@ -278,6 +278,7 @@ void cGUI::calcTour()
     {
         myResultText += myGraph.userName(v) + " -> ";
     }
+    std::cout << myResultText << "\n";
 }
 
 void cGUI::calcSales()

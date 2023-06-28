@@ -80,7 +80,7 @@ namespace raven
             vOutEdges[d].push_back(s);
             vInEdges[s].push_back(d);
             lastEdgeIndex++;
-            mapEdge.insert(mapEdge_t::value_type(std::make_pair(s, d), lastEdgeIndex));
+            mapEdge.insert(mapEdge_t::value_type(std::make_pair(d,s), lastEdgeIndex));
 
             return lastEdgeIndex - 1;
         }
