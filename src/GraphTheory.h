@@ -35,7 +35,9 @@ namespace raven
             // {
             // }
 
-            void calculate(const cGraph &g);
+            void calculate(
+                const cGraph &g,
+                const std::vector<double>& vEdgeWeights);
 
             std::vector<int> getTour() const
             {
@@ -56,6 +58,7 @@ namespace raven
 
         private:
             const cGraph *g;
+            std::vector<double> myEdgeWeights;
             cGraph spanTree;
 
             int dfsStart;

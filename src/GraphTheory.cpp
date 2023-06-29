@@ -425,6 +425,8 @@ namespace raven
             // track visited vertices
             std::vector<bool> visited(g.vertexCount(), false);
 
+            std::vector<double> vEdgeWeight(2 * g.vertexCount(),1);
+
             /* loop until all vertices have been visited
 
             This is required for graphs that are not fully connected
@@ -492,11 +494,11 @@ namespace raven
                             // so the path is forced to go the long way around back to start
                             raven::graph::cGraph temp = g;
                             temp.remove(w, v);
-                            cycle = path(temp, {}, w, v).first;
+                            cycle = path(temp, vEdgeWeight, w, v).first;
                         }
                         else
                         {
-                            cycle = path(g, {}, w, v).first;
+                            cycle = path(g, vEdgeWeight, w, v).first;
                         }
 
                         // ignore "cycles" that just go back and forth over one edge

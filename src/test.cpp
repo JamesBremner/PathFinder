@@ -282,7 +282,7 @@ TEST(tourNodes)
     g.add("a", "d");
     raven::graph::cTourNodes tourer;
 
-    tourer.calculate(g);
+    tourer.calculate(g,{1,1,1,1,1,1});
 
     CHECK_EQUAL(0, tourer.unvisitedCount());
     CHECK_EQUAL(0, tourer.revisitedCount());
@@ -515,7 +515,7 @@ TEST(tourNodes2)
     g.add("c", "d");
     raven::graph::cTourNodes tourer;
 
-    tourer.calculate(g);
+    tourer.calculate(g,{1,1,1,1});
     auto tour = tourer.getTour();
 
     std::vector<std::string> expected{"a", "d", "c", "b"};

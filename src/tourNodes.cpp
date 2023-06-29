@@ -88,9 +88,12 @@ namespace raven
             tour.push_back(v);
         }
 
-        void cTourNodes::calculate(const cGraph &graph)
+        void cTourNodes::calculate(
+            const cGraph &graph,
+            const std::vector<double>& vEdgeWeights)
         {
             g = &graph;
+            myEdgeWeights = std::move(vEdgeWeights);
 
             auto best = tour;
             int bestUnvisited = INT_MAX;
@@ -104,7 +107,7 @@ namespace raven
 
                 spanTree = spanningTree(
                     *g,
-                    {},                             // TODO
+                    myEdgeWeights,                             
                     g->userName(spanTreeRoot));
                 if (!spanTree.vertexCount())
                     continue;
@@ -208,7 +211,7 @@ namespace raven
                 // allowing node revisits
                 auto pathret = path(
                     spanTree,
-                    {},
+                    myEdgeWeights,
                     spanTree.find(g->userName(tour.back())),
                     spanTree.find(g->userName(target)));
 
