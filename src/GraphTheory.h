@@ -104,7 +104,8 @@ namespace raven
         class cTSP
         {
         public:
-            cTSP(raven::graph::cGraph &inputGraph);
+            cTSP(raven::graph::cGraph &inputGraph,
+            const std::vector<double>& vEdgeWeight );
 
             std::vector<int> calculate();
 
@@ -128,6 +129,7 @@ namespace raven
             int final_res;
 
             raven::graph::cGraph& g;
+            const std::vector<double>& myEdgeWeight;
 
             void TSPRec(int curr_bound,
                         int curr_weight,

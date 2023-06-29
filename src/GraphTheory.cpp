@@ -1031,8 +1031,10 @@ namespace raven
             return ret;
         }
 
-        cTSP::cTSP(raven::graph::cGraph &inputGraph)
+        cTSP::cTSP(raven::graph::cGraph &inputGraph,
+                   const std::vector<double> &vEdgeWeight)
             : g(inputGraph),
+              myEdgeWeight(vEdgeWeight),
               final_res(INT_MAX)
         {
         }
@@ -1203,8 +1205,7 @@ namespace raven
 
         int cTSP::edgeWeight(int i, int j) const
         {
-            // TODO            return rEdgeAttrInt(g, i, j, 0);
-            return 0;
+            return myEdgeWeight[g.find(i,j)];
         }
 
     }

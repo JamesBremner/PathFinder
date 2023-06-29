@@ -50,7 +50,7 @@ TEST(salesBBmetric)
     raven::graph::cGraph g;
     std::vector<double> edgeWeight;
     readfile(g, edgeWeight,"../dat/tspmetric.txt");
-    raven::graph::cTSP tpsbb(g);
+    raven::graph::cTSP tpsbb(g,edgeWeight);
     auto path = g.userName(tpsbb.calculate());
     std::vector<std::string> exp{"0", "1", "3", "2", "0"};
     CHECK_EQUAL(80,tpsbb.TotalPathEdgeWeight());
@@ -64,7 +64,7 @@ TEST(salesBBnotmetric)
     raven::graph::cGraph g;
     std::vector<double> edgeWeight;
     readfile(g, edgeWeight, "../dat/tspnotmetric.txt");
-    raven::graph::cTSP tpsbb(g);
+    raven::graph::cTSP tpsbb(g,edgeWeight);
     auto path = g.userName(tpsbb.calculate());
     std::vector<std::string> exp{"0", "1", "3", "2", "0"};
     CHECK_EQUAL(27,tpsbb.TotalPathEdgeWeight());
