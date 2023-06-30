@@ -45,7 +45,6 @@ TEST(add)
     CHECK_EQUAL(1, ba);
 }
 
-
 TEST(probs)
 {
     raven::graph::cGraph g;
@@ -53,11 +52,12 @@ TEST(probs)
     int e = g.add("a", "c");
     e = g.add("b", "c");
 
-    std::vector<double> edgeWeight(2,0.5);
+    std::vector<double> edgeWeight(2, 0.5);
 
     int act = 100 * probs(
-
-.
+                        g,
+                        edgeWeight,
+                        g.find("c"));
 
     CHECK_EQUAL(75, act);
 
@@ -73,13 +73,13 @@ TEST(probs)
     g.clear();
     g.directed();
     edgeWeight.resize(7);
-    edgeWeight[ g.add("u", "c")] = 0.3;
-    edgeWeight[ g.add("u", "d")] = 0.5;
-    edgeWeight[ g.add("c", "a")] = 0.2;
-    edgeWeight[ g.add("c", "b")] = 0.2;
-    edgeWeight[ g.add("d", "b")] = 0.4;
-    edgeWeight[ g.add("a", "v")] = 0.1;
-    edgeWeight[ g.add("b", "v")] = 0.1;
+    edgeWeight[g.add("u", "c")] = 0.3;
+    edgeWeight[g.add("u", "d")] = 0.5;
+    edgeWeight[g.add("c", "a")] = 0.2;
+    edgeWeight[g.add("c", "b")] = 0.2;
+    edgeWeight[g.add("d", "b")] = 0.4;
+    edgeWeight[g.add("a", "v")] = 0.1;
+    edgeWeight[g.add("b", "v")] = 0.1;
 
     act = 100 * probs(
                     g,
@@ -88,16 +88,15 @@ TEST(probs)
     CHECK_EQUAL(3, act);
 }
 
-
 TEST(salesBBmetric)
 {
     raven::graph::cGraph g;
     std::vector<double> edgeWeight;
-    readfile(g, edgeWeight,"../dat/tspmetric.txt");
-    raven::graph::cTSP tpsbb(g,edgeWeight);
+    readfile(g, edgeWeight, "../dat/tspmetric.txt");
+    raven::graph::cTSP tpsbb(g, edgeWeight);
     auto path = g.userName(tpsbb.calculate());
     std::vector<std::string> exp{"0", "1", "3", "2", "0"};
-    CHECK_EQUAL(80,tpsbb.TotalPathEdgeWeight());
+    CHECK_EQUAL(80, tpsbb.TotalPathEdgeWeight());
     CHECK(std::equal(
         exp.begin(),
         exp.end(),
@@ -108,10 +107,10 @@ TEST(salesBBnotmetric)
     raven::graph::cGraph g;
     std::vector<double> edgeWeight;
     readfile(g, edgeWeight, "../dat/tspnotmetric.txt");
-    raven::graph::cTSP tpsbb(g,edgeWeight);
+    raven::graph::cTSP tpsbb(g, edgeWeight);
     auto path = g.userName(tpsbb.calculate());
     std::vector<std::string> exp{"0", "1", "3", "2", "0"};
-    CHECK_EQUAL(27,tpsbb.TotalPathEdgeWeight());
+    CHECK_EQUAL(27, tpsbb.TotalPathEdgeWeight());
     CHECK(std::equal(
         exp.begin(),
         exp.end(),
@@ -326,25 +325,25 @@ TEST(tourNodes)
     g.add("a", "d");
     raven::graph::cTourNodes tourer;
 
-    tourer.calculate(g,{1,1,1,1,1,1});
+    tourer.calculate(g, {1, 1, 1, 1, 1, 1});
 
     CHECK_EQUAL(0, tourer.unvisitedCount());
     CHECK_EQUAL(0, tourer.revisitedCount());
 
     auto tour = tourer.getTour();
     CHECK_EQUAL(4, tour.size());
-    // std::vector<std::string> expected{"c", "b", "d", "a"};
-    // auto actual = g.userName(tour);
-    // CHECK(std::equal(
-    //     expected.begin(),
-    //     expected.end(),
-    //     actual.begin()));
+    std::vector<std::string> expected{"c", "b", "a", "d"};
+    auto actual = g.userName(tour);
+    CHECK(std::equal(
+        expected.begin(),
+        expected.end(),
+        actual.begin()));
 }
 
 TEST(flows)
 {
     raven::graph::cGraph g;
-    std::vector<double> edgeWeight(1,7);
+    std::vector<double> edgeWeight(1, 7);
     g.directed();
 
     g.add("a", "b");
@@ -400,14 +399,14 @@ TEST(removeLink)
     CHECK(g.find(g.find("b"), g.find("b")) == -1);
     CHECK(g.find(g.find("a"), g.find("d")) >= 0);
 
-    //     ei = g.find(g.find("a"), g.find("d"));
-    //     CHECK(ei >= 0);
+    int ei = g.find(g.find("a"), g.find("d"));
+    CHECK(ei >= 0);
 
-    //     g.remove(ei);
+    g.remove(ei);
 
-    //     CHECK(g.find(g.find("a"), g.find("b")) >= 0);
-    //     CHECK(g.find(g.find("b"), g.find("b")) == -1);
-    //     CHECK(g.find(g.find("a"), g.find("d")) >= -1);
+    CHECK(g.find(g.find("a"), g.find("b")) >= 0);
+    CHECK(g.find(g.find("b"), g.find("b")) == -1);
+    CHECK(g.find(g.find("a"), g.find("d")) >= -1);
 }
 
 TEST(edgebyindex)
@@ -433,10 +432,8 @@ TEST(attributes)
     g.wVertexAttr(v1, {"10", "11", "12"});
     g.wVertexAttr(v2, {"20", "21", "22"});
 
-
     CHECK_EQUAL("11", g.rVertexAttr(v1, 1));
     CHECK_EQUAL("22", g.rVertexAttr(v2, 2));
-
 }
 
 TEST(adjacent)
@@ -468,13 +465,13 @@ TEST(dijsktra)
     g.add("a", "b");
     g.add("b", "c");
     g.add("a", "d");
-    std::vector<double> edgeWeight(3,1);
+    std::vector<double> edgeWeight(3, 1);
 
     std::vector<std::string> expected{"a", "b", "c"};
     CHECK(std::equal(
         expected.begin(),
         expected.end(),
-        g.userName(path(g, edgeWeight,"a", "c").first).begin()));
+        g.userName(path(g, edgeWeight, "a", "c").first).begin()));
 }
 TEST(allpaths)
 {
@@ -483,8 +480,7 @@ TEST(allpaths)
     g.add("b", "c");
     g.add("a", "d");
     g.add("d", "c");
-    std::vector<double> edgeWeight(8,1);
-
+    std::vector<double> edgeWeight(8, 1);
 
     auto act = allPaths(
         g, edgeWeight,
@@ -511,7 +507,7 @@ TEST(spanningTree)
     g.add("a", "b");
     g.add("b", "c");
     g.add("a", "d");
-    std::vector<double> edgeWeight(3,1);
+    std::vector<double> edgeWeight(3, 1);
 
     std::vector<std::pair<int, int>> expected{
         {0, 1},
@@ -559,7 +555,7 @@ TEST(tourNodes2)
     g.add("c", "d");
     raven::graph::cTourNodes tourer;
 
-    tourer.calculate(g,{1,1,1,1});
+    tourer.calculate(g, {1, 1, 1, 1});
     auto tour = tourer.getTour();
 
     std::vector<std::string> expected{"a", "d", "c", "b"};
@@ -578,9 +574,9 @@ TEST(sourceToSink)
     g.add("b", "e");
     g.add("b", "d");
     g.add("c", "d");
-    std::vector<double> edgeWeight(4,1);
+    std::vector<double> edgeWeight(4, 1);
 
-    auto res = sourceToSink(g,edgeWeight);
+    auto res = sourceToSink(g, edgeWeight);
 
     auto dbg = g.userName(res[1]);
 
