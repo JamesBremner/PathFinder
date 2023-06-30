@@ -34,6 +34,7 @@ OBJ_pathfinder = \
 	$(ODIR)/cGraph.o \
 	$(ODIR)/GraphTheory.o \
 	$(ODIR)/tourNodes.o \
+	$(ODIR)/astar.o \
 	$(ODIR)/GraphViz.o \
 	$(ODIR)/readfile.o
 

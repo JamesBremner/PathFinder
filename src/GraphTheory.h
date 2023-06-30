@@ -37,7 +37,7 @@ namespace raven
 
             void calculate(
                 const cGraph &g,
-                const std::vector<double>& vEdgeWeights);
+                const std::vector<double> &vEdgeWeights);
 
             std::vector<int> getTour() const
             {
@@ -108,7 +108,7 @@ namespace raven
         {
         public:
             cTSP(raven::graph::cGraph &inputGraph,
-            const std::vector<double>& vEdgeWeight );
+                 const std::vector<double> &vEdgeWeight);
 
             std::vector<int> calculate();
 
@@ -131,8 +131,8 @@ namespace raven
             // Stores the final minimum weight of shortest tour.
             int final_res;
 
-            raven::graph::cGraph& g;
-            const std::vector<double>& myEdgeWeight;
+            raven::graph::cGraph &g;
+            const std::vector<double> &myEdgeWeight;
 
             void TSPRec(int curr_bound,
                         int curr_weight,
@@ -151,7 +151,7 @@ namespace raven
 
         graph_calc readfile(
             cGraph &g,
-            std::vector<double>& edgeWeight,
+            std::vector<double> &edgeWeight,
             const std::string &fname);
 
         /// @brief read edge attribute as integer
@@ -170,7 +170,7 @@ namespace raven
 
         void dijsktra(
             const cGraph &g,
-            const std::vector<double>& edgeWeight,
+            const std::vector<double> &edgeWeight,
             int start,
             std::vector<double> &dist,
             std::vector<int> &pred);
@@ -185,7 +185,7 @@ namespace raven
         std::pair<std::vector<int>, double>
         path(
             const cGraph &g,
-            const std::vector<double>& edgeWeight,
+            const std::vector<double> &edgeWeight,
             const std::string &startName,
             const std::string &endName);
 
@@ -198,14 +198,14 @@ namespace raven
         std::vector<std::vector<int>>
         allPaths(
             const cGraph &g,
-            const std::vector<double>& edgeWeight,
+            const std::vector<double> &edgeWeight,
             int start,
             int end);
 
         std::pair<std::vector<int>, double>
         path(
             const cGraph &g,
-            const std::vector<double>& edgeWeight,
+            const std::vector<double> &edgeWeight,
             int start,
             int end);
 
@@ -217,7 +217,7 @@ namespace raven
         cGraph
         spanningTree(
             const cGraph &g,
-            const std::vector<double>& edgeWeight,
+            const std::vector<double> &edgeWeight,
             const std::string &startName);
 
         /// @brief depth first search
@@ -272,7 +272,7 @@ namespace raven
 
         double flows(
             const cGraph &g,
-            const std::vector<double>& edgeCapacity,
+            const std::vector<double> &edgeCapacity,
             int start,
             int end,
             std::vector<int> &vEdgeFlow);
@@ -285,7 +285,7 @@ namespace raven
 
         double multiflows(
             const cGraph &g,
-            const std::vector<double>& edgeCapacity,
+            const std::vector<double> &edgeCapacity,
             const std::vector<int> &vsource,
             int end);
 
@@ -297,12 +297,12 @@ namespace raven
 
         std::vector<std::vector<int>> sourceToSink(
             const cGraph &g,
-            const std::vector<double>& edgeWeight);
+            const std::vector<double> &edgeWeight);
 
         double probs(
             cGraph &g,
-            const std::vector<double>& edgeWeight,
-             int end);
+            const std::vector<double> &edgeWeight,
+            int end);
 
         std::vector<std::string> alloc(cGraph &g);
 
@@ -337,5 +337,33 @@ namespace raven
         void RunDOT(
             cGraph &g,
             const std::string &pathViz);
+
+        /// @brief Implement the A* algorithm with constant edge weights
+        /// @param g graph to be searched https://github.com/JamesBremner/PathFinder
+        /// @param edgeWeight function calculates edge weight based on edge index
+        /// @param start vertex index
+        /// @param goal vertex index
+        /// @param heuristic function calculates distance estimate from vertex to goal
+        /// @return vector of vertex indices on path from start to goal
+
+        std::vector<int> astar(
+            raven::graph::cGraph &g,
+            std::function<double(int)> edgeWeight,
+            int start, int goal,
+            std::function<double(int)> heuristic);
+
+        /// @brief Implement the A* algorithm with dynamic edge weights
+        /// @param g graph to be searched https://github.com/JamesBremner/PathFinder
+        /// @param dynWeight function calculates edge weight based on path so far
+        /// @param start vertex index
+        /// @param goal vertex index
+        /// @param heuristic function calculates distance estimate from vertex to goal
+        /// @return vector of vertex indices on path from start to goal
+
+        std::vector<int> astarDynWeights(
+            raven::graph::cGraph &g,
+            std::function<double(int, const std::vector<int> &)> dynWeight,
+            int start, int goal,
+            std::function<double(int)> heuristic);
     }
 }
