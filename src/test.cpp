@@ -45,6 +45,50 @@ TEST(add)
     CHECK_EQUAL(1, ba);
 }
 
+
+TEST(probs)
+{
+    raven::graph::cGraph g;
+    g.directed();
+    int e = g.add("a", "c");
+    e = g.add("b", "c");
+
+    std::vector<double> edgeWeight(2,0.5);
+
+    int act = 100 * probs(
+
+.
+
+    CHECK_EQUAL(75, act);
+
+    //     l u c 0.3
+    // l u d 0.5
+    // l c a 0.2
+    // l c b 0.2
+    // l d b 0.4
+    // l a v 0.1
+    // l b v 0.1
+    // e v
+
+    g.clear();
+    g.directed();
+    edgeWeight.resize(7);
+    edgeWeight[ g.add("u", "c")] = 0.3;
+    edgeWeight[ g.add("u", "d")] = 0.5;
+    edgeWeight[ g.add("c", "a")] = 0.2;
+    edgeWeight[ g.add("c", "b")] = 0.2;
+    edgeWeight[ g.add("d", "b")] = 0.4;
+    edgeWeight[ g.add("a", "v")] = 0.1;
+    edgeWeight[ g.add("b", "v")] = 0.1;
+
+    act = 100 * probs(
+                    g,
+                    edgeWeight,
+                    g.find("v"));
+    CHECK_EQUAL(3, act);
+}
+
+
 TEST(salesBBmetric)
 {
     raven::graph::cGraph g;
@@ -439,26 +483,26 @@ TEST(allpaths)
     g.add("b", "c");
     g.add("a", "d");
     g.add("d", "c");
-    std::vector<double> edgeWeight(4,1);
+    std::vector<double> edgeWeight(8,1);
 
-    // TODO
-    // auto act = allPaths(
-    //     g, edgeWeight,
-    //     g.find("a"), g.find("c"));
 
-    // CHECK_EQUAL(2, act.size());
+    auto act = allPaths(
+        g, edgeWeight,
+        g.find("a"), g.find("c"));
 
-    // std::vector<std::string> expected1{"a", "d", "c"};
-    // CHECK(std::equal(
-    //     expected1.begin(),
-    //     expected1.end(),
-    //     g.userName(act[0]).begin()));
+    CHECK_EQUAL(2, act.size());
 
-    // std::vector<std::string> expected2{"a", "b", "c"};
-    // CHECK(std::equal(
-    //     expected2.begin(),
-    //     expected2.end(),
-    //     g.userName(act[1]).begin()));
+    std::vector<std::string> expected1{"a", "d", "c"};
+    CHECK(std::equal(
+        expected1.begin(),
+        expected1.end(),
+        g.userName(act[0]).begin()));
+
+    std::vector<std::string> expected2{"a", "b", "c"};
+    CHECK(std::equal(
+        expected2.begin(),
+        expected2.end(),
+        g.userName(act[1]).begin()));
 }
 
 TEST(spanningTree)
@@ -559,49 +603,6 @@ TEST(cGrid2D)
     g.extDim(2, 1);
     CHECK_EQUAL(5, g.index(2, 1));
     CHECK_EQUAL(4, g.index(1, 1));
-}
-
-TEST(probs)
-{
-    raven::graph::cGraph g;
-    g.directed();
-    int e = g.add("a", "c");
-    e = g.add("b", "c");
-
-    std::vector<double> edgeWeight(2,0.5);
-
-    int act = 100 * probs(
-                        g,
-                        edgeWeight,
-                        g.find("c"));
-
-    CHECK_EQUAL(75, act);
-
-    //     l u c 0.3
-    // l u d 0.5
-    // l c a 0.2
-    // l c b 0.2
-    // l d b 0.4
-    // l a v 0.1
-    // l b v 0.1
-    // e v
-
-    g.clear();
-    g.directed();
-    edgeWeight.resize(7);
-    edgeWeight[ g.add("u", "c"),0.3];
-    edgeWeight[ g.add("u", "d"),0.5];
-    edgeWeight[ g.add("c", "a"),0.2];
-    edgeWeight[ g.add("c", "b"),0.2];
-    edgeWeight[ g.add("d", "b"),0.4];
-    edgeWeight[ g.add("a", "v"),0.1];
-    edgeWeight[ g.add("b", "v"),0.1];
-
-    act = 100 * probs(
-                    g,
-                    edgeWeight,
-                    g.find("v"));
-    CHECK_EQUAL(3, act);
 }
 
 TEST(alloc)

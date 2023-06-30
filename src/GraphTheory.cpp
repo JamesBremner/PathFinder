@@ -425,7 +425,13 @@ namespace raven
             // track visited vertices
             std::vector<bool> visited(g.vertexCount(), false);
 
-            std::vector<double> vEdgeWeight(2 * g.vertexCount(),1);
+            /* cycles exist whatever the edge weights
+            So construct default edge weights for all edges
+            allowing for all possible edges
+            */
+            std::vector<double> vEdgeWeight(
+                2 * g.vertexCount()* g.vertexCount(),
+                1);
 
             /* loop until all vertices have been visited
 
