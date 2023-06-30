@@ -85,6 +85,7 @@ private:
     wex::panel &myplLayout;             // display layout ( graphViz )
 
     raven::graph::cGraph myGraph;       // the input graph
+    std::vector<double> myEdgeWeight;
     raven::graph::cGraph myResultGraph; // the result graph
 
     raven::graph::cTourNodes *mypTourNodes;

@@ -13,7 +13,7 @@ cGUI::cGUI()
           {50, 50, 1000, 700}),
       myplText(wex::maker::make<wex::panel>(fm)),
       myplLayout(wex::maker::make<wex::panel>(fm)),
-      myCalcOption( raven::graph::graph_calc::none)
+      myCalcOption(raven::graph::graph_calc::none)
 {
     myplText.move(0, 0, 800, 750);
     myplLayout.move(0, 100, 800, 750);
@@ -96,7 +96,10 @@ void cGUI::calculate()
         {
             // raven::set::cRunWatch::Start();
 
-            myCalcOption = readfile(myGraph,myfname);
+            myCalcOption = readfile(
+                myGraph,
+                myEdgeWeight,
+                myfname);
 
             myplText.text("Calculating...");
             myplText.update();
@@ -104,59 +107,59 @@ void cGUI::calculate()
             switch (myCalcOption)
             {
 
-            case  raven::graph::graph_calc::cost:
+            case raven::graph::graph_calc::cost:
                 calcCost();
                 break;
 
-            case  raven::graph::graph_calc::cycle:
+            case raven::graph::graph_calc::cycle:
                 calcCycle();
                 break;
 
-            case  raven::graph::graph_calc::tour:
+            case raven::graph::graph_calc::tour:
                 calcTour();
                 break;
 
-            case  raven::graph::graph_calc::spans:
+            case raven::graph::graph_calc::spans:
                 calcSpan();
                 break;
 
-            case  raven::graph::graph_calc::sales:
+            case raven::graph::graph_calc::sales:
                 calcSales();
                 break;
 
-            case  raven::graph::graph_calc::cliques:
+            case raven::graph::graph_calc::cliques:
                 calcCliques();
                 break;
 
-            case  raven::graph::graph_calc::flows:
+            case raven::graph::graph_calc::flows:
                 calcFlows();
                 break;
 
-            case  raven::graph::graph_calc::multiflows:
+            case raven::graph::graph_calc::multiflows:
                 calcMultiFlows();
                 break;
 
-            case  raven::graph::graph_calc::allpaths:
+            case raven::graph::graph_calc::allpaths:
                 calcAllPaths();
                 break;
 
-            case  raven::graph::graph_calc::probs:
+            case raven::graph::graph_calc::probs:
                 calcProbs();
                 break;
 
-            case  raven::graph::graph_calc::alloc:
+            case raven::graph::graph_calc::alloc:
                 calcAlloc();
                 break;
 
-            case  raven::graph::graph_calc::euler:
+            case raven::graph::graph_calc::euler:
                 calcEuler();
                 break;
 
-            case  raven::graph::graph_calc::cover:
+            case raven::graph::graph_calc::cover:
                 calcCover();
                 break;
 
-            case  raven::graph::graph_calc::none:
+            case raven::graph::graph_calc::none:
                 break;
             }
         }
@@ -174,7 +177,7 @@ void cGUI::calculate()
 void cGUI::calcCost()
 {
     myStartName.clear();
-    myStartName.push_back( myGraph.startName());
+    myStartName.push_back(myGraph.startName());
     myEndName = myGraph.endName();
     if (myStartName.empty() || myEndName.empty())
         throw std::runtime_error("No path endpoints");
@@ -183,6 +186,7 @@ void cGUI::calcCost()
 
     auto result = path(
         myGraph,
+        myEdgeWeight,
         myStartName.back(),
         myEndName);
 
@@ -212,7 +216,10 @@ void cGUI::calcSpan()
         myStartName.push_back(myGraph.userName(0));
     else
         myStartName.push_back(myGraph.startName());
-    myResultGraph = spanningTree(myGraph, myStartName.back());
+    myResultGraph = spanningTree(
+        myGraph,
+        myEdgeWeight,
+        myStartName.back());
     myViewType = eView::span;
     auto viz = pathViz(
         myResultGraph,
@@ -271,7 +278,7 @@ void cGUI::calcTour()
 {
     delete mypTourNodes;
     mypTourNodes = new raven::graph::cTourNodes();
-    mypTourNodes->calculate(myGraph);
+    mypTourNodes->calculate(myGraph,myEdgeWeight);
 
     myResultText = "";
     for (int v : mypTourNodes->getTour())
@@ -303,8 +310,8 @@ void cGUI::calcSales()
                 double y2 = atof(myGraph.rVertexAttr(v2, 1).c_str());
                 double dx = x2 - x1;
                 double dy = y2 - y1;
-                std::string dsq = std::to_string(dx * dx + dy * dy);
-                myGraph.wEdgeAttr(myGraph.add(v1, v2), {dsq});
+                double dsq = dx * dx + dy * dy;
+                myEdgeWeight[myGraph.add(v1, v2)] = dsq;
             }
         }
     }
@@ -330,10 +337,11 @@ void cGUI::calcFlows()
 {
     std::vector<int> vEdgeFlow;
     myStartName.clear();
-    myStartName.push_back( myGraph.startName());
+    myStartName.push_back(myGraph.startName());
     myEndName = myGraph.endName();
     double flow = flows(
         myGraph,
+        myEdgeWeight,
         myGraph.find(myStartName.back()),
         myGraph.find(myEndName),
         vEdgeFlow);
@@ -346,6 +354,7 @@ void cGUI::calcMultiFlows()
         vstart.push_back(myGraph.find(n));
     double flow = multiflows(
         myGraph,
+        myEdgeWeight,
         vstart,
         myGraph.find(myEndName));
     myResultText = "Total Flow = " + std::to_string(flow);
@@ -355,6 +364,7 @@ void cGUI::calcProbs()
 {
     double p = probs(
         myGraph,
+        myEdgeWeight,
         myGraph.find(myGraph.endName()));
     myResultText = "Probability " + std::to_string(p);
 }
@@ -465,11 +475,11 @@ void cGUI::drawLayout(PAINTSTRUCT &ps)
     switch (myCalcOption)
     {
 
-    case  raven::graph::graph_calc::cost:
-    case  raven::graph::graph_calc::spans:
-    case  raven::graph::graph_calc::sales:
-    case  raven::graph::graph_calc::euler:
-    case  raven::graph::graph_calc::cycle:
+    case raven::graph::graph_calc::cost:
+    case raven::graph::graph_calc::spans:
+    case raven::graph::graph_calc::sales:
+    case raven::graph::graph_calc::euler:
+    case raven::graph::graph_calc::cycle:
     {
         // fill graph panel with image produced by graphviz
         myplLayout.show(true);
