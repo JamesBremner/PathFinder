@@ -43,6 +43,7 @@ class cObstacle
     std::vector<cOCell *> vN;    ///< nodes to be included in path
 
     raven::graph::cGraph mygraphdata;
+    std::vector<double> myEdgeWeight;
     raven::graph::cTourNodes myRouteCalculator;
     std::vector<std::tuple<std::string, int, int>> myTour;
 

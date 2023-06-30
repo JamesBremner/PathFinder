@@ -133,12 +133,8 @@ void cObstacle::connect()
 
             auto sn1 = std::to_string(n1->ID());
             auto sn2 = std::to_string(n2->ID());
-            mygraphdata.wEdgeAttr(
-                mygraphdata.add(sn1, sn2),
-                {std::to_string(d2)});
-            mygraphdata.wEdgeAttr(
-                mygraphdata.add(sn2, sn1),
-                {std::to_string(d2)});
+            myEdgeWeight[mygraphdata.add(sn1, sn2)] = d2;
+            myEdgeWeight[mygraphdata.add(sn2, sn2)] = d2;
             mygraphdata.wVertexAttr(
                 mygraphdata.find(sn1),
                 {std::to_string(w1), std::to_string(h1)});
@@ -150,7 +146,7 @@ void cObstacle::connect()
 
 void cObstacle::tourNodes()
 {
-    myRouteCalculator.calculate(mygraphdata);
+    myRouteCalculator.calculate(mygraphdata, myEdgeWeight);
     std::cout << "unvisited " << myRouteCalculator.unvisitedCount()
               << ", revisited " << myRouteCalculator.revisitedCount()
               << ", nodes " << mygraphdata.vertexCount()

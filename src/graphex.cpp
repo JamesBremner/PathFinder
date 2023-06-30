@@ -10,6 +10,7 @@
 #include "cRunWatch.h"
 
 raven::graph::cGraph theGraph;
+std::vector<double> theEdgeWeight;
 
 std::vector<std::string> tokenize(const std::string &line)
 {
@@ -136,7 +137,8 @@ void read(const std::vector<std::string> &q)
         return;
     theGraph.directed();
     std::ifstream ifs(q[1]);
-    if (!ifs.is_open()) {
+    if (!ifs.is_open())
+    {
         std::cout << "Cannot open " + q[1] << "\n";
         return;
     }
@@ -179,13 +181,16 @@ void cycles()
 
 void s2s()
 {
-    auto s2s = sourceToSink(theGraph);
+    auto s2s = sourceToSink(theGraph, theEdgeWeight);
     std::cout << s2s.size() << " sources\n";
 }
 
 void span()
 {
-    raven::graph::spanningTree(theGraph, theGraph.userName(0));
+    raven::graph::spanningTree(
+        theGraph,
+        theEdgeWeight,
+        theGraph.userName(0));
 }
 
 void paths()
@@ -195,6 +200,7 @@ void paths()
 
     raven::graph::dijsktra(
         theGraph,
+        theEdgeWeight,
         rand() % theGraph.vertexCount(), // random start vertex
         dist,
         pred);
