@@ -12,6 +12,7 @@ A GUI that reads text files specifying a graph and the path to be found
 
  * __Euler__ Path that traverses every edge exactly once [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Euler)
  * __Costs__  Cheapest or shortest paths between two vertices. [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Costs)
+ * __Explore__ Path in square 2D grid with unkown link costs until reached. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/Explore)
  * __Tour__ Path that visits all vertices. [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Tour)
  * __Cycle__ Find cycles in a graph.  [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Cycles)
  * __Spans__ Find minimum cost edges that cover every vertex. [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Spans)
