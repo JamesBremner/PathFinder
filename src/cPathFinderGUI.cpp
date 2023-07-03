@@ -159,6 +159,10 @@ void cGUI::calculate()
                 calcCover();
                 break;
 
+            case raven::graph::graph_calc::explore:
+                calcExplore();
+                break;
+
             case raven::graph::graph_calc::none:
                 break;
             }
@@ -278,7 +282,7 @@ void cGUI::calcTour()
 {
     delete mypTourNodes;
     mypTourNodes = new raven::graph::cTourNodes();
-    mypTourNodes->calculate(myGraph,myEdgeWeight);
+    mypTourNodes->calculate(myGraph, myEdgeWeight);
 
     myResultText = "";
     for (int v : mypTourNodes->getTour())
@@ -409,6 +413,25 @@ void cGUI::calcCover()
         ss << myGraph.userName(vi) << ", ";
     myResultText = ss.str();
     myViewType = eView::route;
+}
+
+void cGUI::calcExplore()
+{
+    auto path = astar(
+        myGraph,
+        [this](int v) -> double
+        {
+            return myEdgeWeight[v];
+        },
+        myGraph.find(myGraph.startName()),
+        myGraph.find(myGraph.endName()),
+        [this](int v) -> double
+        {
+            return 0;
+        });
+    myResultText = "";
+    for (int v :path)
+        myResultText += myGraph.userName(v) + " -> ";
 }
 void cGUI::draw(PAINTSTRUCT &ps)
 {

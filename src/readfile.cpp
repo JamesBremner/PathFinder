@@ -1,10 +1,12 @@
+#include <string>
 #include <fstream>
 #include "cGraph.h"
 #include "GraphTheory.h"
+#include "cGrid2d.h"
 
 static void readSales(
     raven::graph::cGraph &g,
-    std::vector<double>& edgeWeight,
+    std::vector<double> &edgeWeight,
     std::ifstream &ifs)
 {
     g.clear();
@@ -50,7 +52,7 @@ static void readSales(
 
 static void readCostedLinks(
     raven::graph::cGraph &g,
-    std::vector<double>& edgeWeight,
+    std::vector<double> &edgeWeight,
     std::ifstream &ifs)
 {
     g.clear();
@@ -67,14 +69,15 @@ static void readCostedLinks(
                 throw std::runtime_error(
                     "g ( graph mode ) must be second line");
             ifs >> directed >> same;
-            if( directed == "1")
+            if (directed == "1")
                 g.directed();
             break;
         case 'l':
             ifs >> sn1 >> sn2 >> scost;
             g.add(sn1, sn2);
             edgeWeight.push_back(atof(scost.c_str()));
-            if( same == "1") {
+            if (same == "1")
+            {
                 edgeWeight.push_back(atof(scost.c_str()));
             }
             break;
@@ -162,13 +165,87 @@ static void readCycle(
         ifs >> stype;
     }
 }
+
+static void readExplore(
+    raven::graph::cGraph &g,
+    std::vector<double> &edgeWeight,
+    std::ifstream &ifs)
+{
+    g.clear();
+    g.directed();
+
+    cGrid2D grid;
+    std::vector<int> vBlockCells;
+
+    std::string stype;
+    int dim, sc, sr;
+    ifs >> stype;
+    while (ifs.good())
+    {
+        switch (stype[0])
+        {
+        case 'd':
+        {
+            ifs >> dim;
+            grid.setDim(dim, dim);
+            edgeWeight.resize(8 * dim * dim, 1000);
+            break;
+        }
+        case 'b':
+        {
+            int col, row;
+            ifs >> col >> row;
+            vBlockCells.push_back(grid.index(col, row));
+            break;
+        }
+        case 's':
+            ifs >> sc >> sr;
+            g.startName("c" + std::to_string(sc) + "r" + std::to_string(sr));
+            break;
+        case 'e':
+            ifs >>sc >> sr;
+            g.endName("c" + std::to_string(sc) + "r" + std::to_string(sr));
+            break;
+        }
+        ifs >> stype;
+    }
+    for (
+        int cell = 0;
+        cell < dim * dim;
+        cell++)
+    {
+        int col, row;
+        grid.coords(col, row, cell);
+
+        double w = 1;
+        if (std::find(
+                vBlockCells.begin(),
+                vBlockCells.end(),
+                cell) != vBlockCells.end())
+            w = 1000;
+
+        auto srcname = grid.name(cell);
+
+        for (int r = row - 1; r < row + 2; r++)
+        {
+            for (int c = col - 1; c < col + 2; c++)
+            {
+                if (c == col && r == row)
+                    continue;
+                int i = grid.index(c, r);
+                if (i >= 0)
+                    edgeWeight[g.add(srcname, grid.name(i))] = w;
+            }
+        }
+    }
+}
 namespace raven
 {
     namespace graph
     {
         graph_calc readfile(
             raven::graph::cGraph &g,
-            std::vector<double>& edgeWeight,
+            std::vector<double> &edgeWeight,
             const std::string &fname)
         {
             raven::graph::graph_calc myCalcOption = raven::graph::graph_calc::none;
@@ -272,6 +349,11 @@ namespace raven
             {
                 myCalcOption = graph_calc::cover;
                 readUncostedLinks(g, ifs);
+            }
+            else if (calc.find("explore") != -1)
+            {
+                myCalcOption = graph_calc::explore;
+                readExplore(g, edgeWeight, ifs);
             }
             else
                 throw std::runtime_error(

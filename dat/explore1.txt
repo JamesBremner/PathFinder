@@ -1,0 +1,7 @@
+format explore
+d 5
+b 3 1
+b 3 2
+b 3 3
+s 0 4
+e 4 0

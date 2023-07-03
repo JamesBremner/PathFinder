@@ -25,6 +25,7 @@ namespace raven
             alloc,
             euler,
             cover,
+            explore,
         };
 
         class cTourNodes

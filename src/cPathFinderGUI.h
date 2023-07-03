@@ -119,6 +119,7 @@ private:
     void calcAlloc();
     void calcEuler();
     void calcCover();
+    void calcExplore();
 
     void draw(PAINTSTRUCT &ps);
     void drawLayout(PAINTSTRUCT &ps);
