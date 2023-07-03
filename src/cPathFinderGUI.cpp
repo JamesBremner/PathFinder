@@ -430,8 +430,14 @@ void cGUI::calcExplore()
             return 0;
         });
     myResultText = "";
-    for (int v :path)
+    for (int v : path)
         myResultText += myGraph.userName(v) + " -> ";
+    RunDOT(
+        myGraph,
+        pathViz(
+            myGraph,
+            path,
+            true));
 }
 void cGUI::draw(PAINTSTRUCT &ps)
 {
@@ -503,6 +509,7 @@ void cGUI::drawLayout(PAINTSTRUCT &ps)
     case raven::graph::graph_calc::sales:
     case raven::graph::graph_calc::euler:
     case raven::graph::graph_calc::cycle:
+    case raven::graph::graph_calc::explore:
     {
         // fill graph panel with image produced by graphviz
         myplLayout.show(true);
