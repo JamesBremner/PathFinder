@@ -87,24 +87,23 @@ void cGUI::ConstructMenu()
 
 void cGUI::calculate()
 {
+    raven::graph::sGraphData graphData;
+
     wex::filebox fb(fm);
 
     try
     {
-        myfname = fb.open();
+        graphData.fname = fb.open();
 
         {
             // raven::set::cRunWatch::Start();
 
-            myCalcOption = readfile(
-                myGraph,
-                myEdgeWeight,
-                myfname);
+            readfile( graphData);
 
             myplText.text("Calculating...");
             myplText.update();
 
-            switch (myCalcOption)
+            switch (graphData.option)
             {
 
             case raven::graph::graph_calc::cost:
@@ -180,19 +179,7 @@ void cGUI::calculate()
 }
 void cGUI::calcCost()
 {
-    myStartName.clear();
-    myStartName.push_back(myGraph.startName());
-    myEndName = myGraph.endName();
-    if (myStartName.empty() || myEndName.empty())
-        throw std::runtime_error("No path endpoints");
-    if (!myStartName.size())
-        throw std::runtime_error("No start");
-
-    auto result = path(
-        myGraph,
-        myEdgeWeight,
-        myStartName.back(),
-        myEndName);
+    auto result = path( myGraphData );
 
     if (!result.first.size())
     {
@@ -201,29 +188,22 @@ void cGUI::calcCost()
     }
     myResultText = "";
     for (int v : result.first)
-        myResultText += myGraph.userName(v) + " -> ";
+        myResultText += myGraphData.g.userName(v) + " -> ";
     myResultText += " Cost = " + std::to_string(result.second);
 
     auto viz = pathViz(
-        myGraph,
+        myGraphData.g,
         result.first,
         true);
     RunDOT(
-        myGraph,
+        myGraphData.g,
         viz);
 }
 
 void cGUI::calcSpan()
 {
-    myStartName.clear();
-    if (myGraph.startName().empty())
-        myStartName.push_back(myGraph.userName(0));
-    else
-        myStartName.push_back(myGraph.startName());
-    myResultGraph = spanningTree(
-        myGraph,
-        myEdgeWeight,
-        myStartName.back());
+    myResultGraph = spanningTree( myGraphData );
+
     myViewType = eView::span;
     auto viz = pathViz(
         myResultGraph,
@@ -236,17 +216,12 @@ void cGUI::calcSpan()
 
 void cGUI::calcCycle()
 {
-    int startIndex = -1;
-    if (myStartName.size())
-        startIndex = myGraph.find(myStartName[0]);
-    auto vc = dfs_cycle_finder(
-        myGraph,
-        startIndex);
+    auto vc = dfs_cycle_finder( myGraphData );
 
     myResultText = std::to_string(vc.size()) + " cycles found\n\n";
     for (int k = 0; k < vc.size(); k++)
     {
-        for (auto &sv : myGraph.userName(vc[k]))
+        for (auto &sv : myGraphData.g.userName(vc[k]))
             myResultText += sv + " ";
 
         myResultText += "\n";
@@ -254,23 +229,21 @@ void cGUI::calcCycle()
     myViewType = eView::route;
 
     RunDOT(
-        myGraph,
+        myGraphData.g,
         pathViz(
-            myGraph,
+            myGraphData.g,
             {},
             true));
 }
 
 void cGUI::calcAllPaths()
 {
-    auto vc = dfs_allpaths(
-        myGraph,
-        myGraph.find(myGraph.startName()),
-        myGraph.find(myGraph.endName()));
+    auto vc = dfs_allpaths( myGraphData );
+
     myResultText = std::to_string(vc.size()) + " paths found\n\n";
     for (int k = 0; k < vc.size(); k++)
     {
-        for (auto &sv : myGraph.userName(vc[k]))
+        for (auto &sv : myGraphData.g.userName(vc[k]))
             myResultText += sv + " ";
 
         myResultText += "\n";
@@ -282,12 +255,12 @@ void cGUI::calcTour()
 {
     delete mypTourNodes;
     mypTourNodes = new raven::graph::cTourNodes();
-    mypTourNodes->calculate(myGraph, myEdgeWeight);
+    mypTourNodes->calculate(myGraphData);
 
     myResultText = "";
     for (int v : mypTourNodes->getTour())
     {
-        myResultText += myGraph.userName(v) + " -> ";
+        myResultText += myGraphData.g.userName(v) + " -> ";
     }
     std::cout << myResultText << "\n";
 }
@@ -296,7 +269,7 @@ void cGUI::calcSales()
 {
     myResultText = "Sales calcultion NYI";
 
-    if (myGraph.rVertexAttr(0, 1) == "")
+    if (myGraphData.g.rVertexAttr(0, 1) == "")
     {
         // link specification
     }
@@ -304,18 +277,18 @@ void cGUI::calcSales()
     {
         // city location specification
         // link all cities with the square of the pythogorean distance between their locations
-        for (int v1 = 0; v1 < myGraph.vertexCount(); v1++)
+        for (int v1 = 0; v1 < myGraphData.g.vertexCount(); v1++)
         {
-            double x1 = atof(myGraph.rVertexAttr(v1, 0).c_str());
-            double y1 = atof(myGraph.rVertexAttr(v1, 1).c_str());
-            for (int v2 = v1 + 1; v2 < myGraph.vertexCount(); v2++)
+            double x1 = atof(myGraphData.g.rVertexAttr(v1, 0).c_str());
+            double y1 = atof(myGraphData.g.rVertexAttr(v1, 1).c_str());
+            for (int v2 = v1 + 1; v2 < myGraphData.g.vertexCount(); v2++)
             {
-                double x2 = atof(myGraph.rVertexAttr(v2, 0).c_str());
-                double y2 = atof(myGraph.rVertexAttr(v2, 1).c_str());
+                double x2 = atof(myGraphData.g.rVertexAttr(v2, 0).c_str());
+                double y2 = atof(myGraphData.g.rVertexAttr(v2, 1).c_str());
                 double dx = x2 - x1;
                 double dy = y2 - y1;
                 double dsq = dx * dx + dy * dy;
-                myEdgeWeight[myGraph.add(v1, v2)] = dsq;
+                myGraphData.edgeWeight[myGraphData.g.add(v1, v2)] = dsq;
             }
         }
     }
@@ -323,9 +296,9 @@ void cGUI::calcSales()
     calcTour();
 
     RunDOT(
-        myGraph,
+        myGraphData.g,
         pathViz(
-            myGraph,
+            myGraphData.g,
             mypTourNodes->getTour(),
             true));
 }
@@ -333,49 +306,35 @@ void cGUI::calcSales()
 void cGUI::calcCliques()
 {
     cliques(
-        myGraph,
+        myGraphData.g,
         myResultText);
 }
 
 void cGUI::calcFlows()
 {
     std::vector<int> vEdgeFlow;
-    myStartName.clear();
-    myStartName.push_back(myGraph.startName());
-    myEndName = myGraph.endName();
+
     double flow = flows(
-        myGraph,
-        myEdgeWeight,
-        myGraph.find(myStartName.back()),
-        myGraph.find(myEndName),
+        myGraphData,
         vEdgeFlow);
     myResultText = "Total Flow = " + std::to_string(flow);
 }
 void cGUI::calcMultiFlows()
 {
-    std::vector<int> vstart;
-    for (auto &n : myStartName)
-        vstart.push_back(myGraph.find(n));
-    double flow = multiflows(
-        myGraph,
-        myEdgeWeight,
-        vstart,
-        myGraph.find(myEndName));
+    double flow = multiflows( myGraphData );
+
     myResultText = "Total Flow = " + std::to_string(flow);
 }
 
 void cGUI::calcProbs()
 {
-    double p = probs(
-        myGraph,
-        myEdgeWeight,
-        myGraph.find(myGraph.endName()));
-    myResultText = "Probability " + std::to_string(p);
+    myResultText = "Probability " 
+        + std::to_string(probs( myGraphData ));
 }
 
 void cGUI::calcAlloc()
 {
-    auto ret = alloc(myGraph);
+    auto ret = alloc(myGraphData);
 
     std::stringstream ss;
     ss << "Agent                Task\n\n";
@@ -388,29 +347,29 @@ void cGUI::calcAlloc()
 
 void cGUI::calcEuler()
 {
-    auto ret = euler(myGraph);
+    auto ret = euler(myGraphData.g);
 
     std::stringstream ss;
     for (int vi : ret)
-        ss << myGraph.userName(vi) << " -> ";
+        ss << myGraphData.g.userName(vi) << " -> ";
     myResultText = ss.str();
 
     auto viz = pathViz(
-        myGraph,
+        myGraphData.g,
         ret,
         true);
     RunDOT(
-        myGraph,
+        myGraphData.g,
         viz);
 }
 
 void cGUI::calcCover()
 {
-    auto ret = vertexCover(myGraph);
+    auto ret = vertexCover(myGraphData.g);
 
     std::stringstream ss;
     for (int vi : ret)
-        ss << myGraph.userName(vi) << ", ";
+        ss << myGraphData.g.userName(vi) << ", ";
     myResultText = ss.str();
     myViewType = eView::route;
 }
@@ -418,24 +377,22 @@ void cGUI::calcCover()
 void cGUI::calcExplore()
 {
     auto path = astar(
-        myGraph,
+        myGraphData,
         [this](int v) -> double
         {
-            return myEdgeWeight[v];
+            return myGraphData.edgeWeight[v];
         },
-        myGraph.find(myGraph.startName()),
-        myGraph.find(myGraph.endName()),
         [this](int v) -> double
         {
             return 0;
         });
     myResultText = "";
     for (int v : path)
-        myResultText += myGraph.userName(v) + " -> ";
+        myResultText += myGraphData.g.userName(v) + " -> ";
     RunDOT(
-        myGraph,
+        myGraphData.g,
         pathViz(
-            myGraph,
+            myGraphData.g,
             path,
             true));
 }

@@ -28,6 +28,17 @@ namespace raven
             explore,
         };
 
+        struct sGraphData
+        {
+            cGraph g;
+            std::string fname;
+            std::vector<double> edgeWeight;
+            std::string startName;
+            std::vector<std::string> multiStart;
+            std::string endName;
+            graph_calc option;
+        };
+
         class cTourNodes
         {
         public:
@@ -36,9 +47,7 @@ namespace raven
             // {
             // }
 
-            void calculate(
-                const cGraph &g,
-                const std::vector<double> &vEdgeWeights);
+            void calculate(sGraphData &gd);
 
             std::vector<int> getTour() const
             {
@@ -150,10 +159,7 @@ namespace raven
         /// @param fname path to file
         /// @return calculation option requested
 
-        graph_calc readfile(
-            cGraph &g,
-            std::vector<double> &edgeWeight,
-            const std::string &fname);
+        void readfile( sGraphData& graphData );
 
         /// @brief read edge attribute as integer
         /// @param g graph
@@ -184,11 +190,8 @@ namespace raven
         /// @return pair: empty vector, -1 when end is not reachable from start
 
         std::pair<std::vector<int>, double>
-        path(
-            const cGraph &g,
-            const std::vector<double> &edgeWeight,
-            const std::string &startName,
-            const std::string &endName);
+        path( sGraphData &gd );
+
 
         /// @brief find all paths between two nodes
         /// @param g
@@ -197,18 +200,10 @@ namespace raven
         /// @return vector of vectors of node indices on paths
 
         std::vector<std::vector<int>>
-        allPaths(
-            const cGraph &g,
-            const std::vector<double> &edgeWeight,
-            int start,
-            int end);
+        allPaths( sGraphData &gd);
 
         std::pair<std::vector<int>, double>
-        path(
-            const cGraph &g,
-            const std::vector<double> &edgeWeight,
-            int start,
-            int end);
+        path( sGraphData &gd);
 
         /// @brief find spanning tree
         /// @param g
@@ -216,10 +211,7 @@ namespace raven
         /// @return graph - a tree rooted at start and visiting every node
 
         cGraph
-        spanningTree(
-            const cGraph &g,
-            const std::vector<double> &edgeWeight,
-            const std::string &startName);
+        spanningTree( sGraphData &gd);
 
         /// @brief depth first search
         /// @param g
@@ -238,9 +230,8 @@ namespace raven
         /// @return vector of cycles
 
         std::vector<std::vector<int>>
-        dfs_cycle_finder(
-            const cGraph &g,
-            int startIndex = -1);
+        dfs_cycle_finder( sGraphData& gd );
+
 
         /// @brief find all paths between 2 vertices
         /// @param g
@@ -249,10 +240,7 @@ namespace raven
         /// @return vector of path vectors
 
         std::vector<std::vector<int>>
-        dfs_allpaths(
-            const cGraph &g,
-            int startIndex,
-            int destIndex);
+        dfs_allpaths( sGraphData& gd );
 
         /// @brief path visiting every node
 
@@ -272,10 +260,7 @@ namespace raven
         /// @return total flow
 
         double flows(
-            const cGraph &g,
-            const std::vector<double> &edgeCapacity,
-            int start,
-            int end,
+            sGraphData& gd,
             std::vector<int> &vEdgeFlow);
 
         /// @brief Maximum flow through graph with multiple sources
@@ -284,11 +269,7 @@ namespace raven
         /// @param end sink vertex index
         /// @return maximum flow
 
-        double multiflows(
-            const cGraph &g,
-            const std::vector<double> &edgeCapacity,
-            const std::vector<int> &vsource,
-            int end);
+        double multiflows(sGraphData &gd);
 
         /// @brief Find connected source and sinks
         /// @param g the graph
@@ -300,12 +281,9 @@ namespace raven
             const cGraph &g,
             const std::vector<double> &edgeWeight);
 
-        double probs(
-            cGraph &g,
-            const std::vector<double> &edgeWeight,
-            int end);
+        double probs(            sGraphData &gd );
 
-        std::vector<std::string> alloc(cGraph &g);
+        std::vector<std::string> alloc(sGraphData &gd);
 
         /// @brief  Find euler path through graph
         /// @param g graph
@@ -342,15 +320,12 @@ namespace raven
         /// @brief Implement the A* algorithm with constant edge weights
         /// @param g graph to be searched https://github.com/JamesBremner/PathFinder
         /// @param edgeWeight function calculates edge weight based on edge index
-        /// @param start vertex index
-        /// @param goal vertex index
         /// @param heuristic function calculates distance estimate from vertex to goal
         /// @return vector of vertex indices on path from start to goal
 
         std::vector<int> astar(
-            raven::graph::cGraph &g,
+            raven::graph::sGraphData &gd,
             std::function<double(int)> edgeWeight,
-            int start, int goal,
             std::function<double(int)> heuristic);
 
         /// @brief Implement the A* algorithm with dynamic edge weights

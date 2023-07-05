@@ -146,7 +146,10 @@ void cObstacle::connect()
 
 void cObstacle::tourNodes()
 {
-    myRouteCalculator.calculate(mygraphdata, myEdgeWeight);
+    raven::graph::sGraphData gd;
+    gd.g = mygraphdata;
+    gd.edgeWeight = myEdgeWeight;
+    myRouteCalculator.calculate(gd);
     std::cout << "unvisited " << myRouteCalculator.unvisitedCount()
               << ", revisited " << myRouteCalculator.revisitedCount()
               << ", nodes " << mygraphdata.vertexCount()

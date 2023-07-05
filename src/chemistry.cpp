@@ -12,33 +12,34 @@ namespace raven
             std::string SMILES;              // the SMILES representation of the chemical graph
             std::vector<std::string> vLabel; // the label locations
 
-            raven::graph::cGraph g = ingraph;
+            sGraphData gd;
+            gd.g = ingraph;
 
             // remove bonds to Hydrogen
-            for (auto &bond : g.edgeList())
+            for (auto &bond : gd.g.edgeList())
             {
-                if (g.userName(bond.first)[0] == 'H' || g.userName(bond.second)[0] == 'H')
-                    g.remove(bond.first, bond.second);
+                if (gd.g.userName(bond.first)[0] == 'H' || gd.g.userName(bond.second)[0] == 'H')
+                    gd.g.remove(bond.first, bond.second);
             }
 
             // check for cycles
-            auto vCycle = dfs_cycle_finder(g);
+            auto vCycle = dfs_cycle_finder(gd);
             for (int k = 0; k < vCycle.size(); k++)
             {
-                g.remove(vCycle[k][0], vCycle[k][1]);
-                g.wVertexAttr(vCycle[k][0], {std::to_string(k + 1)});
-                g.wVertexAttr(vCycle[k][1], {std::to_string(k + 1)});
+                gd.g.remove(vCycle[k][0], vCycle[k][1]);
+                gd.g.wVertexAttr(vCycle[k][0], {std::to_string(k + 1)});
+                gd.g.wVertexAttr(vCycle[k][1], {std::to_string(k + 1)});
             }
 
             // depth first search of graph
             int prev = -1;
-            dfs(g, 0,
+            dfs(gd.g, 0,
                 [&](int v)
                 {
                     // check for double bond
                     if (prev != -1)
                     {
-                        if (bondtype[g.find(prev, v)] == 2)
+                        if (bondtype[gd.g.find(prev, v)] == 2)
                         {
                             SMILES += "=";
                             vLabel.push_back("-");
@@ -46,7 +47,7 @@ namespace raven
                     }
 
                     // get the atom label
-                    auto label = g.userName(v);
+                    auto label = gd.g.userName(v);
 
                     switch (label[0])
                     {
@@ -62,7 +63,7 @@ namespace raven
                     }
 
                     // check for cycle break
-                    auto kc = g.rVertexAttr(v, 0);
+                    auto kc = gd.g.rVertexAttr(v, 0);
                     if (!kc.empty())
                     {
                         SMILES += kc;

@@ -88,12 +88,10 @@ namespace raven
             tour.push_back(v);
         }
 
-        void cTourNodes::calculate(
-            const cGraph &graph,
-            const std::vector<double>& vEdgeWeights)
+        void cTourNodes::calculate( sGraphData &gd)
         {
-            g = &graph;
-            myEdgeWeights = std::move(vEdgeWeights);
+            g = &gd.g;
+            myEdgeWeights = std::move(gd.edgeWeight);
 
             auto best = tour;
             int bestUnvisited = INT_MAX;
@@ -105,10 +103,8 @@ namespace raven
                 // find a spanning tree
                 // note: spanTree.userName( vi ) == g.userName( vi )
 
-                spanTree = spanningTree(
-                    *g,
-                    myEdgeWeights,                             
-                    g->userName(spanTreeRoot));
+                gd.startName = gd.g.userName( spanTreeRoot );
+                spanTree = spanningTree( gd );
                 if (!spanTree.vertexCount())
                     continue;
 
@@ -209,11 +205,12 @@ namespace raven
 
                 // find best path from last node in tour
                 // allowing node revisits
-                auto pathret = path(
-                    spanTree,
-                    myEdgeWeights,
-                    spanTree.find(g->userName(tour.back())),
-                    spanTree.find(g->userName(target)));
+                sGraphData gd;
+                gd.g = spanTree;
+                gd.edgeWeight = myEdgeWeights;
+                gd.startName = g->userName(tour.back());
+                gd.endName = g->userName(target);
+                auto pathret = path( gd );
 
                 // check for a shorter path
                 if (pathret.first.size() && pathret.first.size() < bestHops)

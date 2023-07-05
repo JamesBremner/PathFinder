@@ -85,30 +85,19 @@ namespace raven
         }
 
         std::pair<std::vector<int>, double>
-        path(
-            const cGraph &g,
-            const std::vector<double> &edgeWeight,
-            const std::string &startName,
-            const std::string &endName)
+        path( sGraphData &gd)
         {
-            return path(
-                g,
-                edgeWeight,
-                g.find(startName),
-                g.find(endName));
-        }
+            if( gd.startName.empty() || gd.endName.empty() )
+                throw std::runtime_error(
+                    "path: no start or end"                );
 
-        std::pair<std::vector<int>, double>
-        path(
-            const cGraph &g,
-            const std::vector<double> &edgeWeight,
-            int start,
-            int end)
-        {
+            int start = gd.g.find( gd.startName );
+            int end = gd.g.find( gd.endName );
+
             std::vector<int> vpath;
 
-            if (0 > start || start > g.vertexCount() ||
-                0 > end || end > g.vertexCount())
+            if (0 > start || start > gd.g.vertexCount() ||
+                0 > end || end > gd.g.vertexCount())
                 return std::make_pair(vpath, -1);
             if (start == end)
             {
@@ -119,7 +108,7 @@ namespace raven
             // run the Dijsktra algorithm
             std::vector<double> dist;
             std::vector<int> pred;
-            dijsktra(g, edgeWeight, start, dist, pred);
+            dijsktra(gd.g, gd.edgeWeight, start, dist, pred);
 
             // check that end is reachable from start
             if (pred[end] == -1)
@@ -140,24 +129,18 @@ namespace raven
         }
 
         std::vector<std::vector<int>>
-        allPaths(
-            const cGraph &g,
-            const std::vector<double> &edgeWeight,
-            int start,
-            int end)
+        allPaths( sGraphData &gd)
         {
             std::vector<std::vector<int>> ret;
 
-            auto edgeCost = std::move(edgeWeight);
-
-            // copy input graph to working graph
-            cGraph work = g;
+                // copy input graph to working graph
+            auto work = gd;
 
             bool fnew = true;
             while (fnew)
             {
                 // find new path
-                auto p = path(work, edgeCost, start, end).first;
+                auto p = path(work).first;
                 if (!p.size())
                     break;
 
@@ -182,8 +165,8 @@ namespace raven
                 // increment cost of path links
                 for (int k = 1; k < p.size(); k++)
                 {
-                    int ei = work.find(p[k - 1], p[k]);
-                    edgeCost[ei]++;
+                    int ei = work.g.find(p[k - 1], p[k]);
+                    gd.edgeWeight[ei]++;
                 }
             }
             return ret;
@@ -199,66 +182,63 @@ namespace raven
         }
 
         cGraph
-        spanningTree(
-            const cGraph &g,
-            const std::vector<double> &edgeWeight,
-            const std::string &startName)
+        spanningTree( sGraphData& gd )
         {
             // std::cout << "spanning Tree " << startName << "\n";
 
-            if (edgeWeight.size() < g.edgeCount())
+            if (gd.edgeWeight.size() < gd.g.edgeCount())
                 throw std::runtime_error(
                     "spanningTree bad edge weights");
 
             // copy vertices from input grqaph to spanning tree
             cSpanningTree ST;
-            for (int kv = 0; kv < g.vertexCount(); kv++)
-                ST.mySpanningTree.add(g.userName(kv));
+            for (int kv = 0; kv < gd.g.vertexCount(); kv++)
+                ST.mySpanningTree.add(gd.g.userName(kv));
 
-            int start = g.find(startName);
+            int start = gd.g.find(gd.startName);
 
             // track visited vertices
-            std::vector<bool> visited(g.vertexCount(), false);
+            std::vector<bool> visited(gd.g.vertexCount(), false);
 
             // add initial arbitrary link
             int v = start;
-            auto va = g.adjacentOut(v);
+            auto va = gd.g.adjacentOut(v);
             if (!va.size())
                 throw std::runtime_error(
                     "spanning tree start vertex unconnected");
             auto w = va[0];
-            ST.add(g, v, w);
+            ST.add(gd.g, v, w);
 
             visited[v] = true;
             visited[w] = true;
 
             // while nodes remain outside of span
-            while (g.vertexCount() > ST.vertexCount())
+            while (gd.g.vertexCount() > ST.vertexCount())
             {
                 double min_cost = INT_MAX;
                 std::pair<int, int> bestLink;
                 bestLink.first = -1;
 
                 // loop over nodes in span
-                for (int v = 0; v < g.vertexCount(); v++)
+                for (int v = 0; v < gd.g.vertexCount(); v++)
                 {
                     if (!visited[v])
                         continue;
 
                     // loop over adjacent nodes not in span
-                    for (auto w : g.adjacentOut(v))
+                    for (auto w : gd.g.adjacentOut(v))
                     {
                         // std::cout << "try " << g.userName(v) <<" "<< g.userName(w) << "\n";
                         if (visited[w])
                             continue;
 
                         // check edge exists
-                        int ei = g.find(v, w);
+                        int ei = gd.g.find(v, w);
                         if (ei < 0)
                             continue;
 
                         // track cheapest edge
-                        double cost = edgeWeight[ei];
+                        double cost = gd.edgeWeight[ei];
                         if (cost < min_cost)
                         {
                             min_cost = cost;
@@ -269,10 +249,10 @@ namespace raven
 
                 if (bestLink.first == -1)
                 {
-                    std::cout << "spanning tree starting from " << startName << " cannot reach ";
+                    std::cout << "spanning tree starting from " << gd.startName << " cannot reach ";
                     for (int v = 0; v < visited.size(); v++)
                         if (!visited[v])
-                            std::cout << g.userName(v) << " ";
+                            std::cout << gd.g.userName(v) << " ";
                     std::cout << "\n";
                     // std::cout << g.text() << "\nPartial ST\n";
                     // std::cout << ST.mySpanningTree.text();
@@ -281,7 +261,7 @@ namespace raven
                 }
 
                 // add cheapest link between node in tree to node not yet in tree
-                ST.add(g, bestLink.first, bestLink.second);
+                ST.add(gd.g, bestLink.first, bestLink.second);
 
                 visited[bestLink.first] = true;
                 visited[bestLink.second] = true;
@@ -334,16 +314,15 @@ namespace raven
         }
 
         std::vector<std::vector<int>>
-        dfs_allpaths(
-            const cGraph &g,
-            int startIndex,
-            int destIndex)
+        dfs_allpaths( sGraphData& gd )
         {
+            int startIndex = gd.g.find( gd.startName );
+            int destIndex = gd.g.find( gd.endName);
             std::vector<std::vector<int>> apaths;
             std::vector<int> path;
 
             // track visited vertices
-            std::vector<bool> visited(g.vertexCount(), false);
+            std::vector<bool> visited(gd.g.vertexCount(), false);
 
             // vertices waiting to be visited
             std::stack<int> wait;
@@ -392,12 +371,12 @@ namespace raven
                         // remove from path
                         path.erase(path.end() - 1);
 
-                        vadj = g.adjacentOut(path.back());
+                        vadj = gd.g.adjacentOut(path.back());
                     } while (std::find(vadj.begin(), vadj.end(), wait.top()) == vadj.end());
                 }
                 else
                 {
-                    for (int w : g.adjacentOut(v))
+                    for (int w : gd.g.adjacentOut(v))
                     {
                         if (w < 0)
                             throw std::runtime_error(
@@ -411,9 +390,7 @@ namespace raven
         }
 
         std::vector<std::vector<int>>
-        dfs_cycle_finder(
-            const cGraph &g,
-            int inputStartIndex)
+        dfs_cycle_finder( sGraphData& gd )
         {
 
             // store for found cycles, vertex indices in order reached.
@@ -423,14 +400,15 @@ namespace raven
             std::vector<std::vector<int>> vfoundCycleSignature;
 
             // track visited vertices
-            std::vector<bool> visited(g.vertexCount(), false);
+            std::vector<bool> visited(gd.g.vertexCount(), false);
 
             /* cycles exist whatever the edge weights
             So construct default edge weights for all edges
             allowing for all possible edges
             */
-            std::vector<double> vEdgeWeight(
-                2 * g.vertexCount()* g.vertexCount(),
+           gd.edgeWeight.clear();
+           gd.edgeWeight.resize(
+                2 * gd.g.vertexCount()* gd.g.vertexCount(),
                 1);
 
             /* loop until all vertices have been visited
@@ -442,7 +420,7 @@ namespace raven
             while (true)
             {
                 int startIndex;
-                if (inputStartIndex < 0)
+                if (gd.startName.empty())
                 {
                     // find unvisited vertex to start the DFS from
                     auto it = std::find(
@@ -458,7 +436,7 @@ namespace raven
                 }
                 else
                 {
-                    startIndex = inputStartIndex;
+                    startIndex = gd.g.find(gd.startName);
                 }
 
                 // vertices waiting to be processed
@@ -476,7 +454,7 @@ namespace raven
                     visited[v] = true;
 
                     // loop over vertices reachable with one hop
-                    for (int w : g.adjacentOut(v))
+                    for (int w : gd.g.adjacentOut(v))
                     {
                         if (!visited[w])
                         {
@@ -493,18 +471,25 @@ namespace raven
 
                         */
                         std::vector<int> cycle;
-                        if (!g.isDirected())
+                        if (!gd.g.isDirected())
                         {
                             // for undirected  graphs
                             // remove reverse edge
                             // so the path is forced to go the long way around back to start
-                            raven::graph::cGraph temp = g;
-                            temp.remove(w, v);
-                            cycle = path(temp, vEdgeWeight, w, v).first;
+
+                            sGraphData temp;
+                            temp.g = gd.g;
+                            temp.edgeWeight = gd.edgeWeight;
+                            temp.startName = gd.g.userName( w );
+                            temp.endName = gd.g.userName( v );
+                            temp.g.remove(w,v);
+                            cycle = path(temp).first;
                         }
                         else
                         {
-                            cycle = path(g, vEdgeWeight, w, v).first;
+                            gd.startName = gd.g.userName(w);
+                            gd.endName = gd.g.userName(v);
+                            cycle = path(gd).first;
                         }
 
                         // ignore "cycles" that just go back and forth over one edge
@@ -552,12 +537,12 @@ namespace raven
                         vfoundCycleSignature.push_back(signature);
                     }
                 }
-                if (inputStartIndex >= 0)
+                if (!gd.startName.empty())
                 {
                     std::vector<std::vector<int>> cycles_with_start;
                     for (auto &c : ret)
                     {
-                        if (std::find(c.begin(), c.end(), inputStartIndex) != c.end())
+                        if (std::find(c.begin(), c.end(), startIndex) != c.end())
                             cycles_with_start.push_back(c);
                     }
                     ret = cycles_with_start;
@@ -653,28 +638,27 @@ namespace raven
 
         double
         flows(
-            const cGraph &g,
-            const std::vector<double> &edgeWeight,
-            int start,
-            int end,
+            sGraphData& gd,
             std::vector<int> &vEdgeFlow)
         {
-            if (!g.isDirected())
+            if (!gd.g.isDirected())
                 throw std::runtime_error(
                     "Flow calculation needs directed graph ( 2nd input line must be 'g')");
 
-            auto edgeCapacity = edgeWeight;
+            int start = gd.g.find(gd.startName);
+            int end = gd.g.find(gd.endName);
+            auto edgeCapacity = gd.edgeWeight;
 
             int totalFlow = 0;
 
             // copy graph to working graph
-            auto work = g;
+            auto work = gd;
 
             while (1)
             {
                 // find path
                 // std::cout << "links:\n" << linksText() << "\n";
-                auto p = path(work, edgeCapacity, start, end);
+                auto p = path(work);
                 // std::cout << "pathsize " << myPath.size() << " ";
                 if (!p.first.size())
                     break;
@@ -688,7 +672,7 @@ namespace raven
                 {
                     if (u >= 0)
                     {
-                        double cap = edgeCapacity[work.find(u, v)];
+                        double cap = edgeCapacity[work.g.find(u, v)];
                         if (cap < maxflow)
                         {
                             maxflow = cap;
@@ -703,12 +687,12 @@ namespace raven
                 {
                     if (u >= 0)
                     {
-                        int ei = work.find(u, v);
+                        int ei = work.g.find(u, v);
                         double cap = edgeCapacity[ei] - maxflow;
                         if (cap <= 0)
                         {
                             // link capacity filled, remove
-                            work.remove(u, v);
+                            work.g.remove(u, v);
                         }
                         else
                         {
@@ -722,14 +706,14 @@ namespace raven
             }
 
             vEdgeFlow.clear();
-            for (int ei = 0; ei < g.edgeCount(); ei++)
+            for (int ei = 0; ei < gd.g.edgeCount(); ei++)
             {
                 double f;
-                if (work.dest(ei) == -1)
-                    f = edgeWeight[ei];
+                if (work.g.dest(ei) == -1)
+                    f = gd.edgeWeight[ei];
                 else
                 {
-                    double oc = edgeWeight[ei];
+                    double oc = gd.edgeWeight[ei];
                     double wc = edgeCapacity[ei];
                     f = oc - wc;
                 }
@@ -744,21 +728,15 @@ namespace raven
             return totalFlow;
         }
 
-        double multiflows(
-            const cGraph &g,
-            const std::vector<double> &edgeCapacity,
-            const std::vector<int> &vsource,
-            int end)
+        double multiflows(sGraphData &gd)
         {
             double totalmultiflow = 0;
             std::vector<int> vEdgeFlow;
-            for (int s : vsource)
+            for (auto& s : gd.multiStart)
             {
+                gd.startName = s;
                 totalmultiflow += flows(
-                    g,
-                    edgeCapacity,
-                    s,
-                    end,
+                    gd,
                     vEdgeFlow);
             }
             return totalmultiflow;
@@ -803,37 +781,33 @@ namespace raven
             return ret;
         }
 
-        double probs(
-            cGraph &g,
-            const std::vector<double> &edgeWeight,
-            int end)
+        double probs( sGraphData& gd )
         {
-            if (!g.isDirected())
+            if (!gd.g.isDirected())
                 throw std::runtime_error(
                     "Probability calculation needs directed graph ( 2nd input line must be 'g')");
 
+            int end = gd.g.find( gd.endName );
+
             // Mark all node probabilities as 'not yet calculated'
             std::string nyc("-1");
-            for (int vi = 0; vi < g.vertexCount(); vi++)
-                g.wVertexAttr(vi, {nyc});
+            for (int vi = 0; vi < gd.g.vertexCount(); vi++)
+                gd.g.wVertexAttr(vi, {nyc});
 
             // loop over nodes
-            for (int vi = 0; vi < g.vertexCount(); vi++)
+            for (int vi = 0; vi < gd.g.vertexCount(); vi++)
             {
                 if (vi == end)
                     continue;
 
                 // check for possible starting node
                 // i.e one with out edges and no in edges
-                if ((!g.adjacentOut(vi).size()) && (!g.adjacentIn(vi).size()))
+                if ((!gd.g.adjacentOut(vi).size()) && (!gd.g.adjacentIn(vi).size()))
                     continue;
 
                 // iterate over all paths from starting node to target node
-                for (auto &path : allPaths(
-                         g,
-                         edgeWeight,
-                         vi,
-                         end))
+                gd.startName = gd.g.userName(vi);
+                for (auto &path : allPaths( gd ) )
                 {
                     // loop over nodes in path
                     for (int n : path)
@@ -844,9 +818,9 @@ namespace raven
                         // loop over inlinks
                         std::vector<double> vprob;
                         bool fOK = true;
-                        for (int m : g.adjacentIn(n))
+                        for (int m : gd.g.adjacentIn(n))
                         {
-                            auto prevNodeProb = g.rVertexAttr(m, 0);
+                            auto prevNodeProb = gd.g.rVertexAttr(m, 0);
                             if (prevNodeProb == "-1")
                             {
                                 // the previous node probability has not been calculated yet
@@ -858,7 +832,7 @@ namespace raven
                             // it is the product of the source node proabability and the link probability
                             vprob.push_back(
                                 atof(prevNodeProb.c_str()) *
-                                edgeWeight[g.find(m, n)]);
+                                gd.edgeWeight[gd.g.find(m, n)]);
                         }
                         // check if there is enough information
                         // to calculate the probability for this node
@@ -893,59 +867,60 @@ namespace raven
                             nodes with 2 inlinks
                             */
                             throw std::runtime_error(
-                                g.userName(n) + " has more than 2 inlinks, please refactor input");
+                                gd.g.userName(n) + " has more than 2 inlinks, please refactor input");
                         }
 
                         // save node probability
-                        g.wVertexAttr(n, {std::to_string(nodeprob)});
+                        gd.g.wVertexAttr(n, {std::to_string(nodeprob)});
                     }
                 }
             }
 
-            return atof(g.rVertexAttr(end, 0).c_str());
+            return atof(gd.g.rVertexAttr(end, 0).c_str());
         }
         std::vector<std::string> alloc(
-            cGraph &g)
+            sGraphData &gd)
         {
             // identify unique agents and tasks
             std::set<int> setAgent, setTask;
-            for (int ei = 0; ei < g.edgeCount(); ei++)
+            for (int ei = 0; ei < gd.g.edgeCount(); ei++)
             {
-                setAgent.insert(g.src(ei));
-                setTask.insert(g.dest(ei));
+                setAgent.insert(gd.g.src(ei));
+                setTask.insert(gd.g.dest(ei));
             }
 
             // add link from start to each agent
-            int start = g.add("start_alloc");
+            int start = gd.g.add("start_alloc");
             for (int agent : setAgent)
-                g.add(start, agent);
+                gd.g.add(start, agent);
 
             // add link from each task to end
-            int end = g.add("end_alloc");
+            int end = gd.g.add("end_alloc");
             for (int task : setTask)
-                g.add(task, end);
+                gd.g.add(task, end);
 
             // set capacity of every link to 1
-            std::vector<double> edgeWeight(g.edgeCount(), 1);
+            gd.edgeWeight.clear();
+            gd.edgeWeight.resize(gd.g.edgeCount(), 1);
 
             // assign agents to tasks by calculating the maximum flow
             std::vector<int> vEdgeFlow;
-            flows(g, edgeWeight, start, end, vEdgeFlow);
+            flows(gd, vEdgeFlow);
 
             std::vector<std::string> ret;
-            for (int ei = 0; ei < g.edgeCount(); ei++)
+            for (int ei = 0; ei < gd.g.edgeCount(); ei++)
             {
                 if (vEdgeFlow[ei] <= 0)
                     continue;
 
-                int s = g.src(ei);
-                int d = g.dest(ei);
+                int s = gd.g.src(ei);
+                int d = gd.g.dest(ei);
                 if (s == start)
                     continue;
                 if (d == end)
                     continue;
-                ret.push_back(g.userName(s));
-                ret.push_back(g.userName(d));
+                ret.push_back(gd.g.userName(s));
+                ret.push_back(gd.g.userName(d));
             }
             return ret;
         }

@@ -174,8 +174,9 @@ void read(const std::vector<std::string> &q)
 
 void cycles()
 {
-    auto cycles = dfs_cycle_finder(
-        theGraph);
+    raven::graph::sGraphData gd;
+    gd.g = theGraph;
+    auto cycles = dfs_cycle_finder(gd);
     std::cout << cycles.size() << " cycles\n";
 }
 
@@ -187,10 +188,10 @@ void s2s()
 
 void span()
 {
-    raven::graph::spanningTree(
-        theGraph,
-        theEdgeWeight,
-        theGraph.userName(0));
+    raven::graph::sGraphData gd;
+    gd.g = theGraph;
+    gd.startName = theGraph.userName(0);
+    raven::graph::spanningTree(gd);
 }
 
 void paths()

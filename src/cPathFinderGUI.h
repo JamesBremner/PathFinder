@@ -71,28 +71,16 @@ class cGUI : public cStarterGUI
 public:
     cGUI();
 
-    void start(const std::string &name)
-    {
-        myStartName.push_back(name);
-    }
-    void end(const std::string &name)
-    {
-        myEndName = name;
-    }
-
 private:
     wex::panel &myplText;               // display text
     wex::panel &myplLayout;             // display layout ( graphViz )
 
-    raven::graph::cGraph myGraph;       // the input graph
-    std::vector<double> myEdgeWeight;
+    raven::graph::sGraphData myGraphData;       // the input graph
     raven::graph::cGraph myResultGraph; // the result graph
 
     raven::graph::cTourNodes *mypTourNodes;
     std::string myfname;                // input filename
     raven::graph::graph_calc myCalcOption;            // calculation requested by input file
-    std::vector<std::string> myStartName;   // starting node
-    std::string myEndName;              // ending node
     std::string myResultText;           // calculation result text
 
     enum class eView

@@ -47,17 +47,14 @@ TEST(add)
 
 TEST(probs)
 {
-    raven::graph::cGraph g;
-    g.directed();
-    int e = g.add("a", "c");
-    e = g.add("b", "c");
+    raven::graph::sGraphData gd;
+    gd.g.directed();
+    gd.g.add("a", "c");
+    gd.g.add("b", "c");
+    gd.edgeWeight.resize(2, 0.5);
+    gd.endName = "c";
 
-    std::vector<double> edgeWeight(2, 0.5);
-
-    int act = 100 * probs(
-                        g,
-                        edgeWeight,
-                        g.find("c"));
+    int act = 100 * probs( gd );
 
     CHECK_EQUAL(75, act);
 
@@ -70,31 +67,29 @@ TEST(probs)
     // l b v 0.1
     // e v
 
-    g.clear();
-    g.directed();
-    edgeWeight.resize(7);
-    edgeWeight[g.add("u", "c")] = 0.3;
-    edgeWeight[g.add("u", "d")] = 0.5;
-    edgeWeight[g.add("c", "a")] = 0.2;
-    edgeWeight[g.add("c", "b")] = 0.2;
-    edgeWeight[g.add("d", "b")] = 0.4;
-    edgeWeight[g.add("a", "v")] = 0.1;
-    edgeWeight[g.add("b", "v")] = 0.1;
+    gd.g.clear();
+    gd.g.directed();
+    gd.edgeWeight.resize(7);
+    gd.edgeWeight[gd.g.add("u", "c")] = 0.3;
+    gd.edgeWeight[gd.g.add("u", "d")] = 0.5;
+    gd.edgeWeight[gd.g.add("c", "a")] = 0.2;
+    gd.edgeWeight[gd.g.add("c", "b")] = 0.2;
+    gd.edgeWeight[gd.g.add("d", "b")] = 0.4;
+    gd.edgeWeight[gd.g.add("a", "v")] = 0.1;
+    gd.edgeWeight[gd.g.add("b", "v")] = 0.1;
+    gd.endName = "v";
 
-    act = 100 * probs(
-                    g,
-                    edgeWeight,
-                    g.find("v"));
+    act = 100 * probs( gd );
     CHECK_EQUAL(3, act);
 }
 
 TEST(salesBBmetric)
 {
-    raven::graph::cGraph g;
-    std::vector<double> edgeWeight;
-    readfile(g, edgeWeight, "../dat/tspmetric.txt");
-    raven::graph::cTSP tpsbb(g, edgeWeight);
-    auto path = g.userName(tpsbb.calculate());
+    raven::graph::sGraphData gd;
+    gd.fname = "../dat/tspmetric.txt";
+    readfile(gd);
+    raven::graph::cTSP tpsbb(gd.g, gd.edgeWeight);
+    auto path = gd.g.userName(tpsbb.calculate());
     std::vector<std::string> exp{"0", "1", "3", "2", "0"};
     CHECK_EQUAL(80, tpsbb.TotalPathEdgeWeight());
     CHECK(std::equal(
@@ -104,11 +99,11 @@ TEST(salesBBmetric)
 }
 TEST(salesBBnotmetric)
 {
-    raven::graph::cGraph g;
-    std::vector<double> edgeWeight;
-    readfile(g, edgeWeight, "../dat/tspnotmetric.txt");
-    raven::graph::cTSP tpsbb(g, edgeWeight);
-    auto path = g.userName(tpsbb.calculate());
+    raven::graph::sGraphData gd;
+    gd.fname = "../dat/tspnotmetric.txt";
+    readfile(gd);
+    raven::graph::cTSP tpsbb(gd.g, gd.edgeWeight);
+    auto path = gd.g.userName(tpsbb.calculate());
     std::vector<std::string> exp{"0", "1", "3", "2", "0"};
     CHECK_EQUAL(27, tpsbb.TotalPathEdgeWeight());
     CHECK(std::equal(
@@ -118,30 +113,29 @@ TEST(salesBBnotmetric)
 }
 TEST(cliques)
 {
-    raven::graph::cGraph g;
-    std::vector<double> edgeWeight;
-    readfile(g, edgeWeight, "../dat/cliques.txt");
+    raven::graph::sGraphData gd;
+    gd.fname = "../dat/cliques.txt";
+    readfile(gd);
     std::string results;
-    cliques(g, results);
+    cliques(gd.g, results);
     std::string expected("clique: 1 5 3 7 \nclique: 2 8 6 4 \n");
     CHECK_EQUAL(expected, results);
 }
 
 TEST(dfs_allpaths)
 {
-    raven::graph::cGraph g;
-    g.directed();
-    g.add("0", "1");
-    g.add("0", "2");
-    g.add("0", "3");
-    g.add("2", "0");
-    g.add("2", "1");
-    g.add("1", "3");
+    raven::graph::sGraphData gd;
+    gd.g.directed();
+    gd.g.add("0", "1");
+    gd.g.add("0", "2");
+    gd.g.add("0", "3");
+    gd.g.add("2", "0");
+    gd.g.add("2", "1");
+    gd.g.add("1", "3");
+    gd.startName = "2";
+    gd.endName = "3";
 
-    auto vpaths = dfs_allpaths(
-        g,
-        g.find("2"),
-        g.find("3"));
+    auto vpaths = dfs_allpaths( gd );
 
     CHECK_EQUAL(3, vpaths.size());
     std::vector<int> expected1{2, 1, 3};
@@ -163,13 +157,15 @@ TEST(dfs_allpaths)
 
 TEST(dfs_allpaths2)
 {
-    raven::graph::cGraph g;
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("a", "d");
-    g.add("d", "c");
+    raven::graph::sGraphData gd;
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("a", "d");
+    gd.g.add("d", "c");
+    gd.startName = "a";
+    gd.endName = "c";
 
-    auto act = dfs_allpaths(g, g.find("a"), g.find("c"));
+    auto act = dfs_allpaths(gd);
 
     CHECK_EQUAL(2, act.size());
 
@@ -177,13 +173,13 @@ TEST(dfs_allpaths2)
     CHECK(std::equal(
         expected1.begin(),
         expected1.end(),
-        g.userName(act[0]).begin()));
+        gd.g.userName(act[0]).begin()));
 
     std::vector<std::string> expected2{"a", "b", "c"};
     CHECK(std::equal(
         expected2.begin(),
         expected2.end(),
-        g.userName(act[1]).begin()));
+        gd.g.userName(act[1]).begin()));
 }
 
 TEST(vertexCover1)
@@ -237,80 +233,78 @@ TEST(vertexCover3)
 }
 TEST(cycle0)
 {
-    raven::graph::cGraph g;
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("c", "d");
-    g.add("d", "a");
+    raven::graph::sGraphData gd;
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("c", "d");
+    gd.g.add("d", "a");
 
-    auto act = dfs_cycle_finder(g);
+    auto act = dfs_cycle_finder(gd);
     CHECK_EQUAL(1, act.size());
     CHECK_EQUAL(5, act[0].size());
 }
 TEST(cycle)
 {
-    raven::graph::cGraph g;
-    g.directed();
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("d", "a");
-    g.add("c", "d");
+    raven::graph::sGraphData gd;
+    gd.g.directed();
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("d", "a");
+    gd.g.add("c", "d");
 
-    auto act = dfs_cycle_finder(g);
+    auto act = dfs_cycle_finder(gd);
     CHECK_EQUAL(1, act.size());
     CHECK_EQUAL(5, act[0].size());
 }
 
 TEST(cycle2)
 {
-    raven::graph::cGraph g;
-    g.directed();
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("d", "a");
-    g.add("c", "d");
-    g.add("b", "e");
-    g.add("e", "f");
-    g.add("f", "g");
-    g.add("g", "e");
+    raven::graph::sGraphData gd;
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("d", "a");
+    gd.g.add("c", "d");
+    gd.g.add("b", "e");
+    gd.g.add("e", "f");
+    gd.g.add("f", "g");
+    gd.g.add("g", "e");
 
-    auto act = dfs_cycle_finder(g);
+    auto act = dfs_cycle_finder(gd);
     CHECK_EQUAL(2, act.size());
     CHECK_EQUAL(4, act[0].size());
     CHECK_EQUAL(5, act[1].size());
 }
 TEST(cycle2undirected)
 {
-    raven::graph::cGraph g;
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("d", "a");
-    g.add("c", "d");
-    g.add("b", "e");
-    g.add("e", "f");
-    g.add("f", "g");
-    g.add("g", "e");
+    raven::graph::sGraphData gd;
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("d", "a");
+    gd.g.add("c", "d");
+    gd.g.add("b", "e");
+    gd.g.add("e", "f");
+    gd.g.add("f", "g");
+    gd.g.add("g", "e");
 
-    auto act = dfs_cycle_finder(g);
-    CHECK_EQUAL(2, act.size());
+    auto act = dfs_cycle_finder(gd);
     CHECK_EQUAL(5, act[0].size());
     CHECK_EQUAL(4, act[1].size());
 }
 
 TEST(cycle2notfullyconnected)
 {
-    raven::graph::cGraph g;
-    g.directed();
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("d", "a");
-    g.add("c", "d");
-    g.add("e", "b"); // directed link makes a,b,c,d reachable from e,f,g but not vice versa
-    g.add("e", "f");
-    g.add("f", "g");
-    g.add("g", "e");
+    raven::graph::sGraphData gd;
+    gd.g.directed();
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("d", "a");
+    gd.g.add("c", "d");
+    gd.g.add("e", "b"); // directed link makes a,b,c,d reachable from e,f,g but not vice versa
+    gd.g.add("e", "f");
+    gd.g.add("f", "g");
+    gd.g.add("g", "e");
 
-    auto act = dfs_cycle_finder(g);
+    auto act = dfs_cycle_finder(gd);
     CHECK_EQUAL(2, act.size());
     CHECK_EQUAL(5, act[0].size());
     CHECK_EQUAL(4, act[1].size());
@@ -318,14 +312,15 @@ TEST(cycle2notfullyconnected)
 
 TEST(tourNodes)
 {
-    raven::graph::cGraph g;
-    g.directed(false);
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("a", "d");
+    raven::graph::sGraphData gd;
+    gd.g.directed(false);
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("a", "d");
+    gd.edgeWeight = {1, 1, 1, 1, 1, 1};
     raven::graph::cTourNodes tourer;
 
-    tourer.calculate(g, {1, 1, 1, 1, 1, 1});
+    tourer.calculate(gd );
 
     CHECK_EQUAL(0, tourer.unvisitedCount());
     CHECK_EQUAL(0, tourer.revisitedCount());
@@ -333,7 +328,7 @@ TEST(tourNodes)
     auto tour = tourer.getTour();
     CHECK_EQUAL(4, tour.size());
     std::vector<std::string> expected{"c", "b", "a", "d"};
-    auto actual = g.userName(tour);
+    auto actual = gd.g.userName(tour);
     CHECK(std::equal(
         expected.begin(),
         expected.end(),
@@ -342,16 +337,16 @@ TEST(tourNodes)
 
 TEST(flows)
 {
-    raven::graph::cGraph g;
-    std::vector<double> edgeWeight(1, 7);
-    g.directed();
+    raven::graph::sGraphData gd;
 
-    g.add("a", "b");
+    gd.g.directed();
+    gd.g.add("a", "b");
+    gd.edgeWeight.resize(1,7);
+    gd.startName = "a";
+    gd.endName = "b";
 
     std::vector<int> vEdgeFlow;
-    double f = flows(
-        g, edgeWeight,
-        g.find("a"), g.find("b"),
+    double f = flows( gd,
         vEdgeFlow);
 
     CHECK_EQUAL(7.0, f);
@@ -461,30 +456,32 @@ TEST(adjacent)
 }
 TEST(dijsktra)
 {
-    raven::graph::cGraph g;
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("a", "d");
-    std::vector<double> edgeWeight(3, 1);
+    raven::graph::sGraphData gd;
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("a", "d");
+    gd.edgeWeight.resize(3, 1);
+    gd.startName = "a";
+    gd.endName = "c";
 
     std::vector<std::string> expected{"a", "b", "c"};
     CHECK(std::equal(
         expected.begin(),
         expected.end(),
-        g.userName(path(g, edgeWeight, "a", "c").first).begin()));
+        gd.g.userName(path(gd).first).begin()));
 }
 TEST(allpaths)
 {
-    raven::graph::cGraph g;
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("a", "d");
-    g.add("d", "c");
-    std::vector<double> edgeWeight(8, 1);
+    raven::graph::sGraphData gd;
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("a", "d");
+    gd.g.add("d", "c");
+    gd.edgeWeight.resize(8, 1);
+    gd.startName = "a";
+    gd.endName = "c";
 
-    auto act = allPaths(
-        g, edgeWeight,
-        g.find("a"), g.find("c"));
+    auto act = allPaths(gd);
 
     CHECK_EQUAL(2, act.size());
 
@@ -492,29 +489,30 @@ TEST(allpaths)
     CHECK(std::equal(
         expected1.begin(),
         expected1.end(),
-        g.userName(act[0]).begin()));
+        gd.g.userName(act[0]).begin()));
 
     std::vector<std::string> expected2{"a", "b", "c"};
     CHECK(std::equal(
         expected2.begin(),
         expected2.end(),
-        g.userName(act[1]).begin()));
+        gd.g.userName(act[1]).begin()));
 }
 
 TEST(spanningTree)
 {
-    raven::graph::cGraph g;
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("a", "d");
-    std::vector<double> edgeWeight(3, 1);
+    raven::graph::sGraphData gd;
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("a", "d");
+    gd.edgeWeight.resize(3, 1);
+    gd.startName = "a";
 
     std::vector<std::pair<int, int>> expected{
         {0, 1},
         {0, 3},
         {1, 2}};
 
-    auto res = spanningTree(g, edgeWeight, "a").edgeList();
+    auto res = spanningTree(gd).edgeList();
 
     CHECK_EQUAL(3, res.size());
 
@@ -547,19 +545,20 @@ TEST(dfs)
 
 TEST(tourNodes2)
 {
-    raven::graph::cGraph g;
-    g.directed(false);
-    g.add("a", "b");
-    g.add("b", "c");
-    g.add("a", "d");
-    g.add("c", "d");
+    raven::graph::sGraphData gd;
+    gd.g.directed(false);
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("a", "d");
+    gd.g.add("c", "d");
+    gd.edgeWeight.resize(4,1);
     raven::graph::cTourNodes tourer;
 
-    tourer.calculate(g, {1, 1, 1, 1});
+    tourer.calculate(gd);
     auto tour = tourer.getTour();
 
     std::vector<std::string> expected{"a", "d", "c", "b"};
-    auto actual = g.userName(tour);
+    auto actual = gd.g.userName(tour);
     CHECK(std::equal(
         expected.begin(),
         expected.end(),
@@ -603,16 +602,16 @@ TEST(cGrid2D)
 
 TEST(alloc)
 {
-    raven::graph::cGraph g;
-    g.directed();
-    g.add("child1", "chore1");
-    g.add("child1", "chore2");
-    g.add("child1", "chore3");
-    g.add("child2", "chore1");
-    g.add("child2", "chore2");
-    g.add("child2", "chore3");
+    raven::graph::sGraphData gd;
+    gd.g.directed();
+    gd.g.add("child1", "chore1");
+    gd.g.add("child1", "chore2");
+    gd.g.add("child1", "chore3");
+    gd.g.add("child2", "chore1");
+    gd.g.add("child2", "chore2");
+    gd.g.add("child2", "chore3");
 
-    auto act = alloc(g);
+    auto act = alloc(gd);
 
     std::vector<std::string> exp{"child1", "chore2", "child2", "chore3"};
     CHECK(std::equal(
