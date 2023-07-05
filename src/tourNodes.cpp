@@ -91,7 +91,7 @@ namespace raven
         void cTourNodes::calculate( sGraphData &gd)
         {
             g = &gd.g;
-            myEdgeWeights = std::move(gd.edgeWeight);
+            myEdgeWeights = gd.edgeWeight;
 
             auto best = tour;
             int bestUnvisited = INT_MAX;

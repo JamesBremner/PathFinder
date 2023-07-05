@@ -45,6 +45,39 @@ TEST(add)
     CHECK_EQUAL(1, ba);
 }
 
+TEST(allpaths)
+{
+    raven::graph::sGraphData gd;
+    gd.g.add("a", "b");
+    gd.g.add("b", "c");
+    gd.g.add("a", "d");
+    gd.g.add("d", "c");
+    gd.edgeWeight.resize(8, 1);
+    gd.startName = "a";
+    gd.endName = "c";
+
+    auto act = allPaths(gd);
+
+    CHECK_EQUAL(2, act.size());
+
+    std::vector<std::string> expected1{"a", "d", "c"};
+    CHECK(std::equal(
+        expected1.begin(),
+        expected1.end(),
+        gd.g.userName(act[0]).begin()));
+
+    std::vector<std::string> expected2{"a", "b", "c"};
+    CHECK(std::equal(
+        expected2.begin(),
+        expected2.end(),
+        gd.g.userName(act[1]).begin()));
+}
+
+
+
+
+
+
 TEST(probs)
 {
     raven::graph::sGraphData gd;
@@ -271,8 +304,8 @@ TEST(cycle2)
 
     auto act = dfs_cycle_finder(gd);
     CHECK_EQUAL(2, act.size());
-    CHECK_EQUAL(4, act[0].size());
-    CHECK_EQUAL(5, act[1].size());
+    CHECK_EQUAL(5, act[0].size());
+    CHECK_EQUAL(4, act[1].size());
 }
 TEST(cycle2undirected)
 {
@@ -469,33 +502,6 @@ TEST(dijsktra)
         expected.begin(),
         expected.end(),
         gd.g.userName(path(gd).first).begin()));
-}
-TEST(allpaths)
-{
-    raven::graph::sGraphData gd;
-    gd.g.add("a", "b");
-    gd.g.add("b", "c");
-    gd.g.add("a", "d");
-    gd.g.add("d", "c");
-    gd.edgeWeight.resize(8, 1);
-    gd.startName = "a";
-    gd.endName = "c";
-
-    auto act = allPaths(gd);
-
-    CHECK_EQUAL(2, act.size());
-
-    std::vector<std::string> expected1{"a", "d", "c"};
-    CHECK(std::equal(
-        expected1.begin(),
-        expected1.end(),
-        gd.g.userName(act[0]).begin()));
-
-    std::vector<std::string> expected2{"a", "b", "c"};
-    CHECK(std::equal(
-        expected2.begin(),
-        expected2.end(),
-        gd.g.userName(act[1]).begin()));
 }
 
 TEST(spanningTree)

@@ -166,7 +166,7 @@ namespace raven
                 for (int k = 1; k < p.size(); k++)
                 {
                     int ei = work.g.find(p[k - 1], p[k]);
-                    gd.edgeWeight[ei]++;
+                    work.edgeWeight[ei]++;
                 }
             }
             return ret;
@@ -898,6 +898,9 @@ namespace raven
             int end = gd.g.add("end_alloc");
             for (int task : setTask)
                 gd.g.add(task, end);
+
+            gd.startName = "start_alloc";
+            gd.endName = "end_alloc";
 
             // set capacity of every link to 1
             gd.edgeWeight.clear();
