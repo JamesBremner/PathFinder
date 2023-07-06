@@ -207,6 +207,19 @@ void paths()
         pred);
 }
 
+void allPaths()
+{
+    raven::graph::sGraphData gd;
+    gd.g = theGraph;
+    gd.edgeWeight.resize(gd.g.edgeCount(),1);
+    gd.startName = gd.g.userName(
+        rand() % theGraph.vertexCount()); // random start vertex
+    gd.endName = gd.g.userName(
+        rand() % theGraph.vertexCount()); // random start vertex
+
+    allPaths( gd );
+}
+
 void ancestor_recurse(
     int v,
     int depth,
@@ -269,6 +282,7 @@ void help()
                  "read filepath : input graph links from file\n"
                  "display :       display links\n"
                  "paths :         find all paths from random vertex to all others ( Dijkstra )\n"
+                 "allpaths :      find all paths between two random vertices ( Dijkstra )\n"
                  "cycles :        find cycles in graph\n"
                  "s2s :           find source to sink connections\n"
                  "gen n :         generate random graph with n vertices\n"
@@ -314,6 +328,8 @@ main()
                 span();
             else if (q[0] == "paths")
                 paths();
+            else if (q[0] == "allpaths")
+                allPaths();
             else if (q[0] == "cover")
                 vertexCover(theGraph);
             else
