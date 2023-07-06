@@ -85,14 +85,14 @@ namespace raven
         }
 
         std::pair<std::vector<int>, double>
-        path( sGraphData &gd)
+        path(sGraphData &gd)
         {
-            if( gd.startName.empty() || gd.endName.empty() )
+            if (gd.startName.empty() || gd.endName.empty())
                 throw std::runtime_error(
-                    "path: no start or end"                );
+                    "path: no start or end");
 
-            int start = gd.g.find( gd.startName );
-            int end = gd.g.find( gd.endName );
+            int start = gd.g.find(gd.startName);
+            int end = gd.g.find(gd.endName);
 
             std::vector<int> vpath;
 
@@ -129,11 +129,11 @@ namespace raven
         }
 
         std::vector<std::vector<int>>
-        allPaths( sGraphData &gd)
+        allPaths(sGraphData &gd)
         {
             std::vector<std::vector<int>> ret;
 
-                // copy input graph to working graph
+            // copy input graph to working graph
             auto work = gd;
 
             bool fnew = true;
@@ -182,7 +182,7 @@ namespace raven
         }
 
         cGraph
-        spanningTree( sGraphData& gd )
+        spanningTree(sGraphData &gd)
         {
             // std::cout << "spanning Tree " << startName << "\n";
 
@@ -314,10 +314,10 @@ namespace raven
         }
 
         std::vector<std::vector<int>>
-        dfs_allpaths( sGraphData& gd )
+        dfs_allpaths(sGraphData &gd)
         {
-            int startIndex = gd.g.find( gd.startName );
-            int destIndex = gd.g.find( gd.endName);
+            int startIndex = gd.g.find(gd.startName);
+            int destIndex = gd.g.find(gd.endName);
             std::vector<std::vector<int>> apaths;
             std::vector<int> path;
 
@@ -390,9 +390,8 @@ namespace raven
         }
 
         std::vector<std::vector<int>>
-        dfs_cycle_finder( sGraphData& gd )
+        dfs_cycle_finder(sGraphData &gd)
         {
-
             // store for found cycles, vertex indices in order reached.
             std::vector<std::vector<int>> ret;
 
@@ -406,10 +405,16 @@ namespace raven
             So construct default edge weights for all edges
             allowing for all possible edges
             */
-           gd.edgeWeight.clear();
-           gd.edgeWeight.resize(
-                2 * gd.g.vertexCount()* gd.g.vertexCount(),
+            gd.edgeWeight.clear();
+            gd.edgeWeight.resize(
+                2 * gd.g.vertexCount() * gd.g.vertexCount(),
                 1);
+
+            // working graph data
+            // used to find cycle when previously visited vertex encountered
+            sGraphData work;
+            work.g = gd.g;
+            work.edgeWeight = gd.edgeWeight;
 
             /* loop until all vertices have been visited
 
@@ -477,19 +482,19 @@ namespace raven
                             // remove reverse edge
                             // so the path is forced to go the long way around back to start
 
-                            sGraphData temp;
-                            temp.g = gd.g;
-                            temp.edgeWeight = gd.edgeWeight;
-                            temp.startName = gd.g.userName( w );
-                            temp.endName = gd.g.userName( v );
-                            temp.g.remove(w,v);
-                            cycle = path(temp).first;
+                            work.startName = gd.g.userName(w);
+                            work.endName = gd.g.userName(v);
+                            work.g.remove(w, v);
+                            cycle = path(work).first;
+
+                            // restore removed edge
+                            work.g = gd.g;
                         }
                         else
                         {
-                            gd.startName = gd.g.userName(w);
-                            gd.endName = gd.g.userName(v);
-                            cycle = path(gd).first;
+                            work.startName = gd.g.userName(w);
+                            work.endName = gd.g.userName(v);
+                            cycle = path(work).first;
                         }
 
                         // ignore "cycles" that just go back and forth over one edge
@@ -638,7 +643,7 @@ namespace raven
 
         double
         flows(
-            sGraphData& gd,
+            sGraphData &gd,
             std::vector<int> &vEdgeFlow)
         {
             if (!gd.g.isDirected())
@@ -732,7 +737,7 @@ namespace raven
         {
             double totalmultiflow = 0;
             std::vector<int> vEdgeFlow;
-            for (auto& s : gd.multiStart)
+            for (auto &s : gd.multiStart)
             {
                 gd.startName = s;
                 totalmultiflow += flows(
@@ -781,13 +786,13 @@ namespace raven
             return ret;
         }
 
-        double probs( sGraphData& gd )
+        double probs(sGraphData &gd)
         {
             if (!gd.g.isDirected())
                 throw std::runtime_error(
                     "Probability calculation needs directed graph ( 2nd input line must be 'g')");
 
-            int end = gd.g.find( gd.endName );
+            int end = gd.g.find(gd.endName);
 
             // Mark all node probabilities as 'not yet calculated'
             std::string nyc("-1");
@@ -807,7 +812,7 @@ namespace raven
 
                 // iterate over all paths from starting node to target node
                 gd.startName = gd.g.userName(vi);
-                for (auto &path : allPaths( gd ) )
+                for (auto &path : allPaths(gd))
                 {
                     // loop over nodes in path
                     for (int n : path)
@@ -1191,7 +1196,7 @@ namespace raven
 
         int cTSP::edgeWeight(int i, int j) const
         {
-            return myEdgeWeight[g.find(i,j)];
+            return myEdgeWeight[g.find(i, j)];
         }
 
     }
