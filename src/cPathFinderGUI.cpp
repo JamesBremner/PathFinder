@@ -12,11 +12,12 @@ cGUI::cGUI()
           "PathFinder",
           {50, 50, 1000, 700}),
       myplText(wex::maker::make<wex::panel>(fm)),
-      myplLayout(wex::maker::make<wex::panel>(fm)),
-      myCalcOption(raven::graph::graph_calc::none)
+      myplLayout(wex::maker::make<wex::panel>(fm))
 {
     myplText.move(0, 0, 800, 750);
     myplLayout.move(0, 100, 800, 750);
+
+    myGraphData.option = raven::graph::graph_calc::none;
 
     ConstructMenu();
 
@@ -396,7 +397,7 @@ void cGUI::calcExplore()
 }
 void cGUI::draw(PAINTSTRUCT &ps)
 {
-    fm.text("PathFinder " + myfname);
+    fm.text("PathFinder " + myGraphData.fname);
 
     wex::shapes S(ps);
 
@@ -418,9 +419,9 @@ void cGUI::draw(PAINTSTRUCT &ps)
 }
 void cGUI::drawInput(wex::shapes &S)
 {
-    if (myfname.empty())
+    if (myGraphData.fname.empty())
         return;
-    std::ifstream ifs(myfname);
+    std::ifstream ifs(myGraphData.fname);
     if (!ifs.is_open())
         throw std::runtime_error(
             "Cannot open input file");

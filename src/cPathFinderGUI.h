@@ -79,8 +79,6 @@ private:
     raven::graph::cGraph myResultGraph; // the result graph
 
     raven::graph::cTourNodes *mypTourNodes;
-    std::string myfname;                // input filename
-    raven::graph::graph_calc myCalcOption;            // calculation requested by input file
     std::string myResultText;           // calculation result text
 
     enum class eView
