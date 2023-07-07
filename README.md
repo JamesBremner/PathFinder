@@ -23,7 +23,8 @@ A GUI that reads text files specifying a graph and the path to be found
  * __Probabilities__ Find the probability that an end node can be reached when links are available with specified probability [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/Probabilities)
  * __Allocate__  Find an allocation of agents to tasks that optimizes the number of tasks completed. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/Allocate)
  * __Node Cover__ Find nodes that cover every link in graph. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/Node-Cover) 
- 
+  * __Hills__ Path that minimizes the changes in elevation. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/Hills)
+
 ### Obstacles
 
 A GUI that reads obstacle locations ( e.g. furniture in a room or crops in a field ) and calculates a route around them. [Detailed Documentation](https://github.com/JamesBremner/PathFinderFeb2023/wiki/Obstacles)
