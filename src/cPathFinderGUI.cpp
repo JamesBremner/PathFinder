@@ -87,23 +87,21 @@ void cGUI::ConstructMenu()
 
 void cGUI::calculate()
 {
-    raven::graph::sGraphData graphData;
-
     wex::filebox fb(fm);
 
     try
     {
-        graphData.fname = fb.open();
+        myGraphData.fname = fb.open();
 
         {
             // raven::set::cRunWatch::Start();
 
-            readfile( graphData);
+            readfile( myGraphData);
 
             myplText.text("Calculating...");
             myplText.update();
 
-            switch (graphData.option)
+            switch (myGraphData.option)
             {
 
             case raven::graph::graph_calc::cost:
@@ -458,7 +456,7 @@ void cGUI::drawSpan(wex::shapes &S)
 
 void cGUI::drawLayout(PAINTSTRUCT &ps)
 {
-    switch (myCalcOption)
+    switch (myGraphData.option)
     {
 
     case raven::graph::graph_calc::cost:

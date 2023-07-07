@@ -93,6 +93,9 @@ namespace raven
 
             int start = gd.g.find(gd.startName);
             int end = gd.g.find(gd.endName);
+            if( start < 0 || end < 0 )
+                throw std::runtime_error(
+                    "path: bad start or end");
 
             std::vector<int> vpath;
 
@@ -282,7 +285,7 @@ namespace raven
             std::stack<int> wait;
 
             /*  1 Start by putting one of the graph's vertices on top of a stack.
-                2 Take the top vertex of the stack and add it to the visited list.
+                2 Take the top vertex off the stack and add it to the visited list.
                 3 Add adjacent vertices which aren't in the visited list to the top of the stack.
                 4 Keep repeating steps 2 and 3 until the stack is empty.
             */

@@ -46,7 +46,37 @@ public:
     /// @param dst vertex index
     void addEdge(int src, int dst)
     {
+        if( src < 0 || dst < 0 )
+            throw std::runtime_error(
+                "cGrid2D::addEdge bad index");
         vEdge.push_back(std::make_pair(src, dst));
+    }
+    void addOrthoEdges()
+    {
+        for (int row = 0; row < myRowCount - 1; row++)
+            for (int col = 0; col < myColCount - 1; col++)
+            {
+                addEdge(index(col, row), index(col + 1, row));
+                addEdge(index(col, row), index(col, row + 1));
+            }
+        for (int col = 0; col < myColCount - 1; col++)
+        {
+            addEdge(index(col, myRowCount - 1), index(col + 1, myRowCount - 1));
+        }
+    }
+    void addDiagEdges()
+    {
+        for (int row = 0; row < myRowCount - 1; row++)
+            for (int col = 1; col < myColCount - 1; col++)
+            {
+                addEdge(index(col, row), index(col - 1, row + 1));
+                addEdge(index(col, row), index(col + 1, row + 1));
+            }
+        for (int row = 0; row < myRowCount - 1; row++)
+        {
+            addEdge(index(0, row), index(1, row + 1));
+            addEdge(index(myColCount-1, row), index(myColCount - 2, row + 1));
+        }
     }
 
     /// @brief get grid dimensions
@@ -154,14 +184,19 @@ public:
         return ret;
     }
 
-    std::string name( int cell ) const
+    std::string name( int c, int r ) const
     {
-        int c,r;
-        coords(c,r,cell);
-        if (0 > c || c >= myColCount &&
-            0 > r && r >= myRowCount )
-            return "";
         return "c" + std::to_string(c) + "r" + std::to_string(r);
+    }
+
+    std::string name(int cell) const
+    {
+        int c, r;
+        coords(c, r, cell);
+        if (0 > c || c >= myColCount &&
+                         0 > r && r >= myRowCount)
+            return "";
+       return name(c,r);
     }
 
     /// @brief get edge indices

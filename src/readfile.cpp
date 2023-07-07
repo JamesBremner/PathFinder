@@ -1,11 +1,13 @@
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <math.h>
 #include "cGraph.h"
 #include "GraphTheory.h"
 #include "cGrid2d.h"
 
 static void readSales(
-    raven::graph::sGraphData& graphData,
+    raven::graph::sGraphData &graphData,
     std::ifstream &ifs)
 {
     graphData.g.clear();
@@ -50,7 +52,7 @@ static void readSales(
 }
 
 static void readCostedLinks(
-    raven::graph::sGraphData& graphData,
+    raven::graph::sGraphData &graphData,
     std::ifstream &ifs)
 {
     graphData.g.clear();
@@ -136,7 +138,7 @@ static void readObstacles(
         "Input file must be processed using the obstacle application");
 }
 static void readCycle(
-    raven::graph::sGraphData& graphData,
+    raven::graph::sGraphData &graphData,
     std::ifstream &ifs)
 {
     graphData.g.clear();
@@ -160,7 +162,7 @@ static void readCycle(
 }
 
 static void readExplore(
-    raven::graph::sGraphData& graphData,
+    raven::graph::sGraphData &graphData,
     std::ifstream &ifs)
 {
     graphData.g.clear();
@@ -195,7 +197,7 @@ static void readExplore(
             graphData.startName = "c" + std::to_string(sc) + "r" + std::to_string(sr);
             break;
         case 'e':
-            ifs >>sc >> sr;
+            ifs >> sc >> sr;
             graphData.endName = "c" + std::to_string(sc) + "r" + std::to_string(sr);
             break;
         }
@@ -231,11 +233,93 @@ static void readExplore(
         }
     }
 }
+
+static std::vector<std::string>
+tokenize(
+    const std::string &line)
+{
+    std::vector<std::string> ret;
+    std::stringstream sst(line);
+    std::string a;
+    while (getline(sst, a, ' '))
+        ret.push_back(a);
+    return ret;
+}
+
+static void readHills(
+    raven::graph::sGraphData &graphData,
+    std::ifstream &ifs)
+{
+    graphData.g.clear();
+    graphData.g.directed();
+
+    cGrid2D grid;
+    std::vector<double> vHeight;
+
+    std::string line;
+    int colcount = -1;
+    int rowCount = 0;
+    int startRow, startCol, endRow, endCol;
+
+    while (getline(ifs, line))
+    {
+        auto vt = tokenize(line);
+        switch (line[0])
+        {
+        case 'o':
+        {
+            bool firstcol = true;
+            for (auto &e : vt)
+            {
+                if (firstcol)
+                    firstcol = false;
+                else
+                    vHeight.push_back(atof(e.c_str()));
+            }
+            if (colcount == -1)
+                colcount = vt.size()-1;
+            else if (colcount != vt.size()-1)
+                throw std::runtime_error(
+                    "readHills: variable column count");
+            rowCount++;
+        }
+        break;
+
+        case 's':
+            if (vt.size() < 3)
+                throw std::runtime_error(
+                    "readHills: bad start line");
+            startCol = atoi(vt[1].c_str())-1;
+            startRow = atoi(vt[2].c_str())-1;
+            break;
+
+        case 'e':
+            if (vt.size() < 3)
+                throw std::runtime_error(
+                    "readHills: bad end line");
+            endCol = atoi(vt[1].c_str())-1;
+            endRow = atoi(vt[2].c_str())-1;
+            break;
+        }
+    }
+    grid.setDim(colcount, rowCount);
+    grid.addOrthoEdges();
+    grid.addDiagEdges();
+    for (auto &p : grid.getEdgesVertexIndex())
+    {
+        graphData.g.add(p.first, p.second);
+        double delta = fabs(vHeight[p.first] - vHeight[p.second]);
+        graphData.edgeWeight.push_back(1 + delta * delta);
+    }
+    graphData.startName = graphData.g.userName(grid.index(startCol, startRow));
+    graphData.endName = graphData.g.userName(grid.index(endCol, endRow));
+}
+
 namespace raven
 {
     namespace graph
     {
-        void readfile( sGraphData& graphData )
+        void readfile(sGraphData &graphData)
         {
             graphData.option = raven::graph::graph_calc::none;
             std::ifstream ifs(graphData.fname);
@@ -343,10 +427,14 @@ namespace raven
                 graphData.option = graph_calc::explore;
                 readExplore(graphData, ifs);
             }
+            else if (calc.find("hills") != -1)
+            {
+                graphData.option = graph_calc::cost;
+                readHills(graphData, ifs);
+            }
             else
                 throw std::runtime_error(
                     "bad calculation type ");
-
         }
     }
 }
