@@ -155,9 +155,7 @@ namespace raven
         };
 
         /// @brief read input file
-        /// @param g graph to store input
-        /// @param fname path to file
-        /// @return calculation option requested
+        /// @param[in/out] graphData to store input
 
         void readfile( sGraphData& graphData );
 
@@ -183,9 +181,7 @@ namespace raven
             std::vector<int> &pred);
 
         /// @brief find shortest path from start to end node
-        /// @param g
-        /// @param startName
-        /// @param endName
+        /// @param gd  graph data
         /// @return pair: vector of node indices on the path, path cost
         /// @return pair: empty vector, -1 when end is not reachable from start
 
@@ -194,9 +190,7 @@ namespace raven
 
 
         /// @brief find all paths between two nodes
-        /// @param g
-        /// @param start
-        /// @param end
+        /// @param gd  graph data
         /// @return vector of vectors of node indices on paths
 
         std::vector<std::vector<int>>
@@ -206,8 +200,7 @@ namespace raven
         path( sGraphData &gd);
 
         /// @brief find spanning tree
-        /// @param g
-        /// @param startName root node
+        /// @param gd  graph data
         /// @return graph - a tree rooted at start and visiting every node
 
         cGraph
@@ -225,8 +218,7 @@ namespace raven
             std::function<bool(int v)> visitor);
 
         /// @brief cycle finder
-        /// @param g
-        /// @param startIndex index of vertex to be included in cycles, default to -1 if all cycles required
+        /// @param gd  graph data
         /// @return vector of cycles
 
         std::vector<std::vector<int>>
@@ -234,9 +226,7 @@ namespace raven
 
 
         /// @brief find all paths between 2 vertices
-        /// @param g
-        /// @param startIndex
-        /// @param destIndex
+        /// @param gd  graph data
         /// @return vector of path vectors
 
         std::vector<std::vector<int>>
@@ -253,9 +243,7 @@ namespace raven
             std::string &results);
 
         /// @brief Maximum flow between two vertices
-        /// @param g
-        /// @param start
-        /// @param end
+        /// @param gd  graph data
         /// @param[out] vEdgeFlow flow through each edge
         /// @return total flow
 
@@ -264,9 +252,7 @@ namespace raven
             std::vector<int> &vEdgeFlow);
 
         /// @brief Maximum flow through graph with multiple sources
-        /// @param g
-        /// @param vsource vector of source vertex indices
-        /// @param end sink vertex index
+        /// @param gd  graph data
         /// @return maximum flow
 
         double multiflows(sGraphData &gd);
@@ -318,7 +304,7 @@ namespace raven
             const std::string &pathViz);
 
         /// @brief Implement the A* algorithm with constant edge weights
-        /// @param g graph to be searched https://github.com/JamesBremner/PathFinder
+        /// @param gd graph to be searched https://github.com/JamesBremner/PathFinder
         /// @param edgeWeight function calculates edge weight based on edge index
         /// @param heuristic function calculates distance estimate from vertex to goal
         /// @return vector of vertex indices on path from start to goal
