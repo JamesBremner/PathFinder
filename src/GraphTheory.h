@@ -327,5 +327,7 @@ namespace raven
             std::function<double(int, const std::vector<int> &)> dynWeight,
             int start, int goal,
             std::function<double(int)> heuristic);
+
+        void tarjan(sGraphData& gd );
     }
 }

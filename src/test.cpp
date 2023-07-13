@@ -45,6 +45,57 @@ TEST(add)
     CHECK_EQUAL(1, ba);
 }
 
+TEST(grid2graph1)
+{
+    cGrid2D grid;
+    raven::graph::sGraphData gd;
+
+    grid.setDim(7, 7);
+    grid.addOrthoEdges();
+    grid.addEdges2Graph( gd.g );
+    gd.edgeWeight.resize(2 * gd.g.edgeCount(), 1);
+
+        gd.startName = "c0r0";
+        gd.endName = "c1r5";
+        auto pa = path(gd).first;
+        auto spa = gd.g.userName(pa);
+        CHECK_EQUAL(7,spa.size());
+}
+
+
+TEST(tarjan)
+{
+    // std::cout << "Articulation points in first graph \n";
+    // raven::graph::sGraphData gd;
+    // gd.g.add("1", "0");
+    // gd.g.add("0", "2");
+    // gd.g.add("2", "1");
+    // gd.g.add("0", "3");
+    // gd.g.add("3", "4");
+    // tarjan(gd);
+
+    // cout << "\nArticulation points in second graph \n";
+    // V = 4;
+    // vector<int> adj2[V];
+    // addEdge(adj2, 0, 1);
+    // addEdge(adj2, 1, 2);
+    // addEdge(adj2, 2, 3);
+    // AP(adj2, V);
+
+    // cout << "\nArticulation points in third graph \n";
+    // V = 7;
+    // vector<int> adj3[V];
+    // addEdge(adj3, 0, 1);
+    // addEdge(adj3, 1, 2);
+    // addEdge(adj3, 2, 0);
+    // addEdge(adj3, 1, 3);
+    // addEdge(adj3, 1, 4);
+    // addEdge(adj3, 1, 6);
+    // addEdge(adj3, 3, 5);
+    // addEdge(adj3, 4, 5);
+    // AP(adj3, V);
+}
+
 TEST(allpaths)
 {
     raven::graph::sGraphData gd;
@@ -73,11 +124,6 @@ TEST(allpaths)
         gd.g.userName(act[1]).begin()));
 }
 
-
-
-
-
-
 TEST(probs)
 {
     raven::graph::sGraphData gd;
@@ -87,7 +133,7 @@ TEST(probs)
     gd.edgeWeight.resize(2, 0.5);
     gd.endName = "c";
 
-    int act = 100 * probs( gd );
+    int act = 100 * probs(gd);
 
     CHECK_EQUAL(75, act);
 
@@ -112,7 +158,7 @@ TEST(probs)
     gd.edgeWeight[gd.g.add("b", "v")] = 0.1;
     gd.endName = "v";
 
-    act = 100 * probs( gd );
+    act = 100 * probs(gd);
     CHECK_EQUAL(3, act);
 }
 
@@ -168,7 +214,7 @@ TEST(dfs_allpaths)
     gd.startName = "2";
     gd.endName = "3";
 
-    auto vpaths = dfs_allpaths( gd );
+    auto vpaths = dfs_allpaths(gd);
 
     CHECK_EQUAL(3, vpaths.size());
     std::vector<int> expected1{2, 1, 3};
@@ -353,7 +399,7 @@ TEST(tourNodes)
     gd.edgeWeight = {1, 1, 1, 1, 1, 1};
     raven::graph::cTourNodes tourer;
 
-    tourer.calculate(gd );
+    tourer.calculate(gd);
 
     CHECK_EQUAL(0, tourer.unvisitedCount());
     CHECK_EQUAL(0, tourer.revisitedCount());
@@ -374,13 +420,13 @@ TEST(flows)
 
     gd.g.directed();
     gd.g.add("a", "b");
-    gd.edgeWeight.resize(1,7);
+    gd.edgeWeight.resize(1, 7);
     gd.startName = "a";
     gd.endName = "b";
 
     std::vector<int> vEdgeFlow;
-    double f = flows( gd,
-        vEdgeFlow);
+    double f = flows(gd,
+                     vEdgeFlow);
 
     CHECK_EQUAL(7.0, f);
 }
@@ -557,7 +603,7 @@ TEST(tourNodes2)
     gd.g.add("b", "c");
     gd.g.add("a", "d");
     gd.g.add("c", "d");
-    gd.edgeWeight.resize(4,1);
+    gd.edgeWeight.resize(4, 1);
     raven::graph::cTourNodes tourer;
 
     tourer.calculate(gd);

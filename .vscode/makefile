@@ -26,7 +26,8 @@ OBJ_test = \
 	$(ODIR)/chemistry.o \
 	$(ODIR)/test.o \
 	$(ODIR)/cutest.o \
-	$(ODIR)/readfile.o
+	$(ODIR)/readfile.o \
+	$(ODIR)/tarjan.o
 
 OBJ_pathfinder = \
 	$(ODIR)/pathfinder.o \

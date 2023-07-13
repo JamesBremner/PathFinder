@@ -46,7 +46,7 @@ public:
     /// @param dst vertex index
     void addEdge(int src, int dst)
     {
-        if( src < 0 || dst < 0 )
+        if (src < 0 || dst < 0)
             throw std::runtime_error(
                 "cGrid2D::addEdge bad index");
         vEdge.push_back(std::make_pair(src, dst));
@@ -75,7 +75,7 @@ public:
         for (int row = 0; row < myRowCount - 1; row++)
         {
             addEdge(index(0, row), index(1, row + 1));
-            addEdge(index(myColCount-1, row), index(myColCount - 2, row + 1));
+            addEdge(index(myColCount - 1, row), index(myColCount - 2, row + 1));
         }
     }
 
@@ -184,7 +184,7 @@ public:
         return ret;
     }
 
-    std::string name( int c, int r ) const
+    std::string name(int c, int r) const
     {
         return "c" + std::to_string(c) + "r" + std::to_string(r);
     }
@@ -196,7 +196,7 @@ public:
         if (0 > c || c >= myColCount &&
                          0 > r && r >= myRowCount)
             return "";
-       return name(c,r);
+        return name(c, r);
     }
 
     /// @brief get edge indices
@@ -205,6 +205,16 @@ public:
     getEdgesVertexIndex() const
     {
         return vEdge;
+    }
+
+    void addEdges2Graph(raven::graph::cGraph &g)
+    {
+        for (auto &e : vEdge)
+        {
+            g.add(
+                name(e.first),
+                name(e.second));
+        }
     }
 
     /// @brief Manhatten path, horizontal part
