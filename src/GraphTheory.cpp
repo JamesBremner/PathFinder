@@ -10,15 +10,6 @@ namespace raven
 {
     namespace graph
     {
-        // int rEdgeAttrInt(
-        //     const cGraph &g,
-        //     std::vector<std::vector<
-        //      int i, int j,
-        //       int ai)
-        // {
-        //     return atoi(g.rEdgeAttr(g.find(i, j), ai).c_str());
-        // }
-
         void dijsktra(
             const cGraph &g,
             const std::vector<double> &edgeWeight,

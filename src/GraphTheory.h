@@ -113,7 +113,7 @@ namespace raven
             }
         };
 
-        /// @brief Travelling Salesman Problem
+        /// @brief Travelling Salesman Problem using Branch and Bound.
         class cTSP
         {
         public:
@@ -157,7 +157,7 @@ namespace raven
         /// @brief read input file
         /// @param[in/out] graphData to store input
 
-        void readfile( sGraphData& graphData );
+        void readfile(sGraphData &graphData);
 
         /// @brief read edge attribute as integer
         /// @param g graph
@@ -186,25 +186,24 @@ namespace raven
         /// @return pair: empty vector, -1 when end is not reachable from start
 
         std::pair<std::vector<int>, double>
-        path( sGraphData &gd );
-
+        path(sGraphData &gd);
 
         /// @brief find all paths between two nodes
         /// @param gd  graph data
         /// @return vector of vectors of node indices on paths
 
         std::vector<std::vector<int>>
-        allPaths( sGraphData &gd);
+        allPaths(sGraphData &gd);
 
         std::pair<std::vector<int>, double>
-        path( sGraphData &gd);
+        path(sGraphData &gd);
 
         /// @brief find spanning tree
         /// @param gd  graph data
         /// @return graph - a tree rooted at start and visiting every node
 
         cGraph
-        spanningTree( sGraphData &gd);
+        spanningTree(sGraphData &gd);
 
         /// @brief depth first search
         /// @param g
@@ -222,15 +221,14 @@ namespace raven
         /// @return vector of cycles
 
         std::vector<std::vector<int>>
-        dfs_cycle_finder( sGraphData& gd );
-
+        dfs_cycle_finder(sGraphData &gd);
 
         /// @brief find all paths between 2 vertices
         /// @param gd  graph data
         /// @return vector of path vectors
 
         std::vector<std::vector<int>>
-        dfs_allpaths( sGraphData& gd );
+        dfs_allpaths(sGraphData &gd);
 
         /// @brief path visiting every node
 
@@ -248,7 +246,7 @@ namespace raven
         /// @return total flow
 
         double flows(
-            sGraphData& gd,
+            sGraphData &gd,
             std::vector<int> &vEdgeFlow);
 
         /// @brief Maximum flow through graph with multiple sources
@@ -267,7 +265,7 @@ namespace raven
             const cGraph &g,
             const std::vector<double> &edgeWeight);
 
-        double probs(            sGraphData &gd );
+        double probs(sGraphData &gd);
 
         std::vector<std::string> alloc(sGraphData &gd);
 
@@ -284,7 +282,20 @@ namespace raven
         std::vector<int>
         vertexCover(const cGraph &g);
 
-        /// @brief Graph description in graphviz dot format
+        /// @brief Graph description in graphviz dot format, multiple paths
+        /// @param g
+        /// @param vpath
+        /// @param pathColor path colors
+        /// @param all
+        /// @return string in graphviz dot format
+
+        std::string multiPathViz(
+            cGraph &g,
+            const std::vector<std::vector<int>> &vpath,
+            const std::vector<std::string>& pathColor,
+            bool all);
+
+        /// @brief Graph description in graphviz dot format, one path
         /// @param g
         /// @param vpath
         /// @param all
@@ -294,6 +305,7 @@ namespace raven
             cGraph &g,
             const std::vector<int> &vpath,
             bool all);
+
 
         /// @brief Run the graphviz dot layout program
         /// @param[in] g
@@ -328,6 +340,6 @@ namespace raven
             int start, int goal,
             std::function<double(int)> heuristic);
 
-        void tarjan(sGraphData& gd );
+        void tarjan(sGraphData &gd);
     }
 }

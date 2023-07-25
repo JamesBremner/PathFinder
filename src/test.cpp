@@ -190,6 +190,24 @@ TEST(salesBBnotmetric)
         exp.end(),
         path.begin()));
 }
+TEST(salesmetric)
+{
+    raven::graph::sGraphData gd;
+    gd.fname = "../dat/tspmetric.txt";
+    readfile(gd);
+    //raven::graph::cTourNodes tpsbb(gd.g, gd.edgeWeight);
+    raven::graph::cTourNodes tourer;
+    tourer.calculate(gd);
+    auto path = gd.g.userName(tourer.getTour());
+
+    std::vector<std::string> exp{"0", "3", "1", "2"};
+    //CHECK_EQUAL(80, tpsbb.TotalPathEdgeWeight());
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        path.begin()));
+}
+
 TEST(cliques)
 {
     raven::graph::sGraphData gd;
