@@ -43,7 +43,14 @@ static void readSales(
             inputType = eInput::link;
             ifs >> sn1 >> sn2 >> scost;
             graphData.g.add(sn1, sn2);
-            graphData.edgeWeight.push_back(atof(scost.c_str()));
+
+            /* Store the edge weight
+               An undirected graph is modelled with 2 edges,
+               backwards and forwards between the vertices */
+            double c = atof(scost.c_str());
+            graphData.edgeWeight.push_back(c);
+            graphData.edgeWeight.push_back(c);
+
             break;
         }
 
