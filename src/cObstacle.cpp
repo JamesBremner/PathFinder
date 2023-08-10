@@ -25,6 +25,7 @@ void read(
 
     if (calc.find("obs") != -1)
     {
+        // randomly placed obstacles in 2D grid
         int nx, ny, view;
         ifs >> nx >> ny >> view;
         obs.grid(nx, ny);
@@ -98,6 +99,7 @@ bool cObstacle::isBlocked(int x1, int y1, int x2, int y2)
             cxy obstacle(ow, oh);
             cxy line1(x1, y1);
             cxy line2(x2, y2);
+            auto dbg = obstacle.dis2toline(line1, line2);
             if (obstacle.dis2toline(line1, line2) < 2)
                 return true;
         }
@@ -107,6 +109,13 @@ bool cObstacle::isBlocked(int x1, int y1, int x2, int y2)
 
 void cObstacle::connect()
 {
+    // allocate memory for the edge weights
+    // orthogonal grid, so each vertice can have up to 4 edges
+    // ( Question: do we need edge weights )
+
+    myEdgeWeight.clear();
+    myEdgeWeight.resize(4 * vN.size() * vN.size());
+
     // loop over node pairs
     for (auto n1 : vN)
         for (auto n2 : vN)
@@ -119,28 +128,30 @@ void cObstacle::connect()
             int w1, h1, w2, h2;
             A->coords(w1, h1, n1);
             A->coords(w2, h2, n2);
-            int dx = w1 - w2;
-            int dy = h1 - h2;
-            int d2 = dx * dx + dy * dy;
-            if (d2 > 50)
+            if( abs( w1-w2) > 1 || abs( h1-h2) > 1 )
                 continue;
+            // int dx = w1 - w2;
+            // int dy = h1 - h2;
+            // int d2 = dx * dx + dy * dy;
+            // if (d2 > 50)
+            //     continue;
 
-            // check for blocked
-            if (isBlocked(w1, h1, w2, h2))
-                continue;
+            // // check for blocked
+            // if (isBlocked(w1, h1, w2, h2))
+            //     continue;
 
             // OK to connect
 
             auto sn1 = std::to_string(n1->ID());
             auto sn2 = std::to_string(n2->ID());
-            myEdgeWeight[mygraphdata.add(sn1, sn2)] = d2;
-            myEdgeWeight[mygraphdata.add(sn2, sn2)] = d2;
+            myEdgeWeight[mygraphdata.add(sn1, sn2)] = 1;
+            myEdgeWeight[mygraphdata.add(sn2, sn2)] = 1;
             mygraphdata.wVertexAttr(
                 mygraphdata.find(sn1),
                 {std::to_string(w1), std::to_string(h1)});
             mygraphdata.wVertexAttr(
                 mygraphdata.find(sn2),
-                    {std::to_string(w2),std::to_string(h2)});
+                {std::to_string(w2), std::to_string(h2)});
         }
 }
 
@@ -156,14 +167,15 @@ void cObstacle::tourNodes()
               << "\n";
 
     myTour.clear();
-    std::tuple<std::string,int,int> loc;
-    for( int n : myRouteCalculator.getTour() ) {
+    std::tuple<std::string, int, int> loc;
+    for (int n : myRouteCalculator.getTour())
+    {
         std::get<0>(loc) = mygraphdata.userName(n);
         A->coords(
-            std::get<1>(loc),std::get<2>(loc),
+            std::get<1>(loc), std::get<2>(loc),
             A->cell(atoi(std::get<0>(loc).c_str())));
 
-        myTour.push_back( loc );
+        myTour.push_back(loc);
     }
 }
 
@@ -181,17 +193,13 @@ std::string cObstacle::draw(int w, int h) const
     }
 }
 
-
-
 void cObstacle::clear()
 {
     myView = -999;
     myfrect = true;
     vN.clear(); ///< nodes to be included in path
     myPolygon.clear();
-
 }
-
 
 void cObstacle::unobstructedPoints()
 {
@@ -207,14 +215,23 @@ void cObstacle::unobstructedPoints()
         grid(W, H);
     }
 
+    // the step increment between points that must be visited
     int V;
-    if (myView > 0)
+    if (myView >= 0)
         V = myView;
     else
         V = 2;
 
-    for (int h = V; h < H - V + 1; h += 2 * V + 1)
-        for (int w = V; w <= W - V + 1; w += 2 * V + 1)
+    int mh = H - V + 1;
+    int mw = W - V + 1;
+    if (V == 0)
+    {
+        mh = H;
+        mw = W;
+    }
+
+    for (int h = V; h < mh; h += 2 * V + 1)
+        for (int w = V; w < mw; w += 2 * V + 1)
         {
             if (!myfrect)
             {
@@ -223,8 +240,11 @@ void cObstacle::unobstructedPoints()
                     continue;
             }
             cOCell *c = A->cell(w, h);
-            c->myType = 2;
-            vN.push_back(c);
+            if (c->myType == 0)
+            {
+                c->myType = 2;
+                vN.push_back(c);
+            }
         }
     if (!vN.size())
         throw std::runtime_error(

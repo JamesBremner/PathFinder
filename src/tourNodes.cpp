@@ -90,6 +90,11 @@ namespace raven
 
         void cTourNodes::calculate( sGraphData &gd)
         {
+            if( ! gd.g.vertexCount()) {
+                std::cout << "cTourNodes::calculate no vertices\n";
+                return;
+            }
+
             g = &gd.g;
             myEdgeWeights = gd.edgeWeight;
 
@@ -149,7 +154,7 @@ namespace raven
                 }
                 // std::cout << "tourNodes revisited " << revisited.size()
                 //           << " unvisited " << unvisited
-                //           << " start " << g.userName(spanTreeRoot)
+                //           << " start " << g->userName(spanTreeRoot)
                 //           << " ( " << spanTreeRoot << " )"
                 //           << "\n";
 

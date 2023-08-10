@@ -135,10 +135,10 @@ public:
     /// @return
     bool isBlocked(int x1, int y1, int x2, int y2);
 
+    /// @brief get calculated tour
+    /// @return vector of tuples: name, col, row
     std::vector<std::tuple<std::string, int, int>> tour() const
     {
-        if (!myTour.size())
-            throw std::runtime_error("No tour");
         return myTour;
     }
     std::vector<cOCell *> NodesRevisited() const

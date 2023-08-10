@@ -97,7 +97,7 @@ void cGUI::draw(PAINTSTRUCT &ps)
 
     fm.text("Obstacles " + myfname);
 
-    int scale = 10;
+    int scale = 40;
 
     wex::shapes S(ps);
     int W, H;
@@ -105,17 +105,6 @@ void cGUI::draw(PAINTSTRUCT &ps)
 
     auto grid = myObstacle.grid();
     S.color(0x000000);
-    // for (auto &l : myObstacle.links())
-    // {
-    //     int w, h, w2, h2;
-    //     grid->coords(
-    //         w, h, std::get<0>(l));
-    //     // std::cout << w << " " << h << " -> ";
-    //     grid->coords(
-    //         w2, h2, std::get<1>(l));
-    //     // std::cout << w2 << " " << h2 << "\n";
-    //     S.line({20 * w, 20 * h, 20 * w2, 20 * h2});
-    // }
 
     std::stringstream sspath;
     int pathCount = 0;
@@ -225,6 +214,7 @@ void cGUI::drawObstacles(
     int W, H;
     myObstacle.size(W, H);
     S.color(0x0000FF);
+    S.textHeight(10);
     for (int h = 0; h < H; h++)
         for (int w = 0; w < W; w++)
         {
@@ -240,20 +230,31 @@ void cGUI::drawObstacles(
             S.color(0x000000);
             S.text(s, {w * scale, h * scale});
         }
+    S.textHeight(20);
 }
 
 void cGUI::drawTour(wex::shapes &S, int scale)
 {
+    if(  ! myObstacle.tour().size() )
+    {
+        std::cout << "cGUI::drawTour no tour found\n";
+        return;
+    }
 
     int W, H;
     myObstacle.size(W, H);
     std::stringstream ss;
     auto prev = myObstacle.tour()[0];
+    int k = 0;
     for (auto &loc : myObstacle.tour())
     {
         S.line({scale * std::get<1>(prev), scale * std::get<2>(prev),
                 scale * std::get<1>(loc), scale * std::get<2>(loc)});
         ss << std::get<0>(loc) << "->";
+        if( k++ > 12 ) {
+            ss << "\n";
+            k = 0;
+        }
         prev = loc;
     }
     ss << "\n\rUnvisited " << myObstacle.unvisitedCount() 
