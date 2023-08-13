@@ -39,6 +39,8 @@ class cObstacle
      */
     int myView; ///< view radius
 
+    int myVisitStep;
+
     cell::cAutomaton<cOCell> *A; ///< 2D grid
     std::vector<cOCell *> vN;    ///< nodes to be included in path
 

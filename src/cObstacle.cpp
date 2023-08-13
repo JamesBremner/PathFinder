@@ -116,7 +116,7 @@ void cObstacle::connect()
     myEdgeWeight.clear();
     myEdgeWeight.resize(4 * vN.size() * vN.size());
 
-    // loop over node pairs
+    // loop over pairs of unobstructed points
     for (auto n1 : vN)
         for (auto n2 : vN)
         {
@@ -128,30 +128,24 @@ void cObstacle::connect()
             int w1, h1, w2, h2;
             A->coords(w1, h1, n1);
             A->coords(w2, h2, n2);
-            if( abs( w1-w2) > 1 || abs( h1-h2) > 1 )
+            if (abs(w1 - w2) > myVisitStep || abs(h1 - h2) > myVisitStep)
                 continue;
-            // int dx = w1 - w2;
-            // int dy = h1 - h2;
-            // int d2 = dx * dx + dy * dy;
-            // if (d2 > 50)
-            //     continue;
 
-            // // check for blocked
-            // if (isBlocked(w1, h1, w2, h2))
-            //     continue;
+            // check for obstacle in path of link between points
+            if (myView > 0)
+                if (isBlocked(w1, h1, w2, h2))
+                    continue;
 
-            // OK to connect
+            // OK to link the two points
 
             auto sn1 = std::to_string(n1->ID());
             auto sn2 = std::to_string(n2->ID());
-            myEdgeWeight[mygraphdata.add(sn1, sn2)] = 1;
-            myEdgeWeight[mygraphdata.add(sn2, sn2)] = 1;
-            mygraphdata.wVertexAttr(
-                mygraphdata.find(sn1),
-                {std::to_string(w1), std::to_string(h1)});
-            mygraphdata.wVertexAttr(
-                mygraphdata.find(sn2),
-                {std::to_string(w2), std::to_string(h2)});
+            
+            int dx = w1 - w2;
+            int dy = h1 - h2;
+            int d2 = dx * dx + dy * dy;
+            myEdgeWeight[mygraphdata.add(sn1, sn2)] = d2;
+            myEdgeWeight[mygraphdata.add(sn2, sn2)] = d2;
         }
 }
 
@@ -160,7 +154,9 @@ void cObstacle::tourNodes()
     raven::graph::sGraphData gd;
     gd.g = mygraphdata;
     gd.edgeWeight = myEdgeWeight;
+
     myRouteCalculator.calculate(gd);
+
     std::cout << "unvisited " << myRouteCalculator.unvisitedCount()
               << ", revisited " << myRouteCalculator.revisitedCount()
               << ", nodes " << mygraphdata.vertexCount()
@@ -222,6 +218,8 @@ void cObstacle::unobstructedPoints()
     else
         V = 2;
 
+    myVisitStep = 2 * V + 1;
+    
     int mh = H - V + 1;
     int mw = W - V + 1;
     if (V == 0)
@@ -230,8 +228,8 @@ void cObstacle::unobstructedPoints()
         mw = W;
     }
 
-    for (int h = V; h < mh; h += 2 * V + 1)
-        for (int w = V; w < mw; w += 2 * V + 1)
+    for (int h = V; h < mh; h += myVisitStep)
+        for (int w = V; w < mw; w += myVisitStep)
         {
             if (!myfrect)
             {
@@ -242,6 +240,8 @@ void cObstacle::unobstructedPoints()
             cOCell *c = A->cell(w, h);
             if (c->myType == 0)
             {
+                // unobstructed point
+                // add to points that must be visited
                 c->myType = 2;
                 vN.push_back(c);
             }
