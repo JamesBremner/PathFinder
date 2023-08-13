@@ -195,6 +195,9 @@ void cObstacle::clear()
     myfrect = true;
     vN.clear(); ///< nodes to be included in path
     myPolygon.clear();
+    myTour.clear();
+    myNodesRevisited.clear();
+    mygraphdata.clear();
 }
 
 void cObstacle::unobstructedPoints()
@@ -249,4 +252,6 @@ void cObstacle::unobstructedPoints()
     if (!vN.size())
         throw std::runtime_error(
             "No unobstructed points");
+
+    //std::cout << "vN size " << vN.size()  << "\n";
 }
