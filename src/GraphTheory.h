@@ -154,6 +154,37 @@ namespace raven
             int edgeWeight(int i, int j) const;
         };
 
+        /// @brief Find articulation points in an undirected graph
+        /// An articulation point is a vertes whose removal 
+        /// increases the number of connected components in the graph.
+
+        class cTarjan
+        {
+        public:
+            /// @brief Find articulation points with Tarjan's algorithm
+            /// @param gd graph description
+            /// @return vector of articulation point names
+
+            std::vector<std::string> ArticulationPoints(sGraphData &gd);
+
+        private:
+            std::vector<bool> visited;  // true if vertex index has been visited
+            std::vector<int> disc;      // discovery times of visited vertices
+            std::vector<int> low;       // earliest visited vertex (the vertex with minimum
+                                        // discovery time) that can be reached from subtree
+                                        // rooted with vertex
+            std::set<int> sAP;          // set of articulation point vertex indices
+
+            /// @brief Recursive search graph for articulation points
+            /// @param gd graph description
+            /// @param time current time
+            /// @param parent vertex index to start search from
+
+            void APRecurse(
+                sGraphData &gd,
+                int &time, int parent );
+        };
+
         /// @brief read input file
         /// @param[in/out] graphData to store input
 
@@ -292,7 +323,7 @@ namespace raven
         std::string multiPathViz(
             cGraph &g,
             const std::vector<std::vector<int>> &vpath,
-            const std::vector<std::string>& pathColor,
+            const std::vector<std::string> &pathColor,
             bool all);
 
         /// @brief Graph description in graphviz dot format, one path
@@ -305,7 +336,6 @@ namespace raven
             cGraph &g,
             const std::vector<int> &vpath,
             bool all);
-
 
         /// @brief Run the graphviz dot layout program
         /// @param[in] g
@@ -340,6 +370,5 @@ namespace raven
             int start, int goal,
             std::function<double(int)> heuristic);
 
-        void tarjan(sGraphData &gd);
     }
 }

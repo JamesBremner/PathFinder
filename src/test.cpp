@@ -45,6 +45,71 @@ TEST(add)
     CHECK_EQUAL(1, ba);
 }
 
+TEST(tarjan_gg3)
+{
+    raven::graph::sGraphData gd;
+    gd.g.directed();
+    gd.g.add("1", "2");
+    gd.g.add("2", "3");
+    gd.g.add("3", "4");
+    gd.g.add("4", "5");
+    gd.g.add("4", "6");
+    gd.g.add("4", "7");
+
+    raven::graph::cTarjan T;
+    auto vAP = T.ArticulationPoints(gd);
+    CHECK_EQUAL(3, vAP.size());
+    CHECK_EQUAL("2", vAP[0]);
+    CHECK_EQUAL("3", vAP[1]);
+    CHECK_EQUAL("4", vAP[2]);
+}
+
+TEST(tarjan_so76904782)
+{
+    raven::graph::sGraphData gd;
+    gd.g.directed();
+    gd.g.add("0", "1");
+    gd.g.add("1", "2");
+    gd.g.add("2", "0");
+    gd.g.add("1", "3");
+    gd.g.add("3", "2");
+    raven::graph::cTarjan T;
+    auto vAP = T.ArticulationPoints(gd);
+    CHECK_EQUAL(1,vAP.size());
+     CHECK_EQUAL("1", vAP[0]);
+ }
+
+TEST(tarjan_gg1)
+{
+    raven::graph::sGraphData gd;
+    gd.g.directed();
+    gd.g.add("1", "0");
+    gd.g.add("0", "2");
+    gd.g.add("2", "1");
+    gd.g.add("0", "3");
+    gd.g.add("3", "4");
+    raven::graph::cTarjan T;
+    auto vAP = T.ArticulationPoints(gd);
+    CHECK_EQUAL(2, vAP.size());
+    CHECK_EQUAL("0", vAP[0]);
+    CHECK_EQUAL("3", vAP[1]);
+}
+
+TEST(tarjan_gg2)
+{
+    raven::graph::sGraphData gd;
+    gd.g.directed();
+    gd.g.add("0", "1");
+    gd.g.add("1", "2");
+    gd.g.add("2", "3");
+    raven::graph::cTarjan T;
+    auto vAP = T.ArticulationPoints(gd);
+    CHECK_EQUAL(2, vAP.size());
+    CHECK_EQUAL("1",vAP[0]);
+    CHECK_EQUAL("2",vAP[1]);
+}
+
+
 TEST(grid2graph1)
 {
     cGrid2D grid;
@@ -52,48 +117,14 @@ TEST(grid2graph1)
 
     grid.setDim(7, 7);
     grid.addOrthoEdges();
-    grid.addEdges2Graph( gd.g );
+    grid.addEdges2Graph(gd.g);
     gd.edgeWeight.resize(2 * gd.g.edgeCount(), 1);
 
-        gd.startName = "c0r0";
-        gd.endName = "c1r5";
-        auto pa = path(gd).first;
-        auto spa = gd.g.userName(pa);
-        CHECK_EQUAL(7,spa.size());
-}
-
-
-TEST(tarjan)
-{
-    // std::cout << "Articulation points in first graph \n";
-    // raven::graph::sGraphData gd;
-    // gd.g.add("1", "0");
-    // gd.g.add("0", "2");
-    // gd.g.add("2", "1");
-    // gd.g.add("0", "3");
-    // gd.g.add("3", "4");
-    // tarjan(gd);
-
-    // cout << "\nArticulation points in second graph \n";
-    // V = 4;
-    // vector<int> adj2[V];
-    // addEdge(adj2, 0, 1);
-    // addEdge(adj2, 1, 2);
-    // addEdge(adj2, 2, 3);
-    // AP(adj2, V);
-
-    // cout << "\nArticulation points in third graph \n";
-    // V = 7;
-    // vector<int> adj3[V];
-    // addEdge(adj3, 0, 1);
-    // addEdge(adj3, 1, 2);
-    // addEdge(adj3, 2, 0);
-    // addEdge(adj3, 1, 3);
-    // addEdge(adj3, 1, 4);
-    // addEdge(adj3, 1, 6);
-    // addEdge(adj3, 3, 5);
-    // addEdge(adj3, 4, 5);
-    // AP(adj3, V);
+    gd.startName = "c0r0";
+    gd.endName = "c1r5";
+    auto pa = path(gd).first;
+    auto spa = gd.g.userName(pa);
+    CHECK_EQUAL(7, spa.size());
 }
 
 TEST(allpaths)
@@ -195,13 +226,13 @@ TEST(salesmetric)
     raven::graph::sGraphData gd;
     gd.fname = "../dat/tspmetric.txt";
     readfile(gd);
-    //raven::graph::cTourNodes tpsbb(gd.g, gd.edgeWeight);
+    // raven::graph::cTourNodes tpsbb(gd.g, gd.edgeWeight);
     raven::graph::cTourNodes tourer;
     tourer.calculate(gd);
     auto path = gd.g.userName(tourer.getTour());
 
     std::vector<std::string> exp{"0", "3", "1", "2"};
-    //CHECK_EQUAL(80, tpsbb.TotalPathEdgeWeight());
+    // CHECK_EQUAL(80, tpsbb.TotalPathEdgeWeight());
     CHECK(std::equal(
         exp.begin(),
         exp.end(),
