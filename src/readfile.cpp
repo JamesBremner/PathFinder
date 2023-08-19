@@ -439,6 +439,11 @@ namespace raven
                 graphData.option = graph_calc::cost;
                 readHills(graphData, ifs);
             }
+            else if (calc.find("cuts") != -1)
+            {
+                graphData.option = graph_calc::cuts;
+                readUncostedLinks(graphData, ifs);
+            }
             else
                 throw std::runtime_error(
                     "bad calculation type ");

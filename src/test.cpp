@@ -48,7 +48,6 @@ TEST(add)
 TEST(tarjan_gg3)
 {
     raven::graph::sGraphData gd;
-    // gd.g.directed();
     gd.g.add("1", "2");
     gd.g.add("2", "3");
     gd.g.add("3", "4");
@@ -159,7 +158,7 @@ TEST(AP_so76642739_directed)
     }
     catch( ... )
     {}
-    
+
 }
 
 TEST(grid2graph1)

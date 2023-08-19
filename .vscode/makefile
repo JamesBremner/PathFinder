@@ -37,6 +37,7 @@ OBJ_pathfinder = \
 	$(ODIR)/tourNodes.o \
 	$(ODIR)/astar.o \
 	$(ODIR)/GraphViz.o \
+	$(ODIR)/tarjan.o \
 	$(ODIR)/readfile.o
 
 OBJ_obstacle = \

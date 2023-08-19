@@ -26,6 +26,7 @@ namespace raven
             euler,
             cover,
             explore,
+            cuts,
         };
 
         struct sGraphData

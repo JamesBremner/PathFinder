@@ -161,6 +161,10 @@ void cGUI::calculate()
                 calcExplore();
                 break;
 
+            case raven::graph::graph_calc::cuts:
+                calcCuts();
+                break;
+
             case raven::graph::graph_calc::none:
                 break;
             }
@@ -394,6 +398,21 @@ void cGUI::calcExplore()
             myGraphData.g,
             path,
             true));
+}
+
+void cGUI::calcCuts()
+{
+    raven::graph::cTarjan T;
+    auto vAP = T.ArticulationPoints(myGraphData);
+    if( ! vAP.size()) {
+        myResultText = "The graph contains no cut vertices";
+        return;
+    }
+    myResultText = "Cut vertices: ";
+    for( auto& name : vAP )
+        myResultText += name + ", ";
+    return;
+
 }
 void cGUI::draw(PAINTSTRUCT &ps)
 {

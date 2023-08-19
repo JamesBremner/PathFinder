@@ -106,6 +106,7 @@ private:
     void calcEuler();
     void calcCover();
     void calcExplore();
+    void calcCuts();
 
     void draw(PAINTSTRUCT &ps);
     void drawLayout(PAINTSTRUCT &ps);

@@ -1,0 +1,4 @@
+format cuts
+l 0 1
+l 1 2
+l 2 3
