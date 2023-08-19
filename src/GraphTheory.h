@@ -162,7 +162,7 @@ namespace raven
         {
         public:
             /// @brief Find articulation points with Tarjan's algorithm
-            /// @param gd graph description
+            /// @param gd undirected graph description ( directed will raise exception )
             /// @return vector of articulation point names
 
             std::vector<std::string> ArticulationPoints(sGraphData &gd);

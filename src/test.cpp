@@ -48,7 +48,7 @@ TEST(add)
 TEST(tarjan_gg3)
 {
     raven::graph::sGraphData gd;
-    gd.g.directed();
+    // gd.g.directed();
     gd.g.add("1", "2");
     gd.g.add("2", "3");
     gd.g.add("3", "4");
@@ -67,7 +67,6 @@ TEST(tarjan_gg3)
 TEST(tarjan_so76904782)
 {
     raven::graph::sGraphData gd;
-    gd.g.directed();
     gd.g.add("0", "1");
     gd.g.add("1", "2");
     gd.g.add("2", "0");
@@ -75,14 +74,13 @@ TEST(tarjan_so76904782)
     gd.g.add("3", "2");
     raven::graph::cTarjan T;
     auto vAP = T.ArticulationPoints(gd);
-    CHECK_EQUAL(1,vAP.size());
-     CHECK_EQUAL("1", vAP[0]);
- }
+    CHECK_EQUAL(0, vAP.size());
+}
 
 TEST(tarjan_gg1)
 {
     raven::graph::sGraphData gd;
-    gd.g.directed();
+    // gd.g.directed();
     gd.g.add("1", "0");
     gd.g.add("0", "2");
     gd.g.add("2", "1");
@@ -98,17 +96,71 @@ TEST(tarjan_gg1)
 TEST(tarjan_gg2)
 {
     raven::graph::sGraphData gd;
-    gd.g.directed();
     gd.g.add("0", "1");
     gd.g.add("1", "2");
     gd.g.add("2", "3");
     raven::graph::cTarjan T;
     auto vAP = T.ArticulationPoints(gd);
     CHECK_EQUAL(2, vAP.size());
-    CHECK_EQUAL("1",vAP[0]);
-    CHECK_EQUAL("2",vAP[1]);
+    CHECK_EQUAL("1", vAP[0]);
+    CHECK_EQUAL("2", vAP[1]);
 }
 
+TEST(AP_so76642739_undirected)
+{
+    raven::graph::sGraphData gd;
+    gd.g.add("0", "2");
+    gd.g.add("2", "1");
+    gd.g.add("1", "0");
+    gd.g.add("0", "4");
+    gd.g.add("2", "3");
+    gd.g.add("4", "5");
+    gd.g.add("5", "6");
+    gd.g.add("6", "3");
+    raven::graph::cTarjan T;
+    auto vAP = T.ArticulationPoints(gd);
+    CHECK_EQUAL(0, vAP.size());
+}
+
+TEST(AP_so76642739_undirected_2)
+{
+    // define edges in a different order
+    raven::graph::sGraphData gd;
+    gd.g.add("0", "4");
+    gd.g.add("0", "2");
+    gd.g.add("2", "1");
+    gd.g.add("1", "0");
+    gd.g.add("2", "3");
+    gd.g.add("4", "5");
+    gd.g.add("5", "6");
+    gd.g.add("6", "3");
+    raven::graph::cTarjan T;
+    auto vAP = T.ArticulationPoints(gd);
+    CHECK_EQUAL(0, vAP.size());
+}
+
+TEST(AP_so76642739_directed)
+{
+    raven::graph::sGraphData gd;
+    gd.g.directed();
+    gd.g.add("0", "2");
+    gd.g.add("2", "1");
+    gd.g.add("1", "0");
+    gd.g.add("0", "4");
+    gd.g.add("2", "3");
+    gd.g.add("4", "5");
+    gd.g.add("5", "6");
+    gd.g.add("6", "3");
+    raven::graph::cTarjan T;
+    try
+    {
+        auto vAP = T.ArticulationPoints(gd);
+        CHECK(false);
+    }
+    catch( ... )
+    {}
+    
+}
 
 TEST(grid2graph1)
 {

@@ -9,9 +9,9 @@ namespace raven
 
         std::vector<std::string> cTarjan::ArticulationPoints(sGraphData &gd)
         {
-            if (!gd.g.isDirected())
+            if (gd.g.isDirected())
                 throw std::runtime_error(
-                    "Tarjan works only for directed graphs");
+                    "Tarjan works only for undirected graphs");
 
             visited.clear();
             visited.resize(gd.g.vertexCount(), false);
