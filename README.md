@@ -24,6 +24,7 @@ A GUI that reads text files specifying a graph and the path to be found
  * __Allocate__  Find an allocation of agents to tasks that optimizes the number of tasks completed. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/Allocate)
  * __Node Cover__ Find nodes that cover every link in graph. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/Node-Cover) 
   * __Hills__ Path that minimizes the changes in elevation. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/Hills)
+  * __Cuts__ Find vertices that, any one removed, split graph into unconnected components. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/Cuts)
 
 ### Obstacles
 
