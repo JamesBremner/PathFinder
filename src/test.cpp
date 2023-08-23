@@ -45,6 +45,39 @@ TEST(add)
     CHECK_EQUAL(1, ba);
 }
 
+TEST(bfs)
+{
+    // these tests are based on the example in https://stackoverflow.com/q/76954728/16582
+    // note that here the station indices are zero-based
+    // and both start and destination count in the path length
+
+    raven::graph::sGraphData gd;
+    gd.g.add("0", "1");
+    gd.g.add("1", "2");
+    gd.g.add("2", "3");
+    gd.g.add("3", "4");
+    gd.g.add("2", "5");
+    gd.g.add("2", "6");
+    gd.g.add("2", "7");
+    gd.g.add("1", "8");
+    gd.g.add("4", "6");
+
+    gd.startName = "0";
+    gd.endName = "4";
+    auto path = bfsPath(gd);
+    CHECK_EQUAL(5, path.size());
+
+    gd.startName = "0";
+    gd.endName = "1";
+    path = bfsPath(gd);
+    CHECK_EQUAL(2, path.size());
+
+    gd.startName = "2";
+    gd.endName = "5";
+    path = bfsPath(gd);
+    CHECK_EQUAL(2, path.size());
+}
+
 TEST(tarjan_gg3)
 {
     raven::graph::sGraphData gd;
@@ -156,9 +189,9 @@ TEST(AP_so76642739_directed)
         auto vAP = T.ArticulationPoints(gd);
         CHECK(false);
     }
-    catch( ... )
-    {}
-
+    catch (...)
+    {
+    }
 }
 
 TEST(grid2graph1)

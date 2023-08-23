@@ -4,6 +4,7 @@
 #include <sstream>
 #include <stack>
 #include <set>
+#include <queue>
 #include "GraphTheory.h"
 
 namespace raven
@@ -84,7 +85,7 @@ namespace raven
 
             int start = gd.g.find(gd.startName);
             int end = gd.g.find(gd.endName);
-            if( start < 0 || end < 0 )
+            if (start < 0 || end < 0)
                 throw std::runtime_error(
                     "path: bad start or end");
 
@@ -549,6 +550,86 @@ namespace raven
                 }
             }
             return ret;
+        }
+
+        std::vector<int>
+        bfsPath(sGraphData &gd)
+        {
+            // the path will be stored her
+            std::vector<int> path;
+
+            // queue of visited vertices with unsearched children
+            std::queue<int> Q;
+
+            // track nodes that have been visited
+            // prevent getting caught going around and around a cycle
+            std::vector<bool> visited(gd.g.vertexCount(), false);
+
+            // store the vertex which every visited vertex was reached from
+            std::vector<int> pred(gd.g.vertexCount(), -1);
+
+            // get vertex indices from user names
+            int start = gd.g.find(gd.startName);
+            int dest = gd.g.find(gd.endName);
+
+            // start at start
+            int v = start;
+            Q.push(v);
+            visited[v] = true;
+
+            // loop while the queue is not empty
+            while (!Q.empty())
+            {
+                // get current vertex from front of queue
+                v = Q.front();
+                Q.pop();
+
+                // loop over vertices reachable from current vertex
+                for (int u : gd.g.adjacentOut(v))
+                {
+                    if (u == dest)
+                    {
+                        // reached the destination, no need to search further
+                        pred[u] = v;
+                        std::queue<int> empty;
+                        std::swap(Q, empty);
+                        break;
+                    }
+                    if (!visited[u])
+                    {
+                        // visit to a new node
+                        // because this is BFS, the first visit will be from
+                        // the previous node on the shortest path
+
+                        // add to queue, record predeccor vertex, and mark visited
+                        Q.push(u);
+                        pred[u] = v;
+                        visited[u] = true;
+                    }
+                }
+            }
+
+            if (pred[dest] == -1)
+            {
+                // destination not reachable
+                return path;
+            }
+
+            // extract path by backtracking from destination to start
+            v = dest;
+            while ( true )
+            {
+                path.push_back(v);
+                if( v == start )
+                    break;
+                v = pred[v];
+                
+            }
+
+            // flip path to start -> destination
+            std::reverse(path.begin(), path.end());
+
+            return path;
         }
 
         void cliques(

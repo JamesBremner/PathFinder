@@ -262,6 +262,13 @@ namespace raven
         std::vector<std::vector<int>>
         dfs_allpaths(sGraphData &gd);
 
+        /// @brief Find shortest path between 2 vertices, all edges count for 1
+        /// @param gd 
+        /// @return vertex indices of path
+        
+        std::vector<int>
+        bfsPath(sGraphData &gd);
+
         /// @brief path visiting every node
 
         std::vector<int>
