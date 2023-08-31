@@ -185,7 +185,7 @@ namespace raven
                 throw std::runtime_error(
                     "spanningTree bad edge weights");
 
-            // copy vertices from input grqaph to spanning tree
+            // copy vertices from input graph to spanning tree
             cSpanningTree ST;
             for (int kv = 0; kv < gd.g.vertexCount(); kv++)
                 ST.mySpanningTree.add(gd.g.userName(kv));
@@ -195,17 +195,13 @@ namespace raven
             // track visited vertices
             std::vector<bool> visited(gd.g.vertexCount(), false);
 
-            // add initial arbitrary link
+            // add start vertex to spanning tree
             int v = start;
             auto va = gd.g.adjacentOut(v);
             if (!va.size())
                 throw std::runtime_error(
                     "spanning tree start vertex unconnected");
-            auto w = va[0];
-            ST.add(gd.g, v, w);
-
             visited[v] = true;
-            visited[w] = true;
 
             // while nodes remain outside of span
             while (gd.g.vertexCount() > ST.vertexCount())

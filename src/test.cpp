@@ -693,8 +693,8 @@ TEST(spanningTree)
     gd.startName = "a";
 
     std::vector<std::pair<int, int>> expected{
-        {0, 1},
         {0, 3},
+        {0, 1},
         {1, 2}};
 
     auto res = spanningTree(gd).edgeList();
@@ -742,7 +742,7 @@ TEST(tourNodes2)
     tourer.calculate(gd);
     auto tour = tourer.getTour();
 
-    std::vector<std::string> expected{"a", "d", "c", "b"};
+    std::vector<std::string> expected{"a", "b", "c", "d"};
     auto actual = gd.g.userName(tour);
     CHECK(std::equal(
         expected.begin(),
