@@ -3,7 +3,9 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "C:/Users/James/code/autocell/src",
+                "C:/Users/James/code/raven-set"
             ],
             "defines": [
                 "_DEBUG",

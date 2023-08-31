@@ -94,4 +94,5 @@ private:
         int scale);
     void drawRouteList(wex::shapes &S);
     void drawTour(wex::shapes& S, int scale );
+    void drawSpanningTree(wex::shapes &S, int scale );
 };

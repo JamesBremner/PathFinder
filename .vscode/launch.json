@@ -6,11 +6,13 @@
     "configurations": [
         
 
+        
+
         {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/test.exe",
+            "program": "${workspaceFolder}/bin/obstacle.exe",
              // "args": ["--bin", "--test2", "--rows", "5", "--cols", "5"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/bin",

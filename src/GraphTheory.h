@@ -43,11 +43,10 @@ namespace raven
         class cTourNodes
         {
         public:
-            // cTourNodes(const cGraph &theGraph)
-            //     : g(theGraph)
-            // {
-            // }
 
+            /// @brief Calculate the tour
+            // @param gd graph data
+            // gd.startName vertex to start tour from, empty to find optimum starting point
             void calculate(sGraphData &gd);
 
             std::vector<int> getTour() const

@@ -16,10 +16,6 @@ namespace raven
             tourNodesAdd(v);
 
             // stop if all nodes visited
-            unvisited = std::count(
-                spanVisited.begin(),
-                spanVisited.end(),
-                false);
             if (!unvisited)
                 return false;
 
@@ -45,12 +41,14 @@ namespace raven
                     vleaf.begin(),
                     vleaf.end(),
                     v) == vleaf.end())
-                return -1;
+                return -1;                  // no jump required
+
+            //std::cout << "at leaf " << g->userName(v) << "\n";
 
             // reached a leaf of the spanning tree
             // check if we reached this leaf by jumping
             if (!spanVisited[spanTree.adjacentOut(v)[0]])
-                return -1;
+                return -1;                   // no jump required
 
             // jump to an unvisted leaf
             for (int f : vleaf)
@@ -65,27 +63,29 @@ namespace raven
                 // check for link to other leaf in original graph
                 if (g->find(v, f) != -1)
                     return f;
-
-                // there is no escape from this leaf without revisiting nodes
-
-                return -3;
             }
 
-            // no unvisited leaves
-            return -2;
+            // no reachable unvisited leaves
+            return -3;
         }
 
         void cTourNodes::tourNodesAdd(
             int v)
         {
-            // std::cout << "add " << spanTree.userName(v) << "\n";
+
+            //std::cout << "add " << spanTree.userName(v) <<" "<< unvisited<< "\n";
             if (spanVisited[v])
             {
+                // revisited node
                 if (std::find(revisited.begin(), revisited.end(), v) == revisited.end())
                     revisited.push_back(v);
             }
+            else
+                unvisited--;
+
             spanVisited[v] = true;
             tour.push_back(v);
+            
         }
 
         void cTourNodes::calculate( sGraphData &gd)
@@ -98,12 +98,21 @@ namespace raven
             g = &gd.g;
             myEdgeWeights = gd.edgeWeight;
 
+            tour.clear();
             auto best = tour;
             int bestUnvisited = INT_MAX;
             std::vector<int>bestRevisited;
 
+            int vstart,vend;
+            if( gd.startName.empty()) {
+                vstart = 0;
+                vend = g->vertexCount();
+            } else {
+                vstart = g->find(gd.startName);
+                vend = vstart+1;
+            }
             // loop over nodes, starting the spanning tree at each
-            for (int spanTreeRoot = 0; spanTreeRoot < g->vertexCount(); spanTreeRoot++)
+            for (int spanTreeRoot = vstart; spanTreeRoot < vend; spanTreeRoot++ )
             {
                 // find a spanning tree
                 // note: spanTree.userName( vi ) == g.userName( vi )
@@ -136,6 +145,7 @@ namespace raven
                     if (dfsStart == -3)
                     {
                         // stuck on a leaf with no one hop reachable unvisited nodes
+                       // std::cout << "stuck on " << g->userName(tour.back()) << "\n";
                         dfsStart = PathToUnvisited();
                         if (dfsStart < 0)
                             break;
@@ -143,6 +153,8 @@ namespace raven
                     if (unvisited == prevUnvisited)
                         break;
                     prevUnvisited = unvisited;
+
+                    //std::cout << "dfs " << dfsStart << " "<< g->userName(dfsStart) << ", ";
 
                     // depth first search
                     dfs(
@@ -152,11 +164,12 @@ namespace raven
                             cTourNodes::visitor, this,
                             std::placeholders::_1));
                 }
-                // std::cout << "tourNodes revisited " << revisited.size()
-                //           << " unvisited " << unvisited
-                //           << " start " << g->userName(spanTreeRoot)
-                //           << " ( " << spanTreeRoot << " )"
-                //           << "\n";
+
+                std::cout << "tourNodes revisited " << revisited.size()
+                          << " unvisited " << unvisited
+                          << " start " << g->userName(spanTreeRoot)
+                          << " ( " << spanTreeRoot << " )"
+                          << "\n";
 
                 // check for 'perfect' tour
                 if ((!revisited.size()) && (!unvisited))

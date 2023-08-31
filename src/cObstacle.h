@@ -157,10 +157,10 @@ public:
         return myRouteCalculator.revisitedCount();
     }
 
-    // vlink_t spanningTree_get()
-    // {
-    //     return mySpanningTree;
-    // }
+    std::vector<std::pair<int, int>> spanningTree_get() const
+    {
+        return myRouteCalculator.spanTree_get();
+    }
 
 private:
 
