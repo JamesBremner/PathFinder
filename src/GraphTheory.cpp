@@ -304,6 +304,47 @@ namespace raven
             }
         }
 
+        void bfs(
+            const cGraph &g,
+            int startIndex,
+            std::function<bool(int v)> visitor)
+        {
+            // queue of visited vertices with unsearched children
+            std::queue<int> Q;
+
+            // track nodes that have been visited
+            // prevent getting caught going around and around a cycle
+            std::vector<bool> visited(g.vertexCount(), false);
+
+            // start at start
+            Q.push(startIndex);
+            visited[startIndex] = true;
+            if (!visitor(startIndex))
+                return;
+
+            // loop while the queue is not empty
+            while (!Q.empty())
+            {
+                // get current vertex from front of queue
+                int v = Q.front();
+                Q.pop();
+
+                // loop over vertices reachable from current vertex
+                for (int u : g.adjacentOut(v))
+                {
+                    if (!visited[u])
+                    {
+                        // add to queue and mark visited
+                        Q.push(u);
+                        visited[u] = true;
+
+                        if (!visitor(v))
+                            return;
+                    }
+                }
+            }
+        }
+
         std::vector<std::vector<int>>
         dfs_allpaths(sGraphData &gd)
         {
@@ -613,13 +654,12 @@ namespace raven
 
             // extract path by backtracking from destination to start
             v = dest;
-            while ( true )
+            while (true)
             {
                 path.push_back(v);
-                if( v == start )
+                if (v == start)
                     break;
                 v = pred[v];
-                
             }
 
             // flip path to start -> destination

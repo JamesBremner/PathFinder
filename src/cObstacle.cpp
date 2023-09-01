@@ -174,7 +174,7 @@ void cObstacle::tourNodes()
     gd.g = mygraphdata;
     gd.edgeWeight = myEdgeWeight;
 
-    gd.startName = "262";
+    //gd.startName = "262";
     myRouteCalculator.calculate(gd);
 
     std::cout << "unvisited " << myRouteCalculator.unvisitedCount()

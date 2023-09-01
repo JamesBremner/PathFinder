@@ -41,14 +41,14 @@ namespace raven
                     vleaf.begin(),
                     vleaf.end(),
                     v) == vleaf.end())
-                return -1;                  // no jump required
+                return -1; // no jump required
 
-            //std::cout << "at leaf " << g->userName(v) << "\n";
+            // std::cout << "at leaf " << g->userName(v) << "\n";
 
             // reached a leaf of the spanning tree
             // check if we reached this leaf by jumping
             if (!spanVisited[spanTree.adjacentOut(v)[0]])
-                return -1;                   // no jump required
+                return -1; // no jump required
 
             // jump to an unvisted leaf
             for (int f : vleaf)
@@ -73,7 +73,7 @@ namespace raven
             int v)
         {
 
-            //std::cout << "add " << spanTree.userName(v) <<" "<< unvisited<< "\n";
+            // std::cout << "add " << spanTree.userName(v) <<" "<< unvisited<< "\n";
             if (spanVisited[v])
             {
                 // revisited node
@@ -85,12 +85,12 @@ namespace raven
 
             spanVisited[v] = true;
             tour.push_back(v);
-            
         }
 
-        void cTourNodes::calculate( sGraphData &gd)
+        void cTourNodes::calculate(sGraphData &gd)
         {
-            if( ! gd.g.vertexCount()) {
+            if (!gd.g.vertexCount())
+            {
                 std::cout << "cTourNodes::calculate no vertices\n";
                 return;
             }
@@ -101,24 +101,27 @@ namespace raven
             tour.clear();
             auto best = tour;
             int bestUnvisited = INT_MAX;
-            std::vector<int>bestRevisited;
+            std::vector<int> bestRevisited;
 
-            int vstart,vend;
-            if( gd.startName.empty()) {
+            int vstart, vend;
+            if (gd.startName.empty())
+            {
                 vstart = 0;
                 vend = g->vertexCount();
-            } else {
+            }
+            else
+            {
                 vstart = g->find(gd.startName);
-                vend = vstart+1;
+                vend = vstart + 1;
             }
             // loop over nodes, starting the spanning tree at each
-            for (int spanTreeRoot = vstart; spanTreeRoot < vend; spanTreeRoot++ )
+            for (int spanTreeRoot = vstart; spanTreeRoot < vend; spanTreeRoot++)
             {
                 // find a spanning tree
                 // note: spanTree.userName( vi ) == g.userName( vi )
 
-                gd.startName = gd.g.userName( spanTreeRoot );
-                spanTree = spanningTree( gd );
+                gd.startName = gd.g.userName(spanTreeRoot);
+                spanTree = spanningTree(gd);
                 if (!spanTree.vertexCount())
                     continue;
 
@@ -145,7 +148,7 @@ namespace raven
                     if (dfsStart == -3)
                     {
                         // stuck on a leaf with no one hop reachable unvisited nodes
-                       // std::cout << "stuck on " << g->userName(tour.back()) << "\n";
+                        // std::cout << "stuck on " << g->userName(tour.back()) << "\n";
                         dfsStart = PathToUnvisited();
                         if (dfsStart < 0)
                             break;
@@ -154,7 +157,7 @@ namespace raven
                         break;
                     prevUnvisited = unvisited;
 
-                    //std::cout << "dfs " << dfsStart << " "<< g->userName(dfsStart) << ", ";
+                    // std::cout << "dfs " << dfsStart << " "<< g->userName(dfsStart) << ", ";
 
                     // depth first search
                     dfs(
@@ -211,32 +214,30 @@ namespace raven
 
         int cTourNodes::PathToUnvisited()
         {
-            int bestHops = INT_MAX;
-            std::vector<int> bestPath;
-
-            // loop over nodes
-            for (int target = 0; target < g->vertexCount(); target++)
-            {
-                // check for visited
-                if (spanVisited[spanTree.find(g->userName(target))])
-                    continue;
-
-                // find best path from last node in tour
-                // allowing node revisits
-                sGraphData gd;
-                gd.g = spanTree;
-                gd.edgeWeight = myEdgeWeights;
-                gd.startName = g->userName(tour.back());
-                gd.endName = g->userName(target);
-                auto pathret = path( gd );
-
-                // check for a shorter path
-                if (pathret.first.size() && pathret.first.size() < bestHops)
+            // find nearbye unvisited vertex
+            int target = -1;
+            bfs(
+                *g,
+                tour.back(),
+                [&](int v) -> bool
                 {
-                    bestHops = pathret.first.size();
-                    bestPath = pathret.first;
-                }
-            }
+                    if (spanVisited[v])
+                        return true;
+                    target = v;
+                    return true;
+                });
+            if( target < 0 )
+                return -1;
+                
+            // find best path from last node in tour
+            // allowing node revisits
+            sGraphData gd;
+            gd.g = spanTree;
+            gd.edgeWeight = myEdgeWeights;
+            gd.startName = g->userName(tour.back());
+            gd.endName = g->userName(target);
+            auto bestPath = bfsPath(gd);
+
             if (!bestPath.size())
                 return -1;
 

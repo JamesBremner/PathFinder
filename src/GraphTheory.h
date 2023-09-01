@@ -91,6 +91,8 @@ namespace raven
 
             int isLeafJump(int v);
 
+            /// @brief find path to unvisited vertex, including visited vertices
+            /// @return last node in path, -1 if no path
             int PathToUnvisited();
 
             std::vector<int> vectorgraphIndexFromSpanIndex(
@@ -243,6 +245,17 @@ namespace raven
         /// visitor should return true, but false if the search should stop
 
         void dfs(
+            const cGraph &g,
+            int startIndex,
+            std::function<bool(int v)> visitor);
+
+        /// @brief breadth first search
+        /// @param g
+        /// @param startIndex
+        /// @param visitor function to call when a new node is reached
+        /// visitor should return true, but false if the search should stop
+
+        void bfs(
             const cGraph &g,
             int startIndex,
             std::function<bool(int v)> visitor);
