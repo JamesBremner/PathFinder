@@ -63,6 +63,7 @@ static void readCostedLinks(
     std::ifstream &ifs)
 {
     graphData.g.clear();
+    graphData.multiStart.clear();
 
     std::string stype, sn1, sn2, scost, directed, same;
     ifs >> stype;
@@ -90,6 +91,7 @@ static void readCostedLinks(
             break;
         case 's':
             ifs >> graphData.startName;
+            graphData.multiStart.push_back( graphData.startName);
             break;
         case 'e':
             ifs >> graphData.endName;
