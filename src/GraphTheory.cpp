@@ -763,7 +763,14 @@ namespace raven
 
             int start = gd.g.find(gd.startName);
             int end = gd.g.find(gd.endName);
-            auto edgeCapacity = gd.edgeWeight;
+            auto edgeCapacity = gd.edgeWeight;  // the initial link capacities
+            // if( vEdgeFlow.size() ) {
+            //     for( int k = 0; k < vEdgeFlow.size(); k++ )
+            //     {
+            //         edgeCapacity[k] -= vEdgeFlow[k];
+            //     }
+            // }
+
 
             int totalFlow = 0;
 
@@ -846,16 +853,42 @@ namespace raven
 
         double multiflows(sGraphData &gd)
         {
-            double totalmultiflow = 0;
-            std::vector<int> vEdgeFlow;
+            // total flow on each link from all sources
+            std::vector<int> vMultiFlow(gd.g.edgeCount());
+
+            // flow on each link from current source
+            std::vector<int> vEdgeFlow(gd.g.edgeCount());
+
+            // working copy of graph
+            sGraphData work = gd;
+
+            // loop over sources
             for (auto &s : gd.multiStart)
             {
-                gd.startName = s;
-                totalmultiflow += flows(
-                    gd,
+                // reduce link capacities by flow from previous generator
+                for (int k = 0; k < vEdgeFlow.size(); k++)
+                    work.edgeWeight[k] -= vEdgeFlow[k];
+
+                // calculate flow from this generator
+                vEdgeFlow.clear();
+                work.startName = s;
+                flows(
+                    work,
                     vEdgeFlow);
+
+                // add to total flow
+                for (int k = 0; k < vEdgeFlow.size(); k++)
+                    vMultiFlow[k] += vEdgeFlow[k];
             }
-            return totalmultiflow;
+
+            // display total flow through each link
+            for (int k = 0; k < vMultiFlow.size(); k++)
+            {
+                std::cout << gd.g.userName(gd.g.src(k))
+                          << " -> " << gd.g.userName(gd.g.dest(k))
+                          << " " << vMultiFlow[k] << "\n";
+            }
+            return 0;
         }
 
         std::vector<std::vector<int>> sourceToSink(

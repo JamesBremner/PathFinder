@@ -1,0 +1,25 @@
+format multiflows
+g 1 0
+l gen1 gen1split 20
+l gen1split dev1 5
+l gen1split dist1 1000
+l gen1split dist2 1000
+l gen2 gen2split 20
+l gen2split dist1 1000
+l gen2split dist2 1000
+l dist1 dev2 15
+l dist1 dev3 3
+l dist2 dev4 4
+l dist2 dev5 5
+l dist2 dev6 6
+l dev1 sink 1000
+l dev2 sink 1000
+l dev3 sink 1000
+l dev4 sink 1000
+l dev5 sink 1000
+l dev6 sink 1000
+s gen1
+s gen2
+e sink
+
+
