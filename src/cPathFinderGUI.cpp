@@ -128,6 +128,9 @@ void cGUI::calculate()
             case raven::graph::graph_calc::cliques:
                 calcCliques();
                 break;
+            case raven::graph::graph_calc::cliques_adjacent:
+                calcCliquesAdjacent();
+                break;
 
             case raven::graph::graph_calc::flows:
                 calcFlows();
@@ -310,7 +313,15 @@ void cGUI::calcCliques()
 {
     cliques(
         myGraphData.g,
-        myResultText);
+        myResultText,
+        false );
+}
+void cGUI::calcCliquesAdjacent()
+{
+    cliques(
+        myGraphData.g,
+        myResultText,
+        true );
 }
 
 void cGUI::calcFlows()

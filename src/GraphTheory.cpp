@@ -670,7 +670,8 @@ namespace raven
 
         void cliques(
             const cGraph &g,
-            std::string &results)
+            std::string &results,
+            bool adjacent)
         {
             // working copy on input graph
             auto work = g;
@@ -711,19 +712,46 @@ namespace raven
                             continue;
                         finished = false;
 
-                        // loop over nodes in clique
-                        for (int v : clique)
+                        if (!adjacent)
                         {
-                            if (work.find(u, v) >= 0 ||
-                                work.find(v, u) >= 0)
+                            // loop over nodes in clique
+                            for (int v : clique)
                             {
-                                // found node in work that is connected to clique nodes.
-                                // move it to clique
-                                // std::cout << "add " << work.userName(u) << "\n";
-                                clique.push_back(u);
-                                work.wVertexAttr(u, {"deleted"});
-                                found = true;
-                                break;
+                                if (work.find(u, v) >= 0 ||
+                                    work.find(v, u) >= 0)
+                                {
+                                    // found node in work that is connected to clique nodes.
+                                    // move it to clique
+                                    // std::cout << "add " << work.userName(u) << "\n";
+                                    clique.push_back(u);
+                                    work.wVertexAttr(u, {"deleted"});
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // loop over nodes in clique
+                            bool adjacentFound = true;
+                            for (int v : clique)
+                            {
+                                if (work.find(u, v) == -1 &&
+                                    work.find(v, u) == -1)
+                                {
+                                    adjacentFound = false;
+                                    break;
+                                }
+                                if (adjacentFound)
+                                {
+                                    // found node in work that is directly connected to all clique nodes.
+                                    // move it to clique
+                                    // std::cout << "add " << work.userName(u) << "\n";
+                                    clique.push_back(u);
+                                    work.wVertexAttr(u, {"deleted"});
+                                    found = true;
+                                    break;
+                                }
                             }
                         }
                         if (found)
@@ -763,14 +791,13 @@ namespace raven
 
             int start = gd.g.find(gd.startName);
             int end = gd.g.find(gd.endName);
-            auto edgeCapacity = gd.edgeWeight;  // the initial link capacities
+            auto edgeCapacity = gd.edgeWeight; // the initial link capacities
             // if( vEdgeFlow.size() ) {
             //     for( int k = 0; k < vEdgeFlow.size(); k++ )
             //     {
             //         edgeCapacity[k] -= vEdgeFlow[k];
             //     }
             // }
-
 
             int totalFlow = 0;
 

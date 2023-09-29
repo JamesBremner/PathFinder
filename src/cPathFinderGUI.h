@@ -98,6 +98,7 @@ private:
     void calcSales();
     void calcTour();
     void calcCliques();
+    void calcCliquesAdjacent();
     void calcFlows();
     void calcMultiFlows();
     void calcAllPaths();

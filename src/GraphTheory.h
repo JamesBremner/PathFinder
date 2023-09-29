@@ -18,6 +18,7 @@ namespace raven
             spans,
             sales,
             cliques,
+            cliques_adjacent,
             flows,
             multiflows,
             allpaths,
@@ -289,7 +290,8 @@ namespace raven
 
         void cliques(
             const cGraph &g,
-            std::string &results);
+            std::string &results,
+            bool adjacent );
 
         /// @brief Maximum flow between two vertices
         /// @param gd  graph data

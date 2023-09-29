@@ -396,6 +396,11 @@ namespace raven
                 graphData.option = graph_calc::sales;
                 readSales(graphData, ifs);
             }
+            else if (calc.find("cliquesadjacent") != -1)
+            {
+                graphData.option = graph_calc::cliques_adjacent;
+                readUncostedLinks(graphData, ifs);
+            }
             else if (calc.find("cliques") != -1)
             {
                 graphData.option = graph_calc::cliques;

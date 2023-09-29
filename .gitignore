@@ -32,3 +32,5 @@
 *.app
 bin/Dictionary.db
 bin/cw.txt
+.VSCodeCounter
+
