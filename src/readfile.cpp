@@ -84,14 +84,14 @@ static void readCostedLinks(
             ifs >> sn1 >> sn2 >> scost;
             graphData.g.add(sn1, sn2);
             graphData.edgeWeight.push_back(atof(scost.c_str()));
-            if (same == "1")
+            if ((!graphData.g.isDirected()) && same == "1")
             {
                 graphData.edgeWeight.push_back(atof(scost.c_str()));
             }
             break;
         case 's':
             ifs >> graphData.startName;
-            graphData.multiStart.push_back( graphData.startName);
+            graphData.multiStart.push_back(graphData.startName);
             break;
         case 'e':
             ifs >> graphData.endName;
@@ -286,8 +286,8 @@ static void readHills(
                     vHeight.push_back(atof(e.c_str()));
             }
             if (colcount == -1)
-                colcount = vt.size()-1;
-            else if (colcount != vt.size()-1)
+                colcount = vt.size() - 1;
+            else if (colcount != vt.size() - 1)
                 throw std::runtime_error(
                     "readHills: variable column count");
             rowCount++;
@@ -298,16 +298,16 @@ static void readHills(
             if (vt.size() < 3)
                 throw std::runtime_error(
                     "readHills: bad start line");
-            startCol = atoi(vt[1].c_str())-1;
-            startRow = atoi(vt[2].c_str())-1;
+            startCol = atoi(vt[1].c_str()) - 1;
+            startRow = atoi(vt[2].c_str()) - 1;
             break;
 
         case 'e':
             if (vt.size() < 3)
                 throw std::runtime_error(
                     "readHills: bad end line");
-            endCol = atoi(vt[1].c_str())-1;
-            endRow = atoi(vt[2].c_str())-1;
+            endCol = atoi(vt[1].c_str()) - 1;
+            endRow = atoi(vt[2].c_str()) - 1;
             break;
         }
     }
@@ -421,6 +421,11 @@ namespace raven
                 graphData.option = graph_calc::allpaths;
                 readUncostedLinks(graphData, ifs);
             }
+            // else if (calc.find("shortestpaths") != -1)
+            // {
+            //     graphData.option = graph_calc::shortestpaths;
+            //     readCostedLinks(graphData, ifs);
+            // }
             else if (calc.find("alloc") != -1)
             {
                 graphData.option = graph_calc::alloc;

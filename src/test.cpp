@@ -329,7 +329,7 @@ TEST(cliques)
     gd.fname = "../dat/cliques.txt";
     readfile(gd);
     std::string results;
-    cliques(gd.g, results);
+    cliques(gd.g, results,false);
     std::string expected("clique: 1 5 3 7 \nclique: 2 8 6 4 \n");
     CHECK_EQUAL(expected, results);
 }
