@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <numeric>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -165,6 +166,103 @@ namespace raven
                 }
             }
             return ret;
+        }
+
+        static void combine_yen(
+            std::pair<std::vector<int>, double> &spur,
+            const std::pair<std::vector<int>, double> &prev,
+            int rootlength,
+            const sGraphData &gd         )
+        {
+            spur.first.insert(
+                spur.first.begin(),
+                prev.first.begin(), prev.first.begin() + rootlength - 1);
+            spur.second = 0;
+            for (int v = 1; v < spur.first.size(); v++)
+                spur.second += gd.edgeWeight[gd.g.find(
+                    spur.first[v - 1], spur.first[v])];
+        }
+        static bool isNewPath_yen(
+            const std::pair<std::vector<int>, double> &test,
+            const std::vector<std::pair<std::vector<int>, double>> &vShortestPaths)
+        {
+            return (
+                std::find_if(
+                    vShortestPaths.begin(), vShortestPaths.end(),
+                    [&](const std::pair<std::vector<int>, double> &p)
+                    {
+                        return std::equal(
+                            p.first.begin(), p.first.end(),
+                            test.first.begin());
+                    }) == vShortestPaths.end());
+        }
+
+        std::vector<std::pair<std::vector<int>, double>>
+        shortestpathsYen(sGraphData &gd)
+        {
+            typedef std::vector<int> path_t;
+            typedef std::pair<path_t, double> path_cost_t;
+            std::vector<path_cost_t> vShortestPaths;
+            std::vector<path_cost_t> vPotentialPaths;
+
+            // Dijsktra gives the very shortest path
+            vShortestPaths.push_back(path(gd));
+
+            // loop looking for next shortest path
+            while (vShortestPaths.size() < 3)
+            {
+                // initialize
+                vPotentialPaths.clear();
+                auto gdwork = gd;
+
+                // loop over previously found shortest paths
+                for (auto &foundPath : vShortestPaths)
+                {
+                    // loop over the previously found path
+                    for (int rootlength = 1; rootlength < foundPath.first.size(); rootlength++)
+                    {
+                        // remove link from spur node used by previous path
+                        gdwork.g.remove(
+                            foundPath.first[rootlength - 1],
+                            foundPath.first[rootlength]);
+
+                        // find shortest path to destination ( spur path )
+                        // without using the link
+                        // dijsktra
+                        gdwork.startName = gd.g.userName(foundPath.first[rootlength - 1]);
+                        path_cost_t spurPath = path(gdwork);
+
+                        // check spur path found
+                        if (!spurPath.first.size())
+                            continue;
+
+                        // combine root and spur paths
+                        combine_yen(
+                            spurPath,
+                            foundPath,
+                            rootlength,
+                            gd);
+
+                        // check this is new path
+                        if (isNewPath_yen(spurPath, vShortestPaths))
+                            vPotentialPaths.push_back(spurPath);
+                    }
+                }
+
+                // no more paths check
+                if( ! vPotentialPaths.size() )
+                    break;
+
+                // Add shortest potential path to output
+                vShortestPaths.push_back(
+                    *std::min_element(
+                        vPotentialPaths.begin(), vPotentialPaths.end(),
+                        [](path_cost_t &a, path_cost_t &b)
+                        {
+                            return a.second < b.second;
+                        }));
+            }
+            return vShortestPaths;
         }
 
         void cSpanningTree::add(

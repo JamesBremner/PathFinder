@@ -144,6 +144,10 @@ void cGUI::calculate()
                 calcAllPaths();
                 break;
 
+            case raven::graph::graph_calc::shortestpaths:
+                calcShortestPaths();
+                break;
+
             case raven::graph::graph_calc::probs:
                 calcProbs();
                 break;
@@ -255,6 +259,19 @@ void cGUI::calcAllPaths()
         myResultText += "\n";
     }
     myViewType = eView::route;
+}
+
+void cGUI::calcShortestPaths()
+{
+    auto vsp = raven::graph::shortestpathsYen( myGraphData);
+    myResultText = "";
+    for( auto& p : vsp ) {
+        for( int v : p.first ) {
+            myResultText += myGraphData.g.userName(v) + " -> ";
+        }
+        myResultText += " cost " + std::to_string(p.second) + "\n";
+    }
+    std::cout << myResultText;
 }
 
 void cGUI::calcTour()

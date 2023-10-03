@@ -76,6 +76,7 @@
         "xhash": "cpp",
         "stack": "cpp",
         "array": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "numeric": "cpp"
     }
 }

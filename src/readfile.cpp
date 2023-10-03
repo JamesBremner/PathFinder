@@ -421,11 +421,11 @@ namespace raven
                 graphData.option = graph_calc::allpaths;
                 readUncostedLinks(graphData, ifs);
             }
-            // else if (calc.find("shortestpaths") != -1)
-            // {
-            //     graphData.option = graph_calc::shortestpaths;
-            //     readCostedLinks(graphData, ifs);
-            // }
+            else if (calc.find("shortestpaths") != -1)
+            {
+                graphData.option = graph_calc::shortestpaths;
+                readCostedLinks(graphData, ifs);
+            }
             else if (calc.find("alloc") != -1)
             {
                 graphData.option = graph_calc::alloc;

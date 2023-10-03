@@ -22,6 +22,7 @@ namespace raven
             flows,
             multiflows,
             allpaths,
+            shortestpaths,
             probs,
             alloc,
             euler,
@@ -158,7 +159,7 @@ namespace raven
         };
 
         /// @brief Find articulation points in an undirected graph
-        /// An articulation point is a vertes whose removal 
+        /// An articulation point is a vertex whose removal 
         /// increases the number of connected components in the graph.
 
         class cTarjan
@@ -218,6 +219,7 @@ namespace raven
         /// @param gd  graph data
         /// @return pair: vector of node indices on the path, path cost
         /// @return pair: empty vector, -1 when end is not reachable from start
+        /// algorithm: Dijsktra
 
         std::pair<std::vector<int>, double>
         path(sGraphData &gd);
@@ -229,8 +231,8 @@ namespace raven
         std::vector<std::vector<int>>
         allPaths(sGraphData &gd);
 
-        std::pair<std::vector<int>, double>
-        path(sGraphData &gd);
+        std::vector<std::pair<std::vector<int>,double>>
+        shortestpathsYen(sGraphData &gd);
 
         /// @brief find spanning tree
         /// @param gd  graph data

@@ -102,6 +102,7 @@ private:
     void calcFlows();
     void calcMultiFlows();
     void calcAllPaths();
+    void calcShortestPaths();
     void calcProbs();
     void calcAlloc();
     void calcEuler();
