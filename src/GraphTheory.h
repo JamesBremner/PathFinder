@@ -22,7 +22,6 @@ namespace raven
             flows,
             multiflows,
             allpaths,
-            shortestpaths,
             probs,
             alloc,
             euler,
@@ -41,6 +40,10 @@ namespace raven
             std::string endName;
             graph_calc option;
         };
+
+        typedef std::vector<int> path_t;
+        typedef std::pair<path_t, double> path_cost_t;
+        typedef std::vector<path_cost_t> vPath_t;
 
         class cTourNodes
         {
@@ -226,13 +229,11 @@ namespace raven
 
         /// @brief find all paths between two nodes
         /// @param gd  graph data
-        /// @return vector of vectors of node indices on paths
+        /// @return vector of path, cost pairs in increasing corst order
+        /// algorithm: Yen
 
-        std::vector<std::vector<int>>
+        vPath_t
         allPaths(sGraphData &gd);
-
-        std::vector<std::pair<std::vector<int>,double>>
-        shortestpathsYen(sGraphData &gd);
 
         /// @brief find spanning tree
         /// @param gd  graph data

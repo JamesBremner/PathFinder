@@ -1,4 +1,4 @@
-format shortestpaths
+format allpathscosted
 g 1 1
 l c d 3
 l d f 4
@@ -8,7 +8,7 @@ l e f 2
 l e g 3
 l f g 2
 l g h 2
-l f h 1
+l f h 2
 s c
 e h
 

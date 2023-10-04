@@ -230,13 +230,13 @@ TEST(allpaths)
     CHECK(std::equal(
         expected1.begin(),
         expected1.end(),
-        gd.g.userName(act[0]).begin()));
+        gd.g.userName(act[0].first).begin()));
 
     std::vector<std::string> expected2{"a", "b", "c"};
     CHECK(std::equal(
         expected2.begin(),
         expected2.end(),
-        gd.g.userName(act[1]).begin()));
+        gd.g.userName(act[1].first).begin()));
 }
 
 TEST(probs)
@@ -334,65 +334,65 @@ TEST(cliques)
     CHECK_EQUAL(expected, results);
 }
 
-TEST(dfs_allpaths)
-{
-    raven::graph::sGraphData gd;
-    gd.g.directed();
-    gd.g.add("0", "1");
-    gd.g.add("0", "2");
-    gd.g.add("0", "3");
-    gd.g.add("2", "0");
-    gd.g.add("2", "1");
-    gd.g.add("1", "3");
-    gd.startName = "2";
-    gd.endName = "3";
+// TEST(dfs_allpaths)
+// {
+//     raven::graph::sGraphData gd;
+//     gd.g.directed();
+//     gd.g.add("0", "1");
+//     gd.g.add("0", "2");
+//     gd.g.add("0", "3");
+//     gd.g.add("2", "0");
+//     gd.g.add("2", "1");
+//     gd.g.add("1", "3");
+//     gd.startName = "2";
+//     gd.endName = "3";
 
-    auto vpaths = dfs_allpaths(gd);
+//     auto vpaths = dfs_allpaths(gd);
 
-    CHECK_EQUAL(3, vpaths.size());
-    std::vector<int> expected1{2, 1, 3};
-    CHECK(std::equal(
-        expected1.begin(),
-        expected1.end(),
-        vpaths[0].begin()));
-    std::vector<int> expected2{2, 0, 3};
-    CHECK(std::equal(
-        expected2.begin(),
-        expected2.end(),
-        vpaths[1].begin()));
-    std::vector<int> expected3{2, 0, 1, 3};
-    CHECK(std::equal(
-        expected3.begin(),
-        expected3.end(),
-        vpaths[2].begin()));
-}
+//     CHECK_EQUAL(3, vpaths.size());
+//     std::vector<int> expected1{2, 1, 3};
+//     CHECK(std::equal(
+//         expected1.begin(),
+//         expected1.end(),
+//         vpaths[0].begin()));
+//     std::vector<int> expected2{2, 0, 3};
+//     CHECK(std::equal(
+//         expected2.begin(),
+//         expected2.end(),
+//         vpaths[1].begin()));
+//     std::vector<int> expected3{2, 0, 1, 3};
+//     CHECK(std::equal(
+//         expected3.begin(),
+//         expected3.end(),
+//         vpaths[2].begin()));
+// }
 
-TEST(dfs_allpaths2)
-{
-    raven::graph::sGraphData gd;
-    gd.g.add("a", "b");
-    gd.g.add("b", "c");
-    gd.g.add("a", "d");
-    gd.g.add("d", "c");
-    gd.startName = "a";
-    gd.endName = "c";
+// TEST(dfs_allpaths2)
+// {
+//     raven::graph::sGraphData gd;
+//     gd.g.add("a", "b");
+//     gd.g.add("b", "c");
+//     gd.g.add("a", "d");
+//     gd.g.add("d", "c");
+//     gd.startName = "a";
+//     gd.endName = "c";
 
-    auto act = dfs_allpaths(gd);
+//     auto act = dfs_allpaths(gd);
 
-    CHECK_EQUAL(2, act.size());
+//     CHECK_EQUAL(2, act.size());
 
-    std::vector<std::string> expected1{"a", "d", "c"};
-    CHECK(std::equal(
-        expected1.begin(),
-        expected1.end(),
-        gd.g.userName(act[0]).begin()));
+//     std::vector<std::string> expected1{"a", "d", "c"};
+//     CHECK(std::equal(
+//         expected1.begin(),
+//         expected1.end(),
+//         gd.g.userName(act[0]).begin()));
 
-    std::vector<std::string> expected2{"a", "b", "c"};
-    CHECK(std::equal(
-        expected2.begin(),
-        expected2.end(),
-        gd.g.userName(act[1]).begin()));
-}
+//     std::vector<std::string> expected2{"a", "b", "c"};
+//     CHECK(std::equal(
+//         expected2.begin(),
+//         expected2.end(),
+//         gd.g.userName(act[1]).begin()));
+// }
 
 TEST(vertexCover1)
 {

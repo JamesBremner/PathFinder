@@ -103,7 +103,7 @@ bool cObstacle::isBlocked(int x1, int y1, int x2, int y2)
             cxy line2(x2, y2);
 
             // fraction of closest point on connection to obstacle
-            double t = obstacle.closest(line1, line2);
+            double t = obstacle.tclosest(line1, line2);
 
             // check that closest point is between link ends
             if (0 < t && t < 1)

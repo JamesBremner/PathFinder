@@ -124,53 +124,9 @@ namespace raven
             return std::make_pair(vpath, dist[end]);
         }
 
-        std::vector<std::vector<int>>
-        allPaths(sGraphData &gd)
-        {
-            std::vector<std::vector<int>> ret;
-
-            // copy input graph to working graph
-            auto work = gd;
-
-            bool fnew = true;
-            while (fnew)
-            {
-                // find new path
-                auto p = path(work).first;
-                if (!p.size())
-                    break;
-
-                // check path is really new
-                for (auto &prevPath : ret)
-                {
-                    if (std::equal(
-                            prevPath.begin(), prevPath.end(),
-                            p.begin()))
-                    {
-                        fnew = false;
-                        break;
-                    }
-                }
-                // check new path was found
-                if (!fnew)
-                    break;
-
-                // add new path to return
-                ret.push_back(p);
-
-                // increment cost of path links
-                for (int k = 1; k < p.size(); k++)
-                {
-                    int ei = work.g.find(p[k - 1], p[k]);
-                    work.edgeWeight[ei]++;
-                }
-            }
-            return ret;
-        }
-
         static void combine_yen(
-            std::pair<std::vector<int>, double> &spur,
-            const std::pair<std::vector<int>, double> &prev,
+            path_cost_t &spur,
+            const path_cost_t &prev,
             int rootlength,
             const sGraphData &gd         )
         {
@@ -183,13 +139,13 @@ namespace raven
                     spur.first[v - 1], spur.first[v])];
         }
         static bool isNewPath_yen(
-            const std::pair<std::vector<int>, double> &test,
-            const std::vector<std::pair<std::vector<int>, double>> &vShortestPaths)
+            const path_cost_t &test,
+            const vPath_t &vShortestPaths)
         {
             return (
                 std::find_if(
                     vShortestPaths.begin(), vShortestPaths.end(),
-                    [&](const std::pair<std::vector<int>, double> &p)
+                    [&](const path_cost_t &p)
                     {
                         return std::equal(
                             p.first.begin(), p.first.end(),
@@ -197,19 +153,17 @@ namespace raven
                     }) == vShortestPaths.end());
         }
 
-        std::vector<std::pair<std::vector<int>, double>>
-        shortestpathsYen(sGraphData &gd)
+        vPath_t
+        allPaths(sGraphData &gd)
         {
-            typedef std::vector<int> path_t;
-            typedef std::pair<path_t, double> path_cost_t;
-            std::vector<path_cost_t> vShortestPaths;
-            std::vector<path_cost_t> vPotentialPaths;
+            vPath_t vShortestPaths;
+            vPath_t vPotentialPaths;
 
             // Dijsktra gives the very shortest path
             vShortestPaths.push_back(path(gd));
 
             // loop looking for next shortest path
-            while (vShortestPaths.size() < 3)
+            while (true)
             {
                 // initialize
                 vPotentialPaths.clear();
@@ -443,81 +397,6 @@ namespace raven
             }
         }
 
-        std::vector<std::vector<int>>
-        dfs_allpaths(sGraphData &gd)
-        {
-            int startIndex = gd.g.find(gd.startName);
-            int destIndex = gd.g.find(gd.endName);
-            std::vector<std::vector<int>> apaths;
-            std::vector<int> path;
-
-            // track visited vertices
-            std::vector<bool> visited(gd.g.vertexCount(), false);
-
-            // vertices waiting to be visited
-            std::stack<int> wait;
-
-            /*  1 Start by putting one of the graph's vertices on top of a stack.
-                2 Take the top vertex of the stack and add it to the visited list.
-                3 Add adjacent vertices which aren't in the visited list to the top of the stack.
-                4 Keep repeating steps 2 and 3 until the stack is empty.
-            */
-
-            wait.push(startIndex);
-
-            while (!wait.empty())
-            {
-                int v = wait.top();
-                if (v < 0)
-                    throw std::runtime_error(
-                        "dfs bad index 1");
-                wait.pop();
-                if (visited[v])
-                    continue;
-
-                visited[v] = true;
-
-                // add new vertex to current path
-                path.push_back(v);
-
-                // check for destination reached
-                if (v == destIndex)
-                {
-                    // store new path
-                    apaths.push_back(path);
-
-                    // check for finished
-                    if (wait.empty())
-                        break;
-
-                    // backtrack along path until last vertex in path
-                    // has a connection to the vertex at top of the stack
-                    std::vector<int> vadj;
-                    do
-                    {
-                        // mark vertex unvisited
-                        visited[path.back()] = false;
-
-                        // remove from path
-                        path.erase(path.end() - 1);
-
-                        vadj = gd.g.adjacentOut(path.back());
-                    } while (std::find(vadj.begin(), vadj.end(), wait.top()) == vadj.end());
-                }
-                else
-                {
-                    for (int w : gd.g.adjacentOut(v))
-                    {
-                        if (w < 0)
-                            throw std::runtime_error(
-                                "dfs bad index 2");
-                        if (!visited[w])
-                            wait.push(w);
-                    }
-                }
-            }
-            return apaths;
-        }
 
         std::vector<std::vector<int>>
         dfs_cycle_finder(sGraphData &gd)
@@ -690,7 +569,7 @@ namespace raven
         std::vector<int>
         bfsPath(sGraphData &gd)
         {
-            // the path will be stored her
+            // the path will be stored here
             std::vector<int> path;
 
             // queue of visited vertices with unsearched children
@@ -1084,7 +963,7 @@ namespace raven
                 for (auto &path : allPaths(gd))
                 {
                     // loop over nodes in path
-                    for (int n : path)
+                    for (int n : path.first)
                     {
                         if (n < 0)
                             continue;

@@ -1,4 +1,4 @@
-format shortestpaths
+format allpathscosted
 g 1 1
 l MCO ATL 1.02
 l MCO MIA 0.63

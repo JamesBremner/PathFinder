@@ -342,7 +342,17 @@ namespace raven
                 throw std::runtime_error(
                     "Bad input format");
 
-            if (calc.find("cost") != -1)
+            else if (calc.find("allpathscosted") != -1)
+            {
+                graphData.option = graph_calc::allpaths;
+                readCostedLinks(graphData, ifs);
+            }
+            else if (calc.find("allpaths") != -1)
+            {
+                graphData.option = graph_calc::allpaths;
+                readUncostedLinks(graphData, ifs);
+            }
+            else if (calc.find("cost") != -1)
             {
                 graphData.option = graph_calc::cost;
                 readCostedLinks(graphData, ifs);
@@ -414,16 +424,6 @@ namespace raven
             else if (calc.find("flows") != -1)
             {
                 graphData.option = graph_calc::flows;
-                readCostedLinks(graphData, ifs);
-            }
-            else if (calc.find("allpaths") != -1)
-            {
-                graphData.option = graph_calc::allpaths;
-                readUncostedLinks(graphData, ifs);
-            }
-            else if (calc.find("shortestpaths") != -1)
-            {
-                graphData.option = graph_calc::shortestpaths;
                 readCostedLinks(graphData, ifs);
             }
             else if (calc.find("alloc") != -1)

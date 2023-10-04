@@ -144,10 +144,6 @@ void cGUI::calculate()
                 calcAllPaths();
                 break;
 
-            case raven::graph::graph_calc::shortestpaths:
-                calcShortestPaths();
-                break;
-
             case raven::graph::graph_calc::probs:
                 calcProbs();
                 break;
@@ -248,22 +244,7 @@ void cGUI::calcCycle()
 
 void cGUI::calcAllPaths()
 {
-    auto vc = dfs_allpaths( myGraphData );
-
-    myResultText = std::to_string(vc.size()) + " paths found\n\n";
-    for (int k = 0; k < vc.size(); k++)
-    {
-        for (auto &sv : myGraphData.g.userName(vc[k]))
-            myResultText += sv + " ";
-
-        myResultText += "\n";
-    }
-    myViewType = eView::route;
-}
-
-void cGUI::calcShortestPaths()
-{
-    auto vsp = raven::graph::shortestpathsYen( myGraphData);
+    auto vsp = raven::graph::allPaths( myGraphData);
     myResultText = "";
     for( auto& p : vsp ) {
         for( int v : p.first ) {
