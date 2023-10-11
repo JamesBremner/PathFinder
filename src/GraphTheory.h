@@ -30,6 +30,10 @@ namespace raven
             cuts,
         };
 
+        /// @brief Data for a graph ( vertices and edges between them)
+        /// with attributes associated with the graph
+        /// that are frequently used by graph theory implementations
+
         struct sGraphData
         {
             cGraph g;
@@ -39,6 +43,21 @@ namespace raven
             std::vector<std::string> multiStart;
             std::string endName;
             graph_calc option;
+
+            /// @brief set the weight of an edge
+            /// @param ei edge index
+            /// @param weight 
+            ///
+            /// If neccessary the edgeWeight vector will be resized to accomodate
+            /// the edge, all edges with smaller indices, and about the same number in addition
+            /// ( prevents doing a resizing every time edges with incrementing indices are set )
+
+            void setEdgeWeight(int ei, int weight)
+            {
+                if (ei >= edgeWeight.size())
+                    edgeWeight.resize(2 + 2 * ei);
+                edgeWeight[ei] = weight;
+            }
         };
 
         typedef std::vector<int> path_t;
@@ -48,7 +67,6 @@ namespace raven
         class cTourNodes
         {
         public:
-
             /// @brief Calculate the tour
             // @param gd graph data
             // gd.startName vertex to start tour from, empty to find optimum starting point
@@ -162,7 +180,7 @@ namespace raven
         };
 
         /// @brief Find articulation points in an undirected graph
-        /// An articulation point is a vertex whose removal 
+        /// An articulation point is a vertex whose removal
         /// increases the number of connected components in the graph.
 
         class cTarjan
@@ -175,12 +193,12 @@ namespace raven
             std::vector<std::string> ArticulationPoints(sGraphData &gd);
 
         private:
-            std::vector<bool> visited;  // true if vertex index has been visited
-            std::vector<int> disc;      // discovery times of visited vertices
-            std::vector<int> low;       // earliest visited vertex (the vertex with minimum
-                                        // discovery time) that can be reached from subtree
-                                        // rooted with vertex
-            std::set<int> sAP;          // set of articulation point vertex indices
+            std::vector<bool> visited; // true if vertex index has been visited
+            std::vector<int> disc;     // discovery times of visited vertices
+            std::vector<int> low;      // earliest visited vertex (the vertex with minimum
+                                       // discovery time) that can be reached from subtree
+                                       // rooted with vertex
+            std::set<int> sAP;         // set of articulation point vertex indices
 
             /// @brief Recursive search graph for articulation points
             /// @param gd graph description
@@ -189,21 +207,13 @@ namespace raven
 
             void APRecurse(
                 sGraphData &gd,
-                int &time, int parent );
+                int &time, int parent);
         };
 
         /// @brief read input file
         /// @param[in/out] graphData to store input
 
         void readfile(sGraphData &graphData);
-
-        /// @brief read edge attribute as integer
-        /// @param g graph
-        /// @param i source vertex index
-        /// @param j destination verted index
-        /// @param ai attribute index
-        /// @return integer value
-        int rEdgeAttrInt(const cGraph &g, int i, int j, int ai);
 
         /// @brief find shortest path from start node to every other
         /// @param g
@@ -279,9 +289,9 @@ namespace raven
         dfs_allpaths(sGraphData &gd);
 
         /// @brief Find shortest path between 2 vertices, all edges count for 1
-        /// @param gd 
+        /// @param gd
         /// @return vertex indices of path
-        
+
         std::vector<int>
         bfsPath(sGraphData &gd);
 
@@ -294,7 +304,7 @@ namespace raven
         void cliques(
             const cGraph &g,
             std::string &results,
-            bool adjacent );
+            bool adjacent);
 
         /// @brief Maximum flow between two vertices
         /// @param gd  graph data
