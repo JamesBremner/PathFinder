@@ -798,7 +798,7 @@ TEST(alloc)
 
     auto act = alloc(gd);
 
-    std::vector<std::string> exp{"child1", "chore2", "child2", "chore3"};
+    std::vector<std::string> exp{"child1", "chore1", "child2", "chore2"};
     CHECK(std::equal(
         exp.begin(),
         exp.end(),

@@ -766,15 +766,7 @@ namespace raven
                 throw std::runtime_error(
                     "Flow calculation needs directed graph ( 2nd input line must be 'g')");
 
-            int start = gd.g.find(gd.startName);
-            int end = gd.g.find(gd.endName);
             auto edgeCapacity = gd.edgeWeight; // the initial link capacities
-            // if( vEdgeFlow.size() ) {
-            //     for( int k = 0; k < vEdgeFlow.size(); k++ )
-            //     {
-            //         edgeCapacity[k] -= vEdgeFlow[k];
-            //     }
-            // }
 
             int totalFlow = 0;
 
@@ -783,19 +775,26 @@ namespace raven
 
             while (1)
             {
-                // find path
-                // std::cout << "links:\n" << linksText() << "\n";
-                auto p = path(work);
-                // std::cout << "pathsize " << myPath.size() << " ";
-                if (!p.first.size())
+                /* find shortest path with available capacity
+
+                This is the Edmonds–Karp implementation of the Ford–Fulkerson method 
+                It uses breadth first searching so the paths are found in a defined order
+                rather than a 'random' order depending on how the links are stored in the graph data structure
+
+                https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm
+
+                */
+
+                auto p = bfsPath(work);
+
+                if (!p.size())
                     break;
-                // std::cout << "Path " << pathText() << "\n";
 
                 // maximum flow through path
                 int maxflow = INT_MAX;
                 int u = -1;
                 int v;
-                for (int v : p.first)
+                for (int v : p)
                 {
                     if (u >= 0)
                     {
@@ -810,7 +809,7 @@ namespace raven
 
                 // consume capacity of links in path
                 u = -1;
-                for (int v : p.first)
+                for (int v : p)
                 {
                     if (u >= 0)
                     {
