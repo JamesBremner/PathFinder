@@ -97,7 +97,7 @@ void cGUI::calculate()
         {
             // raven::set::cRunWatch::Start();
 
-            readfile( myGraphData);
+            readfile(myGraphData);
 
             myplText.text("Calculating...");
             myplText.update();
@@ -125,11 +125,11 @@ void cGUI::calculate()
                 calcSales();
                 break;
 
+            case raven::graph::graph_calc::components:
+                calcComponents();
+                break;
             case raven::graph::graph_calc::cliques:
                 calcCliques();
-                break;
-            case raven::graph::graph_calc::cliques_adjacent:
-                calcCliquesAdjacent();
                 break;
 
             case raven::graph::graph_calc::flows:
@@ -185,7 +185,7 @@ void cGUI::calculate()
 }
 void cGUI::calcCost()
 {
-    auto result = path( myGraphData );
+    auto result = path(myGraphData);
 
     if (!result.first.size())
     {
@@ -208,7 +208,7 @@ void cGUI::calcCost()
 
 void cGUI::calcSpan()
 {
-    myResultGraph = spanningTree( myGraphData );
+    myResultGraph = spanningTree(myGraphData);
 
     myViewType = eView::span;
     auto viz = pathViz(
@@ -222,7 +222,7 @@ void cGUI::calcSpan()
 
 void cGUI::calcCycle()
 {
-    auto vc = dfs_cycle_finder( myGraphData );
+    auto vc = dfs_cycle_finder(myGraphData);
 
     myResultText = std::to_string(vc.size()) + " cycles found\n\n";
     for (int k = 0; k < vc.size(); k++)
@@ -244,10 +244,12 @@ void cGUI::calcCycle()
 
 void cGUI::calcAllPaths()
 {
-    auto vsp = raven::graph::allPaths( myGraphData);
+    auto vsp = raven::graph::allPaths(myGraphData);
     myResultText = "";
-    for( auto& p : vsp ) {
-        for( int v : p.first ) {
+    for (auto &p : vsp)
+    {
+        for (int v : p.first)
+        {
             myResultText += myGraphData.g.userName(v) + " -> ";
         }
         myResultText += " cost " + std::to_string(p.second) + "\n";
@@ -307,19 +309,18 @@ void cGUI::calcSales()
             true));
 }
 
+void cGUI::calcComponents()
+{
+    components(
+        myGraphData.g,
+        myResultText);
+}
 void cGUI::calcCliques()
 {
-    cliques(
+    components(
         myGraphData.g,
         myResultText,
-        false );
-}
-void cGUI::calcCliquesAdjacent()
-{
-    cliques(
-        myGraphData.g,
-        myResultText,
-        true );
+        true);
 }
 
 void cGUI::calcFlows()
@@ -333,15 +334,14 @@ void cGUI::calcFlows()
 }
 void cGUI::calcMultiFlows()
 {
-    double flow = multiflows( myGraphData );
+    double flow = multiflows(myGraphData);
 
     myResultText = "Total Flow = " + std::to_string(flow);
 }
 
 void cGUI::calcProbs()
 {
-    myResultText = "Probability " 
-        + std::to_string(probs( myGraphData ));
+    myResultText = "Probability " + std::to_string(probs(myGraphData));
 }
 
 void cGUI::calcAlloc()
@@ -413,15 +413,15 @@ void cGUI::calcCuts()
 {
     raven::graph::cTarjan T;
     auto vAP = T.ArticulationPoints(myGraphData);
-    if( ! vAP.size()) {
+    if (!vAP.size())
+    {
         myResultText = "The graph contains no cut vertices";
         return;
     }
     myResultText = "Cut vertices: ";
-    for( auto& name : vAP )
+    for (auto &name : vAP)
         myResultText += name + ", ";
     return;
-
 }
 void cGUI::draw(PAINTSTRUCT &ps)
 {
@@ -495,6 +495,24 @@ void cGUI::drawLayout(PAINTSTRUCT &ps)
     case raven::graph::graph_calc::cycle:
     case raven::graph::graph_calc::explore:
     {
+        // fill graph panel with image produced by graphviz
+        myplLayout.show(true);
+        wex::window2file w2f;
+        auto path = std::filesystem::temp_directory_path();
+        auto sample = path / "sample.png";
+        w2f.draw(myplLayout, sample.string());
+    }
+    break;
+
+    case raven::graph::graph_calc::cliques:
+    {
+        RunDOT(
+            myGraphData.g,
+            pathViz(
+                myGraphData.g,
+                {},
+                false));
+
         // fill graph panel with image produced by graphviz
         myplLayout.show(true);
         wex::window2file w2f;

@@ -128,7 +128,7 @@ namespace raven
             path_cost_t &spur,
             const path_cost_t &prev,
             int rootlength,
-            const sGraphData &gd         )
+            const sGraphData &gd)
         {
             spur.first.insert(
                 spur.first.begin(),
@@ -204,7 +204,7 @@ namespace raven
                 }
 
                 // no more paths check
-                if( ! vPotentialPaths.size() )
+                if (!vPotentialPaths.size())
                     break;
 
                 // Add shortest potential path to output
@@ -396,7 +396,6 @@ namespace raven
                 }
             }
         }
-
 
         std::vector<std::vector<int>>
         dfs_cycle_finder(sGraphData &gd)
@@ -645,10 +644,10 @@ namespace raven
             return path;
         }
 
-        void cliques(
+        void components(
             const cGraph &g,
             std::string &results,
-            bool adjacent)
+            bool fclique)
         {
             // working copy on input graph
             auto work = g;
@@ -689,7 +688,7 @@ namespace raven
                             continue;
                         finished = false;
 
-                        if (!adjacent)
+                        if (!fclique)
                         {
                             // loop over nodes in clique
                             for (int v : clique)
@@ -699,7 +698,7 @@ namespace raven
                                 {
                                     // found node in work that is connected to clique nodes.
                                     // move it to clique
-                                    // std::cout << "add " << work.userName(u) << "\n";
+                                    //std::cout << "add " << work.userName(u) << "\n";
                                     clique.push_back(u);
                                     work.wVertexAttr(u, {"deleted"});
                                     found = true;
@@ -709,7 +708,7 @@ namespace raven
                         }
                         else
                         {
-                            // loop over nodes in clique
+                            // loop over all nodes in clique
                             bool adjacentFound = true;
                             for (int v : clique)
                             {
@@ -719,16 +718,16 @@ namespace raven
                                     adjacentFound = false;
                                     break;
                                 }
-                                if (adjacentFound)
-                                {
-                                    // found node in work that is directly connected to all clique nodes.
-                                    // move it to clique
-                                    // std::cout << "add " << work.userName(u) << "\n";
-                                    clique.push_back(u);
-                                    work.wVertexAttr(u, {"deleted"});
-                                    found = true;
-                                    break;
-                                }
+                            }
+                            if (adjacentFound)
+                            {
+                                // found node in work that is directly connected to all clique nodes.
+                                // move it to clique
+                                //std::cout << "add " << work.userName(u) << "\n";
+                                clique.push_back(u);
+                                work.wVertexAttr(u, {"deleted"});
+                                found = true;
+                                break;
                             }
                         }
                         if (found)
@@ -747,9 +746,12 @@ namespace raven
 
             // Display results
             std::stringstream ss;
+            std::string comp_clique = "component  ";
+            if( fclique )
+                comp_clique = "clique ";
             for (auto &c : vclique)
             {
-                ss << "clique: ";
+                ss << comp_clique;
                 for (int n : c)
                     ss << g.userName(n) << " ";
                 ss << "\n";
@@ -777,7 +779,7 @@ namespace raven
             {
                 /* find shortest path with available capacity
 
-                This is the Edmonds–Karp implementation of the Ford–Fulkerson method 
+                This is the Edmonds–Karp implementation of the Ford–Fulkerson method
                 It uses breadth first searching so the paths are found in a defined order
                 rather than a 'random' order depending on how the links are stored in the graph data structure
 

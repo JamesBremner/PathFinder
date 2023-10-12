@@ -18,7 +18,7 @@ namespace raven
             spans,
             sales,
             cliques,
-            cliques_adjacent,
+            components,
             flows,
             multiflows,
             allpaths,
@@ -301,15 +301,24 @@ namespace raven
         tourNodes(
             const cGraph &g);
 
-        void cliques(
+        /// @brief find components or cliques
+        /// @param g 
+        /// @param[out] results 
+        /// @param clique true for cliques, default false
+        /// the vertices in a component are all reachable from each other
+        /// the vertices in a clique are all adjacent
+
+        void components(
             const cGraph &g,
             std::string &results,
-            bool adjacent);
+            bool clique = false);
+
 
         /// @brief Maximum flow between two vertices
         /// @param gd  graph data
         /// @param[out] vEdgeFlow flow through each edge
         /// @return total flow
+        /// Algorithm: Edmonds–Karp implementation of Ford–Fulkerson
 
         double flows(
             sGraphData &gd,
