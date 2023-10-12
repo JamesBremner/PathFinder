@@ -45,3 +45,7 @@ Run timing tests
 ## Test Data
 
 Test data files specifying graphs of various sizes up to hundreds of thousands of edges. [Detailed Documentation](https://github.com/JamesBremner/PathFinder/wiki/Test-Data)
+
+## Algorithms
+
+[Index of standard algorithms implemented](https://github.com/JamesBremner/PathFinder/wiki/Algorithm-Index)
