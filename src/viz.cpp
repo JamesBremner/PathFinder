@@ -1,7 +1,7 @@
 #include <sstream>
 #include <fstream>
 #include <filesystem>
-#include "cGraph.h" 
+#include "cGraph.h"
 #include <wex.h>
 #include "viz.h"
 
@@ -11,11 +11,12 @@ namespace raven
     {
         cViz::cViz()
         {
-            fnVertexColor =  [](int v){return "";};
+            fnVertexColor = [](int v)
+            { return ""; };
         }
-        void cViz::setVertexColor( std::function<std::string(int)> f)
+        void cViz::setVertexColor(std::function<std::string(int)> f)
         {
-            fnVertexColor =  f;
+            fnVertexColor = f;
         }
         std::string cViz::makeDot(const cGraph &g)
         {
@@ -29,8 +30,8 @@ namespace raven
             for (int vi = 0; vi < g.vertexCount(); vi++)
             {
                 ss << "\"" << g.userName(vi) << "\""
-                  << " [  penwidth = 3.0"
-                  << fnVertexColor(vi) << " ];\n";
+                   << " [  penwidth = 3.0"
+                   << fnVertexColor(vi) << " ];\n";
             }
 
             // loop over edges
@@ -43,7 +44,7 @@ namespace raven
                         continue;
 
                     ss << "\"" << g.userName(v1) << "\"" << graphvizlink
-                      << "\"" << g.userName(v2) << "\";\n";
+                       << "\"" << g.userName(v2) << "\";\n";
                 }
             }
             ss << "}\n";
@@ -55,7 +56,7 @@ namespace raven
         {
             // open file to store the VizGraph DOT representation of the graph
             // https://graphviz.org/doc/info/lang.html
-            
+
             // temp directory is usually
             // C:\Users\<userName>\AppData\Local\Temp
             auto path = std::filesystem::temp_directory_path();
@@ -64,7 +65,7 @@ namespace raven
             std::ofstream f(gdot);
             if (!f.is_open())
                 throw std::runtime_error("Cannot open " + gdot.string());
-            
+
             // write dot representation to file
             f << makeDot(g);
 
@@ -74,9 +75,11 @@ namespace raven
             auto sample = path / "sample.png";
             std::string scmd = "dot -Kfdp -n -Tpng -Tdot -o " + sample.string() + " " + gdot.string();
             std::string error;
-            wex::free::startProcess(
-                scmd,
-                error             );
+            if (wex::free::startProcess(
+                    scmd,
+                    error))
+                throw std::runtime_error(
+                    "GraphViz dot failed " + error);
         }
 
     }
