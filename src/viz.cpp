@@ -68,6 +68,7 @@ namespace raven
 
             // write dot representation to file
             f << makeDot(g);
+            f.close();
 
             // run Graphviz dot program to layout the graph
             // and create a PNG image file
