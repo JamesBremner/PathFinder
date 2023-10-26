@@ -328,10 +328,23 @@ TEST(cliques)
     raven::graph::sGraphData gd;
     gd.fname = "../dat/cliques.txt";
     readfile(gd);
-    std::string results;
-    cliques(gd.g, results,false);
-    std::string expected("clique: 1 5 3 7 \nclique: 2 8 6 4 \n");
-    CHECK_EQUAL(expected, results);
+    auto vclique = components(gd.g, false);
+    CHECK_EQUAL(2, vclique.size());
+    std::vector<std::vector<std::string>> exp{
+        {"1", "5", "3", "7"},
+        {"2", "8", "6", "4"}};
+    auto svclique = gd.g.userName( vclique[0] );
+    CHECK(std::equal(
+        exp[0].begin(),
+        exp[0].end(),
+        svclique.begin()));
+     svclique = gd.g.userName( vclique[1] );
+     CHECK(std::equal(
+        exp[1].begin(),
+        exp[1].end(),
+        svclique.begin()));
+    // std::string expected("clique: 1 5 3 7 \nclique: 2 8 6 4 \n");
+    // CHECK_EQUAL(expected, results);
 }
 
 // TEST(dfs_allpaths)

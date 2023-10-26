@@ -303,14 +303,14 @@ namespace raven
 
         /// @brief find components or cliques
         /// @param g 
-        /// @param[out] results 
         /// @param clique true for cliques, default false
+        /// @return vector of vectors of vertex indices in each component
+        ///
         /// the vertices in a component are all reachable from each other
         /// the vertices in a clique are all adjacent
 
-        void components(
+        std::vector<path_t> components(
             const cGraph &g,
-            std::string &results,
             bool clique = false);
 
 

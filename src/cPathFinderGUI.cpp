@@ -311,16 +311,34 @@ void cGUI::calcSales()
 
 void cGUI::calcComponents()
 {
-    components(
-        myGraphData.g,
-        myResultText);
+    auto vclique = components(
+        myGraphData.g);
+    std::stringstream ss;
+    std::string comp_clique = "component  ";
+    for (auto &c : vclique)
+    {
+        ss << comp_clique;
+        for (int n : c)
+            ss << myGraphData.g.userName(n) << " ";
+        ss << "\n";
+    }
+    myResultText = ss.str();
 }
 void cGUI::calcCliques()
 {
-    components(
+    auto vclique = components(
         myGraphData.g,
-        myResultText,
         true);
+    std::stringstream ss;
+    std::string comp_clique = "clique ";
+    for (auto &c : vclique)
+    {
+        ss << comp_clique;
+        for (int n : c)
+            ss << myGraphData.g.userName(n) << " ";
+        ss << "\n";
+    }
+    myResultText = ss.str();
 }
 
 void cGUI::calcFlows()

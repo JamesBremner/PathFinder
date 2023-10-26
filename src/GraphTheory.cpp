@@ -644,9 +644,8 @@ namespace raven
             return path;
         }
 
-        void components(
+        std::vector<path_t> components(
             const cGraph &g,
-            std::string &results,
             bool fclique)
         {
             // working copy on input graph
@@ -744,19 +743,21 @@ namespace raven
                 vclique.push_back(clique);
             }
 
-            // Display results
-            std::stringstream ss;
-            std::string comp_clique = "component  ";
-            if( fclique )
-                comp_clique = "clique ";
-            for (auto &c : vclique)
-            {
-                ss << comp_clique;
-                for (int n : c)
-                    ss << g.userName(n) << " ";
-                ss << "\n";
-            }
-            results = ss.str();
+            return vclique;
+
+            // // Display results
+            // std::stringstream ss;
+            // std::string comp_clique = "component  ";
+            // if( fclique )
+            //     comp_clique = "clique ";
+            // for (auto &c : vclique)
+            // {
+            //     ss << comp_clique;
+            //     for (int n : c)
+            //         ss << g.userName(n) << " ";
+            //     ss << "\n";
+            // }
+            // results = ss.str();
         }
 
         double
