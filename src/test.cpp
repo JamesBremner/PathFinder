@@ -810,12 +810,18 @@ TEST(alloc)
     gd.g.add("child2", "chore3");
 
     auto act = alloc(gd);
+    std::vector<std::string> sact;
+    for( auto& edge : act.edgeList() )
+    {
+        sact.push_back(act.userName(edge.first ));
+        sact.push_back(act.userName(edge.second ));
+    }
 
     std::vector<std::string> exp{"child1", "chore1", "child2", "chore2"};
     CHECK(std::equal(
         exp.begin(),
         exp.end(),
-        act.begin()));
+        sact.begin()));
 }
 
 TEST(Euler2)

@@ -342,7 +342,11 @@ namespace raven
 
         double probs(sGraphData &gd);
 
-        std::vector<std::string> alloc(sGraphData &gd);
+        /// @brief allocate agents to task
+        /// @param gd graph linking agents to tasks they can be allocated to
+        /// @return graph linking agents to task they are allocated to
+
+        cGraph alloc(sGraphData &gd);
 
         /// @brief  Find euler path through graph
         /// @param g graph

@@ -697,7 +697,7 @@ namespace raven
                                 {
                                     // found node in work that is connected to clique nodes.
                                     // move it to clique
-                                    //std::cout << "add " << work.userName(u) << "\n";
+                                    //std::cout << "add " << work.userName(u) << " ";
                                     clique.push_back(u);
                                     work.wVertexAttr(u, {"deleted"});
                                     found = true;
@@ -741,23 +741,11 @@ namespace raven
 
                 // add to collection of maximal cliques
                 vclique.push_back(clique);
+
+                std::cout << "component found\n";
             }
 
             return vclique;
-
-            // // Display results
-            // std::stringstream ss;
-            // std::string comp_clique = "component  ";
-            // if( fclique )
-            //     comp_clique = "clique ";
-            // for (auto &c : vclique)
-            // {
-            //     ss << comp_clique;
-            //     for (int n : c)
-            //         ss << g.userName(n) << " ";
-            //     ss << "\n";
-            // }
-            // results = ss.str();
         }
 
         double
@@ -1033,7 +1021,7 @@ namespace raven
 
             return atof(gd.g.rVertexAttr(end, 0).c_str());
         }
-        std::vector<std::string> alloc(
+        cGraph alloc(
             sGraphData &gd)
         {
             // identify unique agents and tasks
@@ -1065,7 +1053,9 @@ namespace raven
             std::vector<int> vEdgeFlow;
             flows(gd, vEdgeFlow);
 
-            std::vector<std::string> ret;
+            // construct return graph with links from agents to their assigned tasks
+            cGraph gret;
+            gret.directed();
             for (int ei = 0; ei < gd.g.edgeCount(); ei++)
             {
                 if (vEdgeFlow[ei] <= 0)
@@ -1073,14 +1063,19 @@ namespace raven
 
                 int s = gd.g.src(ei);
                 int d = gd.g.dest(ei);
+
+                // skip links from/to source or sink
                 if (s == start)
                     continue;
                 if (d == end)
                     continue;
-                ret.push_back(gd.g.userName(s));
-                ret.push_back(gd.g.userName(d));
+
+                // add assignment edge
+                gret.add( 
+                    gd.g.userName(s),
+                    gd.g.userName(d));
             }
-            return ret;
+            return gret;
         }
 
         std::vector<int> euler(const cGraph &g)

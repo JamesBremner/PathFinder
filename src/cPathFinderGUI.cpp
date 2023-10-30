@@ -364,13 +364,14 @@ void cGUI::calcProbs()
 
 void cGUI::calcAlloc()
 {
-    auto ret = alloc(myGraphData);
+    auto retg = alloc(myGraphData);
 
     std::stringstream ss;
     ss << "Agent                Task\n\n";
-    for (int k = 0; k < ret.size(); k += 2)
+    for ( auto& edge : retg.edgeList() )
     {
-        ss << std::setw(20) << std::left << ret[k] << ret[k + 1] << "\n";
+        ss << std::setw(20) << std::left << retg.userName(edge.first) 
+            << retg.userName(edge.second) << "\n";
     }
     myResultText = ss.str();
 }
