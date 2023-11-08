@@ -326,10 +326,10 @@ TEST(salesmetric)
 TEST(cliques)
 {
     raven::graph::sGraphData gd;
-    gd.fname = "../dat/cliques.txt";
+    gd.fname = "../dat/cliques2.txt";
     readfile(gd);
-    auto vclique = components(gd.g, false);
-    CHECK_EQUAL(2, vclique.size());
+    auto vclique = cliques(gd.g);
+    CHECK_EQUAL(3, vclique.size());
     std::vector<std::vector<std::string>> exp{
         {"1", "5", "3", "7"},
         {"2", "8", "6", "4"}};
@@ -338,13 +338,32 @@ TEST(cliques)
         exp[0].begin(),
         exp[0].end(),
         svclique.begin()));
-     svclique = gd.g.userName( vclique[1] );
+
+    CHECK_EQUAL( 2, vclique[1].size());
+    CHECK_EQUAL( 2, vclique[2].size());
+
+}
+
+TEST(components)
+{
+    raven::graph::sGraphData gd;
+    gd.fname = "../dat/components.txt";
+    readfile(gd);
+    auto vcomp = components( gd.g);
+    CHECK_EQUAL(2, vcomp.size());
+    std::vector<std::vector<std::string>> exp{
+        {"1", "3", "9", "7", "5"},
+        {"2", "6", "10","4", "8"}};
+        auto svclique = gd.g.userName( vcomp[0] );
+    CHECK(std::equal(
+        exp[0].begin(),
+        exp[0].end(),
+        svclique.begin()));
+     svclique = gd.g.userName( vcomp[1] );
      CHECK(std::equal(
         exp[1].begin(),
         exp[1].end(),
         svclique.begin()));
-    // std::string expected("clique: 1 5 3 7 \nclique: 2 8 6 4 \n");
-    // CHECK_EQUAL(expected, results);
 }
 
 // TEST(dfs_allpaths)

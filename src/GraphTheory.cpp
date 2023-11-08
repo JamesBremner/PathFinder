@@ -644,9 +644,8 @@ namespace raven
             return path;
         }
 
-        std::vector<path_t> components(
-            const cGraph &g,
-            bool fclique)
+        std::vector<path_t> cliques(
+            const cGraph &g)
         {
             // working copy on input graph
             auto work = g;
@@ -687,47 +686,26 @@ namespace raven
                             continue;
                         finished = false;
 
-                        if (!fclique)
+                        // loop over all nodes in clique
+                        bool adjacentFound = true;
+                        for (int v : clique)
                         {
-                            // loop over nodes in clique
-                            for (int v : clique)
+                            if (work.find(u, v) == -1 &&
+                                work.find(v, u) == -1)
                             {
-                                if (work.find(u, v) >= 0 ||
-                                    work.find(v, u) >= 0)
-                                {
-                                    // found node in work that is connected to clique nodes.
-                                    // move it to clique
-                                    //std::cout << "add " << work.userName(u) << " ";
-                                    clique.push_back(u);
-                                    work.wVertexAttr(u, {"deleted"});
-                                    found = true;
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // loop over all nodes in clique
-                            bool adjacentFound = true;
-                            for (int v : clique)
-                            {
-                                if (work.find(u, v) == -1 &&
-                                    work.find(v, u) == -1)
-                                {
-                                    adjacentFound = false;
-                                    break;
-                                }
-                            }
-                            if (adjacentFound)
-                            {
-                                // found node in work that is directly connected to all clique nodes.
-                                // move it to clique
-                                //std::cout << "add " << work.userName(u) << "\n";
-                                clique.push_back(u);
-                                work.wVertexAttr(u, {"deleted"});
-                                found = true;
+                                adjacentFound = false;
                                 break;
                             }
+                        }
+                        if (adjacentFound)
+                        {
+                            // found node in work that is directly connected to all clique nodes.
+                            // move it to clique
+                            // std::cout << "add " << work.userName(u) << "\n";
+                            clique.push_back(u);
+                            work.wVertexAttr(u, {"deleted"});
+                            found = true;
+                            break;
                         }
                         if (found)
                             break; // found a node to add to clique
@@ -742,10 +720,64 @@ namespace raven
                 // add to collection of maximal cliques
                 vclique.push_back(clique);
 
-                std::cout << "component found\n";
+                // std::cout << "component found\n";
             }
 
             return vclique;
+        }
+
+        std::vector<path_t> components(
+            const cGraph &g)
+        {
+            std::vector<path_t> ret;
+
+            // track visited vertices
+            std::vector<bool> visited(g.vertexCount(), false);
+
+            for (int startIndex = 0; startIndex < g.vertexCount(); startIndex++)
+            {
+                if (visited[startIndex])
+                    continue;
+
+                std::vector<int> component;
+
+                // reachable vertices waiting to be visited
+                std::stack<int> wait;
+
+                /*  1 Start by putting one of the graph's vertices on top of a stack.
+                    2 Take the top vertex off the stack and add it to the visited list.
+                    3 Add adjacent vertices which aren't in the visited list to the top of the stack.
+                    4 Keep repeating steps 2 and 3 until the stack is empty.
+                */
+
+                wait.push(startIndex);
+
+                while (!wait.empty())
+                {
+                    int v = wait.top();
+                    if (v < 0)
+                        throw std::runtime_error(
+                            "dfs bad index 1");
+                    wait.pop();
+                    if (visited[v])
+                        continue;
+
+                    visited[v] = true;
+                    component.push_back(v);
+
+                    for (int w : g.adjacentOut(v))
+                    {
+                        if (w < 0)
+                            throw std::runtime_error(
+                                "dfs bad index 2");
+                        if (!visited[w])
+                            wait.push(w);
+                    }
+                }
+                // search has reached every reachable vertex from startIndex
+                ret.push_back(component);
+            }
+            return ret;
         }
 
         double
@@ -1071,7 +1103,7 @@ namespace raven
                     continue;
 
                 // add assignment edge
-                gret.add( 
+                gret.add(
                     gd.g.userName(s),
                     gd.g.userName(d));
             }

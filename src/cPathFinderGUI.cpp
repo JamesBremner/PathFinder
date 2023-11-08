@@ -326,9 +326,8 @@ void cGUI::calcComponents()
 }
 void cGUI::calcCliques()
 {
-    auto vclique = components(
-        myGraphData.g,
-        true);
+    auto vclique = cliques(
+        myGraphData.g);
     std::stringstream ss;
     std::string comp_clique = "clique ";
     for (auto &c : vclique)
@@ -524,6 +523,7 @@ void cGUI::drawLayout(PAINTSTRUCT &ps)
     break;
 
     case raven::graph::graph_calc::cliques:
+    case raven::graph::graph_calc::components:
     {
         RunDOT(
             myGraphData.g,

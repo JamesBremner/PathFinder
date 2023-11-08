@@ -301,18 +301,23 @@ namespace raven
         tourNodes(
             const cGraph &g);
 
-        /// @brief find components or cliques
+        /// @brief find cliques
         /// @param g 
-        /// @param clique true for cliques, default false
+        /// @return vector of vectors of vertex indices in each clique
+        ///
+        /// the vertices in a clique are all adjacent
+
+        std::vector<path_t> cliques(
+            const cGraph &g);
+
+        /// @brief find components
+        /// @param g 
         /// @return vector of vectors of vertex indices in each component
         ///
         /// the vertices in a component are all reachable from each other
-        /// the vertices in a clique are all adjacent
 
         std::vector<path_t> components(
-            const cGraph &g,
-            bool clique = false);
-
+            const cGraph &g);
 
         /// @brief Maximum flow between two vertices
         /// @param gd  graph data
