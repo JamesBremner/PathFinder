@@ -50,3 +50,21 @@ Test data files specifying graphs of various sizes up to hundreds of thousands o
 ## Algorithms
 
 [Index of standard algorithms implemented](https://github.com/JamesBremner/PathFinder/wiki/Algorithm-Index)
+
+# Repo Info
+<p>
+  <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/jamesbremner/PathFinder">
+  <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/jamesbremner/PathFinder">
+  <img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/jamesbremner/PathFinder">
+</p>
+
+<p>
+  <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/jamesbremner/PathFinder">
+  <img alt="GitHub Release Date" src="https://img.shields.io/github/release-date/jamesbremner/PathFinder">
+  <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/jamesbremner/windex/PathFinder">
+</p>
+
+<p>
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jamesbremner/PathFinder">
+  <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/y/jamesbremner/PathFinder">
+</p>
