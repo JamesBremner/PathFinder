@@ -159,7 +159,13 @@ namespace raven
             vPath_t vShortestPaths;
             vPath_t vPotentialPaths;
 
+            // Looking for all the paths, regardless of cost
+            // so set all link costs to 1
+            
+            gd.edgeWeight.resize(gd.g.edgeCount(),1);
+
             // Dijsktra gives the very shortest path
+
             vShortestPaths.push_back(path(gd));
 
             // loop looking for next shortest path
