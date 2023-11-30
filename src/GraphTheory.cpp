@@ -124,6 +124,68 @@ namespace raven
             return std::make_pair(vpath, dist[end]);
         }
 
+        path_cost_t
+        bellmanFord(sGraphData &gd)
+        {
+            int start = gd.g.find(gd.startName);
+            std::vector<double> dist(gd.g.vertexCount(), 1e10);
+            std::vector<int> pred(gd.g.vertexCount(), -1);
+            std::vector<int> vpath;
+
+            dist[start] = 0;
+            pred[start] = start;
+
+            for (
+                int kit = 0;
+                kit < gd.g.vertexCount();
+                kit++)
+            {
+                bool improve = false;
+                for (
+                    int ei = 0;
+                    ei < gd.g.edgeCount();
+                    ei++)
+                {
+                    // update distance to vertex if improved
+                    int u = gd.g.src( ei );
+                    int v = gd.g.dest( ei );
+                    double t = dist[u] + gd.edgeWeight[ei];
+                    if( t < dist[v]) {
+                        dist[v] = t;
+                        pred[v] = u;
+                        improve = true;
+                    }
+                }
+
+                // test for negative cycle
+                if( improve && kit == gd.g.vertexCount()-1)
+                    return std::make_pair(vpath, -2);
+                     
+                // test for no improvement
+                if( ! improve )
+                    break;
+            }
+
+            int end = gd.g.find(gd.endName);
+
+            // check that end is reachable from start
+            if (pred[end] == -1)
+                return std::make_pair(vpath, -1);
+
+            vpath.push_back(end);
+            int next = end;
+            while (1)
+            {
+                next = pred[next];
+                vpath.push_back(next);
+                if (next == start)
+                    break;
+            }
+            std::reverse(vpath.begin(), vpath.end());
+
+            return std::make_pair(vpath, dist[end]);
+        }
+
         static void combine_yen(
             path_cost_t &spur,
             const path_cost_t &prev,
@@ -161,8 +223,8 @@ namespace raven
 
             // Looking for all the paths, regardless of cost
             // so set all link costs to 1
-            
-            gd.edgeWeight.resize(gd.g.edgeCount(),1);
+
+            gd.edgeWeight.resize(gd.g.edgeCount(), 1);
 
             // Dijsktra gives the very shortest path
 

@@ -78,7 +78,10 @@ namespace raven
             std::vector<int> adjacentOut(int vi) const;
             std::vector<int> adjacentIn(int vi) const;
 
+            // get vertex index of edge destination
             int dest(int ei) const;
+
+            // get vertex index of edge source
             int src(int ei) const;
 
             std::string rVertexAttr(int vi, int ai) const;

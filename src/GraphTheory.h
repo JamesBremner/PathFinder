@@ -234,8 +234,18 @@ namespace raven
         /// @return pair: empty vector, -1 when end is not reachable from start
         /// algorithm: Dijsktra
 
-        std::pair<std::vector<int>, double>
+        path_cost_t
         path(sGraphData &gd);
+
+        /// @brief find shortest path from start to end node with negative edge costs
+        /// @param gd graph data
+        /// @return pair: vector of node indices on the path, path cost
+        /// @return pair: empty vector, -1 when end is not reachable from start
+        /// @return pair: empty vector, -2 when negative cycle detected
+        /// algorithm: Bellman-Ford
+        
+        path_cost_t
+        bellmanFord(sGraphData &gd);
 
         /// @brief find all paths between two nodes
         /// @param gd  graph data

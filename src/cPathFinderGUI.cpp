@@ -183,19 +183,58 @@ void cGUI::calculate()
         return;
     }
 }
+/// @brief check edge weights
+/// @param gd graph data
+/// @return 1 constant, 2 variable, 3 some negative
+
+static int checkCosts(const raven::graph::sGraphData &gd)
+{
+    if (!gd.edgeWeight.size())
+        throw std::runtime_error("empty edge weights");
+    int find = 1;
+    double constW = gd.edgeWeight[0];
+    for (double w : gd.edgeWeight)
+    {
+        if (w != constW)
+            find = 2;
+        if (w < 0)
+            return 3;
+    }
+    return find;
+}
+
 void cGUI::calcCost()
 {
-    auto result = path(myGraphData);
+    raven::graph::path_cost_t result;
+    switch (checkCosts(myGraphData))
+    {
+    case 1:
+        result.first = bfsPath(myGraphData);
+        result.second = result.first.size();
+        break;
+    case 2:
+        result = path(myGraphData);
+        break;
+    case 3:
+        result = bellmanFord(myGraphData);
+        break;
+    }
 
-    if (!result.first.size())
+    if (result.second == -2)
+    {
+        myResultText = "Negative cycle found";
+    }
+    else if (!result.first.size())
     {
         myResultText = "No path found";
-        return;
     }
-    myResultText = "";
-    for (int v : result.first)
-        myResultText += myGraphData.g.userName(v) + " -> ";
-    myResultText += " Cost = " + std::to_string(result.second);
+    else
+    {
+        myResultText = "";
+        for (int v : result.first)
+            myResultText += myGraphData.g.userName(v) + " -> ";
+        myResultText += " Cost = " + std::to_string(result.second);
+    }
 
     auto viz = pathViz(
         myGraphData.g,
@@ -367,10 +406,10 @@ void cGUI::calcAlloc()
 
     std::stringstream ss;
     ss << "Agent                Task\n\n";
-    for ( auto& edge : retg.edgeList() )
+    for (auto &edge : retg.edgeList())
     {
-        ss << std::setw(20) << std::left << retg.userName(edge.first) 
-            << retg.userName(edge.second) << "\n";
+        ss << std::setw(20) << std::left << retg.userName(edge.first)
+           << retg.userName(edge.second) << "\n";
     }
     myResultText = ss.str();
 }
@@ -524,6 +563,7 @@ void cGUI::drawLayout(PAINTSTRUCT &ps)
 
     case raven::graph::graph_calc::cliques:
     case raven::graph::graph_calc::components:
+    case raven::graph::graph_calc::allpaths:
     {
         RunDOT(
             myGraphData.g,
