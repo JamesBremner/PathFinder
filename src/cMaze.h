@@ -16,9 +16,9 @@ namespace raven
             void read(std::ifstream &file);
 
             /** convert maze to a graph with nodes and links
-             * @param[out] g  the graph
+             * @param[out] gd  the graph data
              */
-            void graph(cGraph &g);
+            void graph(sGraphData &gd);
 
             void path(const std::vector<int> &p)
             {

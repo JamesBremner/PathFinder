@@ -1,6 +1,6 @@
 #include <iostream>
-#include "cMaze.h"
 #include "GraphTheory.h"
+#include "cMaze.h"
 #include "cCommandParser.h"
 
 int main(int argc, char *argv[])
@@ -28,12 +28,22 @@ int main(int argc, char *argv[])
         }
 
         raven::graph::cMaze M;
-        raven::graph::cGraph g;
+        raven::graph::sGraphData gd;
 
+        // read maze specification from file
         M.read(ifs);
-        M.graph(g);
-        M.path(path(g, g.startName(), g.endName()).first);
+
+        // convert maze to graph data
+        M.graph(gd);
+
+        // find path through maze using beadth first search
+        M.path(
+            bfsPath(gd));
+
+        // display maze with path
         std::cout << M.displayText();
+
+        
         return 0;
     }
     auto alg = P.value("gen");

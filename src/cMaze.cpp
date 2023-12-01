@@ -4,8 +4,9 @@
 #include <sstream>
 #include <cstring>
 #include <algorithm>
+#include "GraphTheory.h"
 #include "cMaze.h"
-#include "cGraph.h"
+
 namespace raven
 {
     namespace graph
@@ -100,8 +101,10 @@ namespace raven
             myEnd = endrow * colCount() + endcol;
             myStart = startrow * colCount() + startcol;
         }
-        void cMaze::graph(cGraph &g)
+        void cMaze::graph(sGraphData &gd)
         {
+            cGraph& g = gd.g;
+
             // add nodes at each grid cell
             for (int row = 0; row < rowCount(); row++)
             {
@@ -138,8 +141,9 @@ namespace raven
                     }
                 }
             }
-            g.startName("START");
-            g.endName("END");
+
+            gd.startName = "START";
+            gd.endName = "END";
         }
         void cMaze::generate(const std::string &cmd)
         {
