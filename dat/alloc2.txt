@@ -1,0 +1,5 @@
+format alloc
+g
+l Alice cleaner
+l Alice teacher
+l Bob cleaner

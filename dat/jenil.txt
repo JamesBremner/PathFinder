@@ -1,0 +1,16 @@
+format allpaths
+g 1 1
+l standbye connection
+l connection stateA
+l stateA stateB
+l stateB stateC
+l stateC stateB
+l stateB stateA
+l stateC stateA
+l stateA disconnect
+l stateB disconnect
+l stateC disconnect
+l disconnect standbye
+s standbye
+e disconnect
+

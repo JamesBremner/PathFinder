@@ -1,0 +1,8 @@
+format alloc
+g
+l John teacher1
+l John teacher2
+l John cleaner1
+l Margeret cleaner1
+l Andrew teacher1
+l Andrew teacher2

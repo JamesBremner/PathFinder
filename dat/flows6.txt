@@ -1,0 +1,13 @@
+format flows
+g 1 0
+l src alice 1
+l src bob 1
+l alice teacher 1
+l alice cleaner 1
+l bob cleaner 1
+l teacher sink 1
+l cleaner sink 1
+s src
+e sink
+
+
