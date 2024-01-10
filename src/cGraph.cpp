@@ -80,7 +80,7 @@ namespace raven
             vOutEdges[d].push_back(s);
             vInEdges[s].push_back(d);
             lastEdgeIndex++;
-            mapEdge.insert(mapEdge_t::value_type(std::make_pair(d,s), lastEdgeIndex));
+            mapEdge.insert(mapEdge_t::value_type(std::make_pair(d, s), lastEdgeIndex));
 
             return lastEdgeIndex - 1;
         }
@@ -115,19 +115,18 @@ namespace raven
             if (it != vInEdges[d].end())
                 vInEdges[d].erase(it);
 
-            mapEdge.erase( mapEdge.find(std::make_pair(s,d)));
+            mapEdge.erase(mapEdge.find(std::make_pair(s, d)));
 
             if (fDirected)
                 return;
- 
+
             it = std::find(vOutEdges[d].begin(), vOutEdges[d].end(), s);
             if (it != vOutEdges[d].end())
                 vOutEdges[d].erase(it);
             it = std::find(vInEdges[s].begin(), vInEdges[s].end(), d);
             if (it != vInEdges[s].end())
                 vInEdges[s].erase(it);
-            mapEdge.erase( mapEdge.find(std::make_pair(d,s)));
-
+            mapEdge.erase(mapEdge.find(std::make_pair(d, s)));
         }
         void cGraph::remove(const std::string &src, const std::string &dst)
         {
@@ -166,8 +165,17 @@ namespace raven
         }
         int cGraph::find(int s, int d) const
         {
-            auto it = mapEdge.find( std::make_pair(s,d));
-            if( it == mapEdge.end() )
+            if (!fDirected)
+            {
+                if (s < d)
+                {
+                    int t = s;
+                    s = d;
+                    d = t;
+                }
+            }
+            auto it = mapEdge.find(std::make_pair(s, d));
+            if (it == mapEdge.end())
                 return -1;
             return it->second;
         }

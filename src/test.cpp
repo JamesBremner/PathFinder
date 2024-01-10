@@ -4,6 +4,14 @@
 #include "GraphTheory.h"
 #include "cGrid2D.h"
 
+TEST(cycleZachary)
+{
+     raven::graph::sGraphData gd;
+    gd.fname = "../dat/cycles/Zachary.txt";
+    readfile(gd);  
+    auto act = dfs_cycle_finder(gd); 
+}
+
 TEST(add)
 {
     raven::graph::cGraph g;

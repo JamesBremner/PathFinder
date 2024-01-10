@@ -69,7 +69,17 @@ namespace raven
             int edgeCount() const;
 
             int find(const std::string &name) const;
+
+            /// @brief get index of edge connecting vertices
+            /// @param s index of vertex
+            /// @param d index of vertex
+            /// @return edge index
+            ///
+            /// if vertices not connected, returns -1
+            /// for undirected graphs, returns index to edge with source at vertex with smaller vertex index
+            
             int find(int s, int d) const;
+
             int find(const std::string &src, const std::string &dst) const;
 
             std::string userName(int vi) const;

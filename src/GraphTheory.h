@@ -249,7 +249,7 @@ namespace raven
 
         /// @brief find all paths between two nodes
         /// @param gd  graph data
-        /// @return vector of path, cost pairs in increasing corst order
+        /// @return vector of path, cost pairs in increasing cost order
         /// algorithm: Yen
 
         vPath_t

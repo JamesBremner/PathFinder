@@ -1,5 +1,6 @@
 #include <string>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <math.h>
 #include "cGraph.h"
@@ -103,6 +104,7 @@ static void readCostedLinks(
         ifs >> stype;
     }
 }
+
 static void readUncostedLinks(
     raven::graph::sGraphData &gd,
     std::ifstream &ifs)
@@ -151,13 +153,19 @@ static void readCycle(
     std::ifstream &ifs)
 {
     graphData.g.clear();
-    graphData.g.directed();
+    //graphData.g.directed();
     std::string stype, sn1, sn2;
     ifs >> stype;
 
     while (ifs.good())
     {
-        if (stype[0] == 'l')
+        if (stype[0] == 'g')
+        {
+            ifs >> sn1 >> sn2;
+            if( sn1 == "1")
+                graphData.g.directed();
+        }
+        else if (stype[0] == 'l')
         {
             ifs >> sn1 >> sn2;
             graphData.g.add(sn1, sn2);
@@ -361,7 +369,8 @@ namespace raven
             else if (calc.find("cycle") != -1)
             {
                 graphData.option = graph_calc::cycle;
-                readCycle(graphData, ifs);
+                //readCycle(graphData, ifs);
+                readUncostedLinks(graphData, ifs);
             }
 
             else if (calc.find("astar") != -1)
