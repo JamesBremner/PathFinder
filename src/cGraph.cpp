@@ -167,7 +167,7 @@ namespace raven
         {
             if (!fDirected)
             {
-                if (s < d)
+                if (s > d)
                 {
                     int t = s;
                     s = d;

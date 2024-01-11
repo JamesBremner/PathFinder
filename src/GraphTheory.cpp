@@ -468,6 +468,8 @@ namespace raven
         std::vector<std::vector<int>>
         dfs_cycle_finder(sGraphData &gd)
         {
+//            std::cout << gd.g.text() << "\n";
+            
             // store for found cycles, vertex indices in order reached.
             std::vector<std::vector<int>> ret;
 
@@ -533,6 +535,7 @@ namespace raven
                     int v = wait.top();
                     wait.pop();
                     visited[v] = true;
+                    //std::cout << "visit " << gd.g.userName(v) << " ";
 
                     // loop over vertices reachable with one hop
                     for (int w : gd.g.adjacentOut(v))
@@ -551,6 +554,7 @@ namespace raven
                         from w back to the common ancestor and then around to v again
 
                         */
+                       //std::cout << "cycle finder "<< gd.g.userName(w) <<" "<< gd.g.userName(v) << ": ";
                         std::vector<int> cycle;
                         if (!gd.g.isDirected())
                         {
@@ -572,6 +576,10 @@ namespace raven
                             work.endName = gd.g.userName(v);
                             cycle = path(work).first;
                         }
+
+                        // for( int v : cycle )
+                        //     std::cout << gd.g.userName(v) << " ";
+                        // std::cout << "\n";
 
                         // ignore "cycles" that just go back and forth over one edge
                         if (cycle.size() < 2)

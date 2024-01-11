@@ -50,7 +50,7 @@ TEST(add)
     ab = g.add("a", "b");
     ba = g.add("b", "a");
     CHECK_EQUAL(0, ab);
-    CHECK_EQUAL(1, ba);
+    CHECK_EQUAL(0, ba);
 }
 
 TEST(bfs)
