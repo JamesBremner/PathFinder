@@ -15,8 +15,8 @@ namespace raven
         void cGraph::clear()
         {
             fDirected = false;
-            vOutEdges.clear();
-            vInEdges.clear();
+            vOutVertices.clear();
+            vInVertices.clear();
             vVertexAttr.clear();
             vVertexName.clear();
             mapEdge.clear();
@@ -27,8 +27,8 @@ namespace raven
             if (std::find(vVertexName.begin(), vVertexName.end(), name) != vVertexName.end())
                 throw std::runtime_error(
                     "cGraph::add duplicate vertex name");
-            vOutEdges.push_back({});
-            vInEdges.push_back({});
+            vOutVertices.push_back({});
+            vInVertices.push_back({});
             vVertexName.push_back(name);
             vVertexAttr.push_back({});
             return vVertexName.size() - 1;
@@ -68,8 +68,8 @@ namespace raven
                 return ei;
 
             // add edge
-            vOutEdges[s].push_back(d);
-            vInEdges[d].push_back(s);
+            vOutVertices[s].push_back(d);
+            vInVertices[d].push_back(s);
             lastEdgeIndex++;
             mapEdge.insert(mapEdge_t::value_type(std::make_pair(s, d), lastEdgeIndex));
 
@@ -77,8 +77,8 @@ namespace raven
                 return lastEdgeIndex;
 
             // add reverse edge
-            vOutEdges[d].push_back(s);
-            vInEdges[s].push_back(d);
+            vOutVertices[d].push_back(s);
+            vInVertices[s].push_back(d);
             lastEdgeIndex++;
             mapEdge.insert(mapEdge_t::value_type(std::make_pair(d, s), lastEdgeIndex));
 
@@ -106,26 +106,26 @@ namespace raven
             }
 
             // remove from src out edges
-            auto it = std::find(vOutEdges[s].begin(), vOutEdges[s].end(), d);
-            if (it != vOutEdges[s].end())
-                vOutEdges[s].erase(it);
+            auto it = std::find(vOutVertices[s].begin(), vOutVertices[s].end(), d);
+            if (it != vOutVertices[s].end())
+                vOutVertices[s].erase(it);
 
             // remove from dst in edges
-            it = std::find(vInEdges[d].begin(), vInEdges[d].end(), s);
-            if (it != vInEdges[d].end())
-                vInEdges[d].erase(it);
+            it = std::find(vInVertices[d].begin(), vInVertices[d].end(), s);
+            if (it != vInVertices[d].end())
+                vInVertices[d].erase(it);
 
             mapEdge.erase(mapEdge.find(std::make_pair(s, d)));
 
             if (fDirected)
                 return;
 
-            it = std::find(vOutEdges[d].begin(), vOutEdges[d].end(), s);
-            if (it != vOutEdges[d].end())
-                vOutEdges[d].erase(it);
-            it = std::find(vInEdges[s].begin(), vInEdges[s].end(), d);
-            if (it != vInEdges[s].end())
-                vInEdges[s].erase(it);
+            it = std::find(vOutVertices[d].begin(), vOutVertices[d].end(), s);
+            if (it != vOutVertices[d].end())
+                vOutVertices[d].erase(it);
+            it = std::find(vInVertices[s].begin(), vInVertices[s].end(), d);
+            if (it != vInVertices[s].end())
+                vInVertices[s].erase(it);
             mapEdge.erase(mapEdge.find(std::make_pair(d, s)));
         }
         void cGraph::remove(const std::string &src, const std::string &dst)
@@ -137,20 +137,20 @@ namespace raven
         {
             for (int a : adjacentOut(removed))
                 remove(removed, a);
-            vOutEdges.erase(vOutEdges.begin() + removed);
-            vInEdges.erase(vInEdges.begin() + removed);
+            vOutVertices.erase(vOutVertices.begin() + removed);
+            vInVertices.erase(vInVertices.begin() + removed);
             vVertexName.erase(vVertexName.begin() + removed);
             vVertexAttr.erase(vVertexAttr.begin() + removed);
         }
 
         int cGraph::vertexCount() const
         {
-            return vOutEdges.size();
+            return vOutVertices.size();
         }
         int cGraph::edgeCount() const
         {
             int ret = 0;
-            for (auto &vo : vOutEdges)
+            for (auto &vo : vOutVertices)
                 ret += vo.size();
             if (!fDirected)
                 ret /= 2;
@@ -196,11 +196,11 @@ namespace raven
         }
         std::vector<int> cGraph::adjacentOut(int vi) const
         {
-            return vOutEdges[vi];
+            return vOutVertices[vi];
         }
         std::vector<int> cGraph::adjacentIn(int vi) const
         {
-            return vInEdges[vi];
+            return vInVertices[vi];
         }
 
         int cGraph::dest(int ei) const
@@ -233,7 +233,7 @@ namespace raven
         {
             std::vector<std::pair<int, int>> ret;
             int src = -1;
-            for (auto &ve : vOutEdges)
+            for (auto &ve : vOutVertices)
             {
                 src++;
                 for (int dst : ve)

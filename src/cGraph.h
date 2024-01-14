@@ -110,9 +110,9 @@ namespace raven
 
             // edges
 
-            std::vector<std::vector<int>> vOutEdges;
+            std::vector<std::vector<int>> vOutVertices;
 
-            std::vector<std::vector<int>> vInEdges;
+            std::vector<std::vector<int>> vInVertices;
 
             /** vertex attributes
              *
