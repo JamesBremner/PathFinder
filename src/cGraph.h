@@ -85,7 +85,14 @@ namespace raven
             std::string userName(int vi) const;
             std::vector<std::string> userName(std::vector<int> vvi) const;
 
+            /// @brief vertices reachable by one hop
+            /// @param vi 
+            /// @return 
             std::vector<int> adjacentOut(int vi) const;
+
+            /// @brief vertices that can reach with one hop
+            /// @param vi 
+            /// @return 
             std::vector<int> adjacentIn(int vi) const;
 
             // get vertex index of edge destination
@@ -108,19 +115,11 @@ namespace raven
             bool fDirected;
 
 
-            // edges
+            // adjacency lists
 
             std::vector<std::vector<int>> vOutVertices;
 
             std::vector<std::vector<int>> vInVertices;
-
-            /** vertex attributes
-             *
-             *  vVertexAttr[vi][ai] is a string representing the aith attribute of the vith vertex
-             */
-
-            std::vector<std::string> vVertexName;
-            std::vector<std::vector<std::string>> vVertexAttr;
 
             /* edge map
 
@@ -129,6 +128,15 @@ namespace raven
             int lastEdgeIndex;
             typedef std::map<std::pair<int, int>, int> mapEdge_t;
             mapEdge_t mapEdge;
+
+            
+            /** vertex attributes
+             *
+             *  vVertexAttr[vi][ai] is a string representing the aith attribute of the vith vertex
+             */
+
+            std::vector<std::string> vVertexName;
+            std::vector<std::vector<std::string>> vVertexAttr;
         };
 
     }

@@ -322,6 +322,8 @@ void cGUI::calcSales()
     {
         // city location specification
         // link all cities with the square of the pythogorean distance between their locations
+        myGraphData.edgeWeight.clear();
+        myGraphData.edgeWeight.resize(myGraphData.g.vertexCount()*myGraphData.g.vertexCount(),INT_MAX);
         for (int v1 = 0; v1 < myGraphData.g.vertexCount(); v1++)
         {
             double x1 = atof(myGraphData.g.rVertexAttr(v1, 0).c_str());
