@@ -4,6 +4,43 @@
 #include "GraphTheory.h"
 #include "cGrid2D.h"
 
+TEST(flow)
+{
+    raven::graph::sGraphData gd;
+
+    gd.g.directed();
+    gd.g.add("a", "b");
+    gd.edgeWeight.resize(1, 7);
+    gd.startName = "a";
+    gd.endName = "b";
+
+    std::vector<int> vEdgeFlow;
+    double f = flows(gd,
+                     vEdgeFlow);
+
+    CHECK_EQUAL(7.0, f);
+}
+
+TEST(flow2)
+{
+    raven::graph::sGraphData gd;
+    gd.fname = "../dat/flows7.txt";
+    readfile(gd);
+    gd.edgeWeight.resize(gd.g.edgeCount(), 1 );
+    gd.startName = "src";
+    gd.endName = "sink";
+    
+    std::vector<int> vEdgeFlow;
+    double f = flows(gd,
+                     vEdgeFlow);
+
+    CHECK_EQUAL(2.0, f);
+
+}
+
+
+
+
 TEST(cycleZachary)
 {
      raven::graph::sGraphData gd;
@@ -587,22 +624,7 @@ TEST(tourNodes)
         actual.begin()));
 }
 
-TEST(flows)
-{
-    raven::graph::sGraphData gd;
 
-    gd.g.directed();
-    gd.g.add("a", "b");
-    gd.edgeWeight.resize(1, 7);
-    gd.startName = "a";
-    gd.endName = "b";
-
-    std::vector<int> vEdgeFlow;
-    double f = flows(gd,
-                     vEdgeFlow);
-
-    CHECK_EQUAL(7.0, f);
-}
 
 TEST(removeLink)
 {
