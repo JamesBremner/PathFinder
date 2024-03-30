@@ -147,10 +147,11 @@ namespace raven
                     ei++)
                 {
                     // update distance to vertex if improved
-                    int u = gd.g.src( ei );
-                    int v = gd.g.dest( ei );
+                    int u = gd.g.src(ei);
+                    int v = gd.g.dest(ei);
                     double t = dist[u] + gd.edgeWeight[ei];
-                    if( t < dist[v]) {
+                    if (t < dist[v])
+                    {
                         dist[v] = t;
                         pred[v] = u;
                         improve = true;
@@ -158,11 +159,11 @@ namespace raven
                 }
 
                 // test for negative cycle
-                if( improve && kit == gd.g.vertexCount()-1)
+                if (improve && kit == gd.g.vertexCount() - 1)
                     return std::make_pair(vpath, -2);
-                     
+
                 // test for no improvement
-                if( ! improve )
+                if (!improve)
                     break;
             }
 
@@ -429,6 +430,7 @@ namespace raven
             int startIndex,
             std::function<bool(int v)> visitor)
         {
+
             // queue of visited vertices with unsearched children
             std::queue<int> Q;
 
@@ -468,8 +470,8 @@ namespace raven
         std::vector<std::vector<int>>
         dfs_cycle_finder(sGraphData &gd)
         {
-//            std::cout << gd.g.text() << "\n";
-            
+            //            std::cout << gd.g.text() << "\n";
+
             // store for found cycles, vertex indices in order reached.
             std::vector<std::vector<int>> ret;
 
@@ -535,7 +537,7 @@ namespace raven
                     int v = wait.top();
                     wait.pop();
                     visited[v] = true;
-                    //std::cout << "visit " << gd.g.userName(v) << " ";
+                    // std::cout << "visit " << gd.g.userName(v) << " ";
 
                     // loop over vertices reachable with one hop
                     for (int w : gd.g.adjacentOut(v))
@@ -554,7 +556,7 @@ namespace raven
                         from w back to the common ancestor and then around to v again
 
                         */
-                       //std::cout << "cycle finder "<< gd.g.userName(w) <<" "<< gd.g.userName(v) << ": ";
+                        // std::cout << "cycle finder "<< gd.g.userName(w) <<" "<< gd.g.userName(v) << ": ";
                         std::vector<int> cycle;
                         if (!gd.g.isDirected())
                         {
@@ -657,6 +659,9 @@ namespace raven
             // store the vertex which every visited vertex was reached from
             std::vector<int> pred(gd.g.vertexCount(), -1);
 
+            if (!gd.edgeWeight.size())
+                gd.edgeWeight.resize(gd.g.edgeCount(), 1);
+
             // get vertex indices from user names
             int start = gd.g.find(gd.startName);
             int dest = gd.g.find(gd.endName);
@@ -676,6 +681,9 @@ namespace raven
                 // loop over vertices reachable from current vertex
                 for (int u : gd.g.adjacentOut(v))
                 {
+                    if (gd.edgeWeight[gd.g.find(v, u)] == 0)
+                        continue;
+
                     if (u == dest)
                     {
                         // reached the destination, no need to search further
@@ -690,7 +698,7 @@ namespace raven
                         // because this is BFS, the first visit will be from
                         // the previous node on the shortest path
 
-                        // add to queue, record predeccor vertex, and mark visited
+                        // add to queue, record predessor vertex, and mark visited
                         Q.push(u);
                         pred[u] = v;
                         visited[u] = true;
@@ -865,12 +873,16 @@ namespace raven
                 throw std::runtime_error(
                     "Flow calculation needs directed graph ( 2nd input line must be 'g')");
 
-            auto edgeCapacity = gd.edgeWeight; // the initial link capacities
-
             int totalFlow = 0;
 
-            // copy graph to working graph
-            auto work = gd;
+            // construct residual network
+            // for each link, add a reverse edge with zero weight
+            auto residual = gd;
+            for (auto ep : gd.g.edgeList())
+            {
+                int ei = residual.g.add(ep.second, ep.first);
+                residual.edgeWeight.push_back(0);
+            }
 
             while (1)
             {
@@ -882,9 +894,11 @@ namespace raven
 
                 https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm
 
+                https://theory.stanford.edu/~tim/w16/l/l1.pdf
+
                 */
 
-                auto p = bfsPath(work);
+                auto p = bfsPath(residual);
 
                 if (!p.size())
                     break;
@@ -897,7 +911,7 @@ namespace raven
                 {
                     if (u >= 0)
                     {
-                        double cap = edgeCapacity[work.g.find(u, v)];
+                        double cap = residual.edgeWeight[residual.g.find(u, v)];
                         if (cap < maxflow)
                         {
                             maxflow = cap;
@@ -912,17 +926,13 @@ namespace raven
                 {
                     if (u >= 0)
                     {
-                        int ei = work.g.find(u, v);
-                        double cap = edgeCapacity[ei] - maxflow;
-                        if (cap <= 0)
-                        {
-                            // link capacity filled, remove
-                            work.g.remove(u, v);
-                        }
-                        else
-                        {
-                            edgeCapacity[ei] = cap;
-                        }
+                        // subtract flow from path link
+                        int ei = residual.g.find(u, v);
+                        residual.edgeWeight[ei] -= maxflow;
+
+                        // add flow to reverse edge
+                        ei = residual.g.find(v, u);
+                        residual.edgeWeight[ei] += maxflow;
                     }
                     u = v;
                 }
@@ -930,24 +940,15 @@ namespace raven
                 totalFlow += maxflow;
             }
 
+            // calculate flow through each real edge
             vEdgeFlow.clear();
+
+            // loop over real edges
             for (int ei = 0; ei < gd.g.edgeCount(); ei++)
             {
-                double f;
-                if (work.g.dest(ei) == -1)
-                    f = gd.edgeWeight[ei];
-                else
-                {
-                    double oc = gd.edgeWeight[ei];
-                    double wc = edgeCapacity[ei];
-                    f = oc - wc;
-                }
-
-                //         std::cout << g.userName(g.src(ei))
-                //   << " " << g.userName(g.dest(ei))
-                //   << " " << f << "\n";
-
-                vEdgeFlow.push_back(f);
+                // flow is capacity minus unused capacity
+                vEdgeFlow.push_back(
+                    gd.edgeWeight[ei] - residual.edgeWeight[ei]);
             }
 
             return totalFlow;

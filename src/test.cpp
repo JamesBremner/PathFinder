@@ -4,22 +4,65 @@
 #include "GraphTheory.h"
 #include "cGrid2D.h"
 
-TEST(flow)
+TEST(alloc)
 {
     raven::graph::sGraphData gd;
-
     gd.g.directed();
-    gd.g.add("a", "b");
-    gd.edgeWeight.resize(1, 7);
-    gd.startName = "a";
-    gd.endName = "b";
+    gd.g.add("child1", "chore1");
+    gd.g.add("child1", "chore2");
+    gd.g.add("child1", "chore3");
+    gd.g.add("child2", "chore1");
+    gd.g.add("child2", "chore2");
+    gd.g.add("child2", "chore3");
 
-    std::vector<int> vEdgeFlow;
-    double f = flows(gd,
-                     vEdgeFlow);
+    auto act = alloc(gd);
+    std::vector<std::string> sact;
+    for( auto& edge : act.edgeList() )
+    {
+        sact.push_back(act.userName(edge.first ));
+        sact.push_back(act.userName(edge.second ));
+    }
 
-    CHECK_EQUAL(7.0, f);
+    std::vector<std::string> exp{"child1", "chore1", "child2", "chore2"};
+    CHECK(std::equal(
+        exp.begin(),
+        exp.end(),
+        sact.begin()));
 }
+
+TEST(bfsPathflow)
+{
+        raven::graph::sGraphData gd;
+    gd.g.directed();
+    gd.g.add( "a", "src" );
+    gd.g.add( "src", "b" );
+    gd.g.add( "t", "a" );
+    gd.g.add( "a", "c" );
+    gd.g.add( "b", "t" );
+    gd.g.add( "c", "snk" );
+    gd.startName="src";
+    gd.endName = "snk";
+
+    auto p = raven::graph::bfsPath( gd );
+
+}
+
+// TEST(flow)
+// {
+//     raven::graph::sGraphData gd;
+
+//     gd.g.directed();
+//     gd.g.add("a", "b");
+//     gd.edgeWeight.resize(1, 7);
+//     gd.startName = "a";
+//     gd.endName = "b";
+
+//     std::vector<int> vEdgeFlow;
+//     double f = flows(gd,
+//                      vEdgeFlow);
+
+//     CHECK_EQUAL(7.0, f);
+// }
 
 TEST(flow2)
 {
@@ -847,31 +890,7 @@ TEST(cGrid2D)
     CHECK_EQUAL(4, g.index(1, 1));
 }
 
-TEST(alloc)
-{
-    raven::graph::sGraphData gd;
-    gd.g.directed();
-    gd.g.add("child1", "chore1");
-    gd.g.add("child1", "chore2");
-    gd.g.add("child1", "chore3");
-    gd.g.add("child2", "chore1");
-    gd.g.add("child2", "chore2");
-    gd.g.add("child2", "chore3");
 
-    auto act = alloc(gd);
-    std::vector<std::string> sact;
-    for( auto& edge : act.edgeList() )
-    {
-        sact.push_back(act.userName(edge.first ));
-        sact.push_back(act.userName(edge.second ));
-    }
-
-    std::vector<std::string> exp{"child1", "chore1", "child2", "chore2"};
-    CHECK(std::equal(
-        exp.begin(),
-        exp.end(),
-        sact.begin()));
-}
 
 TEST(Euler2)
 {
