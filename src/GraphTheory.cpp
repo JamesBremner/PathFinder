@@ -1276,6 +1276,36 @@ namespace raven
             return ret;
         }
 
+        double globalClusteringCoefficient(const cGraph &g)
+        {
+            int closedCount = 0;
+            int sumki = 0;
+            for (int i = 0; i < g.vertexCount(); i++)
+            {
+                int ki = 0;
+                for (int j = 0; j < g.vertexCount(); j++)
+                {
+                    if( j == i )
+                        continue;
+                    if (g.find(i, j) != -1)
+                        ki++;
+                    for (int k = 0; k < g.vertexCount(); k++)
+                    {
+                        if( k == i || k == j )
+                            continue;
+                        if (g.find(i, j) != -1 &&
+                            g.find(j, k) != -1 &&
+                            g.find(k, i) != -1)
+                            closedCount++;
+                    }
+                }
+                sumki += ki * (ki - 1);
+            }
+            if (sumki == 0)
+                return 0;
+            return closedCount / sumki;
+        }
+
         cTSP::cTSP(raven::graph::cGraph &inputGraph,
                    const std::vector<double> &vEdgeWeight)
             : g(inputGraph),
@@ -1452,6 +1482,5 @@ namespace raven
         {
             return myEdgeWeight[g.find(i, j)];
         }
-
     }
 }

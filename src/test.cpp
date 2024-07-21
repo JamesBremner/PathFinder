@@ -4,6 +4,25 @@
 #include "GraphTheory.h"
 #include "cGrid2D.h"
 
+TEST( globalClusteringCoefficient )
+{
+    raven::graph::cGraph g;
+    g.add("a","b");
+    g.add("b","c");
+    g.add("c","a");
+
+    double C = raven::graph::globalClusteringCoefficient(g);
+    CHECK_CLOSE(1,C,0.1);
+
+    g.clear();
+    g.add("a","b");
+    g.add("b","c");
+    g.add("c","d");
+
+    CHECK_CLOSE(0,raven::graph::globalClusteringCoefficient(g),0.1);
+
+}
+
 TEST(alloc)
 {
     raven::graph::sGraphData gd;

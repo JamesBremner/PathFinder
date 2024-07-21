@@ -376,6 +376,14 @@ namespace raven
         std::vector<int>
         vertexCover(const cGraph &g);
 
+        /// @brief global clustering coefficient
+        /// @return coefficient
+        ///
+        /// closed triplet count / total triplet count
+        /// https://en.wikipedia.org/wiki/Clustering_coefficient#Global_clustering_coefficient
+
+        double globalClusteringCoefficient( const cGraph &g );
+
         /// @brief Graph description in graphviz dot format, multiple paths
         /// @param g
         /// @param vpath

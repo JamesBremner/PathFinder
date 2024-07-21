@@ -1,0 +1,22 @@
+format flows
+g 1 0
+l s 1 1
+l s 2 1
+l s 3 1
+l s 4 1
+l 1 a 1
+l 1 b 1
+l 2 a 1
+l 2 s 1
+l 3 b 1
+l 3 d 1
+l 4 c 1
+l 4 d 1
+l a t 2
+l b t 2
+l c t 2
+l d t 2
+s s
+e t
+
+
