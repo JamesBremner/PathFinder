@@ -665,6 +665,9 @@ namespace raven
             // get vertex indices from user names
             int start = gd.g.find(gd.startName);
             int dest = gd.g.find(gd.endName);
+            if( start < 0 || dest < 0 )
+                throw std::runtime_error(
+                    "cGraph::bfsPath bad start or destination"                );
 
             // start at start
             int v = start;

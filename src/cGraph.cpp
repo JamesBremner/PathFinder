@@ -196,10 +196,14 @@ namespace raven
         }
         std::vector<int> cGraph::adjacentOut(int vi) const
         {
+            if (0 > vi || vi >= vOutVertices.size())
+                throw std::runtime_error("cGraph::adjacentOut bad vertex index");
             return vOutVertices[vi];
         }
         std::vector<int> cGraph::adjacentIn(int vi) const
         {
+            if (0 > vi || vi >= vOutVertices.size())
+                throw std::runtime_error("cGraph::adjacentIn bad vertex index");
             return vInVertices[vi];
         }
 
