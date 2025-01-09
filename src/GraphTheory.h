@@ -46,7 +46,7 @@ namespace raven
 
             /// @brief set the weight of an edge
             /// @param ei edge index
-            /// @param weight 
+            /// @param weight
             ///
             /// If neccessary the edgeWeight vector will be resized to accomodate
             /// the edge, all edges with smaller indices, and about the same number in addition
@@ -243,7 +243,7 @@ namespace raven
         /// @return pair: empty vector, -1 when end is not reachable from start
         /// @return pair: empty vector, -2 when negative cycle detected
         /// algorithm: Bellman-Ford
-        
+
         path_cost_t
         bellmanFord(sGraphData &gd);
 
@@ -312,7 +312,7 @@ namespace raven
             const cGraph &g);
 
         /// @brief find cliques
-        /// @param g 
+        /// @param g
         /// @return vector of vectors of vertex indices in each clique
         ///
         /// the vertices in a clique are all adjacent
@@ -321,7 +321,7 @@ namespace raven
             const cGraph &g);
 
         /// @brief find components
-        /// @param g 
+        /// @param g
         /// @return vector of vectors of vertex indices in each component
         ///
         /// the vertices in a component are all reachable from each other
@@ -382,20 +382,22 @@ namespace raven
         /// closed triplet count / total triplet count
         /// https://en.wikipedia.org/wiki/Clustering_coefficient#Global_clustering_coefficient
 
-        double globalClusteringCoefficient( const cGraph &g );
+        double globalClusteringCoefficient(const cGraph &g);
 
         /// @brief Graph description in graphviz dot format, multiple paths
         /// @param g
         /// @param vpath
         /// @param pathColor path colors
-        /// @param all
+        /// @param all true: color all paths
+        /// @param vlabel edge labels
         /// @return string in graphviz dot format
 
         std::string multiPathViz(
             cGraph &g,
             const std::vector<std::vector<int>> &vpath,
             const std::vector<std::string> &pathColor,
-            bool all);
+            bool all,
+            const std::vector<std::string> &vlabel);
 
         /// @brief Graph description in graphviz dot format, one path
         /// @param g

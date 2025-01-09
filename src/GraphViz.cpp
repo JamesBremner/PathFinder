@@ -14,7 +14,8 @@ namespace raven
             cGraph &g,
             const std::vector<std::vector<int>> &vpath,
             const std::vector<std::string>& pathColor,
-            bool all)
+            bool all,
+            const std::vector<std::string>& vlabel )
         {
             std::string graphvizgraph = "graph";
             std::string graphvizlink = "--";
@@ -79,6 +80,13 @@ namespace raven
                         }
                     }
 
+                    if( vlabel.size() ) {
+                        // label the edges
+                        // assumes that the edge has not been colored
+                        f << "[ label=\""
+                        << vlabel[g.find(v1,v2)]
+                        << "\" ]";
+                    }
                     f << ";\n";
                 }
             }
@@ -122,7 +130,7 @@ namespace raven
             const std::vector<int> &vpath,
             bool all)
         {
-            return multiPathViz(g, {vpath}, {"red"}, all);
+            return multiPathViz(g, {vpath}, {"red"}, all, {});
         }
 
         void RunDOT(cGraph &g,
